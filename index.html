@@ -5,288 +5,280 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Barber Note">
-    <title>Barber Note Pro V6.9</title>
+    <title>Barber Note Ultimate V.8.9</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2b459a; --bg: #f8fafc; --card: #ffffff; --text: #334155; --sub: #94a3b8; --border: #e2e8f0; --green: #22c55e; --red: #ef4444; --orange: #f59e0b; }
+        :root { --primary: #4e7d4e; --bg: #f8fafc; --card: #ffffff; --text: #334155; --sub: #94a3b8; --border: #e2e8f0; --accent: #2b459a; }
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 100px; }
         .page { display: none; padding: 15px; max-width: 500px; margin: auto; }
         .page.active { display: block; }
-        .header { background: var(--card); padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 15px; position: relative; }
-        .header .branch { font-weight: 600; color: var(--primary); font-size: 1.3rem; }
-        .v-tag { position: absolute; top: 5px; right: 10px; font-size: 0.6rem; color: var(--sub); }
-        .card { background: var(--card); border-radius: 16px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .label { font-size: 0.75rem; color: var(--sub); font-weight: 600; margin-bottom: 6px; display: block; }
-        input, select { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: 1rem; outline: none; background: #fdfdfd; color: var(--text); appearance: none; }
         
-        /* Layout สไตล์ 6.5 */
-        .svc-item { display: grid; grid-template-columns: 1fr 1fr 70px 30px; gap: 8px; margin-bottom: 10px; align-items: center; }
-        .btn-remove-row { color: var(--red); opacity: 0.6; cursor: pointer; text-align: center; }
-        .btn-add { color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 5px; }
+        .header { text-align: center; padding: 10px 0; border-bottom: 1px dashed var(--border); margin-bottom: 15px; }
+        .shop-name { font-size: 1.6rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+
+        /* Dashboard กล่องคู่ ตามรูปภาพ */
+        .db-container { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; margin-bottom: 12px; }
+        .db-main { background: var(--primary); color: white; border-radius: 15px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .db-side { background: white; border-radius: 15px; padding: 15px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
         
-        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .pay-btn { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); text-align: center; cursor: pointer; color: var(--sub); }
-        .pay-btn.active { background: var(--primary); color: white; }
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 14px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
-        .btn-main.success { background: var(--green) !important; }
+        .side-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 5px 0; border-bottom: 1px solid #f1f5f9; }
+        .side-row:last-child { border: 0; }
+        .side-row b { color: var(--text); }
+
+        /* สถิติบริการ */
+        .stat-line { font-size: 0.8rem; margin-top: 10px; opacity: 0.9; }
+
+        /* การ์ดบันทึก */
+        .card { background: white; border-radius: 20px; padding: 15px; border: 1px solid var(--border); margin-bottom: 12px; }
+        .svc-row { display: grid; grid-template-columns: 1.1fr 1.1fr 70px 25px; gap: 5px; margin-bottom: 10px; align-items: center; }
+        select, input { border: 1px solid var(--border); border-radius: 10px; padding: 10px; font-size: 0.9rem; background: #fafafa; width: 100%; outline: none; }
         
-        .rep-summary { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 10px; margin-bottom: 15px; }
-        .box-blue { background: var(--primary); color: white; padding: 15px; border-radius: 16px; }
-        .box-white { background: var(--card); border: 1px solid var(--border); padding: 12px; border-radius: 16px; }
-        .sub-stat { display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; padding: 6px 0; }
-        
-        .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; }
-        .status-bar.blue { background: #dbeafe; color: #1e40af; }
-        .status-bar.orange { background: #ffedd5; color: #9a3412; }
-        
-        .hist-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-        .hist-del { color: var(--red); opacity: 0.3; padding: 10px; cursor: pointer; }
-        .theme-dot { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); height: 75px; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); cursor: pointer; font-size: 0.75rem; }
-        .nav-item.active { color: var(--primary); }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 600; font-size: 1.1rem; cursor: pointer; }
+        .settle-bar { background: #eef2ff; color: var(--accent); text-align: center; padding: 12px; border-radius: 15px; font-weight: 600; margin-bottom: 15px; font-size: 1.1rem; }
+        .gua-tag { background: #dbeafe; color: var(--accent); text-align: center; padding: 8px; border-radius: 10px; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500; }
+
+        /* Theme Selection */
+        .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
+        .theme-dot { height: 35px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
+        .theme-dot.active { border-color: #333; }
+
+        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid var(--border); height: 75px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); font-size: 0.75rem; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
     <div id="page-rec" class="page active">
-        <header class="header"><div class="v-tag">V6.9</div><div class="branch" id="head-shop-rec">BARBER SHOP</div></header>
-        <div class="card">
-            <label class="label">วันที่</label>
-            <input type="date" id="rec-date-raw" style="margin-bottom: 10px;">
-            <div class="grid-2">
-                <div><label class="label">เวลาเริ่ม</label><input type="time" id="rec-start"></div>
-                <div><label class="label">เวลาเสร็จ</label><input type="time" id="rec-end"></div>
-            </div>
+        <div class="header">
+            <div class="shop-name" id="sh-n1">BARBER SHOP</div>
+            <div id="cur-date" style="font-size:0.85rem; color:var(--sub); margin-top:5px;"></div>
         </div>
         <div class="card">
-            <label class="label">บริการ & ทรงผม (เลือกรายการ)</label>
             <div id="svc-list"></div>
-            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการ</div>
+            <div onclick="addSvcRow()" style="color:var(--primary); font-weight:600; cursor:pointer; margin-top:10px; font-size:0.9rem;"><i class="fas fa-plus-circle"></i> เพิ่มบริการ</div>
         </div>
-        <div class="pay-grid">
-            <div class="pay-btn active" id="p-cash" onclick="setPay('เงินสด')">เงินสด</div>
-            <div class="pay-btn" id="p-trans" onclick="setPay('โอนเงิน')">โอนเงิน</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
+            <button id="p-cash" onclick="setPay('เงินสด')" style="padding:15px; border-radius:12px; border:1px solid var(--border); background:white; font-weight:600;">เงินสด</button>
+            <button id="p-trans" onclick="setPay('โอนเงิน')" style="padding:15px; border-radius:12px; border:1px solid var(--border); background:white; font-weight:600;">โอนเงิน</button>
         </div>
-        <button class="btn-main" id="btn-save" onclick="saveRecord()">SAVE RECORD</button>
+        <button class="btn-main" onclick="saveRecord()">บันทึกข้อมูลวันนี้</button>
     </div>
 
     <div id="page-rep" class="page">
-        <header class="header"><div class="branch" id="head-shop-rep">BARBER SHOP</div></header>
-        <div id="rep-date-th" style="text-align:center; font-size:0.9rem; color:var(--sub); margin-bottom:15px;">...</div>
-        <div class="rep-summary">
-            <div class="box-blue">
-                <div class="label" style="color:rgba(255,255,255,0.7);">ยอดเงินรวม</div>
-                <div style="font-size: 1.8rem; font-weight: 700;">฿<span id="r-total">0</span></div>
-                <div style="font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.2); margin-top: 5px;">จำนวนลูกค้า <b id="r-count">0</b> คน</div>
+        <div class="header"><div class="shop-name" id="sh-n2">...</div></div>
+        
+        <div class="db-container">
+            <div class="db-main">
+                <small style="opacity:0.8;">ยอดเงินรวม</small>
+                <div style="font-size:2.2rem; font-weight:700; margin:5px 0;">฿<span id="r-total">0</span></div>
+                <div class="stat-line">ลูกค้า <span id="r-count">0</span> คน | โกน <span id="s-1">0</span> | สระ <span id="s-2">0</span> | ย้อม <span id="s-3">0</span></div>
             </div>
-            <div class="box-white">
-                <div class="sub-stat"><span>เงินโอน</span><b id="r-trans">0</b></div>
-                <div class="sub-stat"><span>รายได้ช่าง</span><b id="r-barber" style="color:var(--primary);">0</b></div>
-                <div class="sub-stat"><span>รายได้ร้าน</span><b id="r-shop">0</b></div>
+            <div class="db-side">
+                <div class="side-row"><span>โอนรวม</span><b id="r-trans">0</b></div>
+                <div class="side-row"><span>รายได้ช่าง</span><b id="r-barber" style="color:var(--primary);">0</b></div>
+                <div class="side-row"><span>รายได้ร้าน</span><b id="r-shop">0</b></div>
             </div>
         </div>
-        <div id="status-bar" class="status-bar">...</div>
-        <div id="hist-container"></div>
+
+        <div class="gua-tag" id="gua-display">ประกันรายได้วันนี้ ฿0</div>
+        <div class="settle-bar" id="settle-text">...</div>
+        
+        <div id="hist-list"></div>
+        <center><small style="color:#ff7675; cursor:pointer;" onclick="clearToday()">ล้างข้อมูลวันนี้</small></center>
     </div>
 
-    <div id="page-history" class="page">
-        <header class="header"><div class="v-tag">V6.9 History</div><div class="branch" id="head-shop-hist">BARBER SHOP</div></header>
-        <div class="card">
-            <input type="date" id="hist-date-select" onchange="renderHistoryPage()">
-            <button onclick="renderMonthlySummary()" style="width:100%; margin-top:10px; background:var(--orange); color:white; border:none; padding:12px; border-radius:10px; font-weight:600;"><i class="fas fa-calendar-alt"></i> สรุปภาพรวมรายเดือน</button>
+    <div id="page-his" class="page">
+        <div class="header"><div class="shop-name">ประวัติรายเดือน</div></div>
+        <div class="card" style="background:#2d3436; color:white; border:none;">
+            <b id="m-label">เดือนนี้</b>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+                <div><small style="opacity:0.7;">ยอดขาย</small><br><b id="m-total" style="font-size:1.3rem;">0</b></div>
+                <div><small style="opacity:0.7;">ช่างได้</small><br><b id="m-barber" style="color:#55efc4;">0</b></div>
+                <div><small style="opacity:0.7;">ร้านได้</small><br><b id="m-shop">0</b></div>
+                <div><small style="opacity:0.7;">ลูกค้าสะสม</small><br><b id="m-count">0</b></div>
+            </div>
         </div>
-        <div id="hist-page-container"></div>
+        <input type="month" id="hist-month" class="card" onchange="renderHistory()" style="width:100%;">
+        <div id="monthly-list"></div>
     </div>
 
     <div id="page-set" class="page">
-        <header class="header"><div class="v-tag">V6.9 Settings</div><div class="branch">ตั้งค่า & ธีม</div></header>
+        <div class="header"><div class="shop-name">ตั้งค่าระบบ</div></div>
         <div class="card">
-            <label class="label">ชื่อร้าน</label>
-            <input type="text" id="s-name" onchange="updateConfig()">
-            <div class="grid-2" style="margin-top:15px;">
-                <div><label class="label">แบ่งช่าง (%)</label><input type="number" id="s-percent" onchange="updateConfig()"></div>
-                <div><label class="label">ประกัน (฿)</label><input type="number" id="s-guarantee" onchange="updateConfig()"></div>
-            </div>
+            <label>ชื่อร้าน</label><input type="text" id="cfg-name" style="margin-bottom:10px;">
+            <label>ส่วนแบ่งช่าง (%)</label><input type="number" id="cfg-per" style="margin-bottom:10px;">
+            <label>ประกันรายได้ช่าง (฿)</label><input type="number" id="cfg-gua">
+            <button class="btn-main" style="margin-top:15px;" onclick="saveCfg()">บันทึกการตั้งค่า</button>
         </div>
         <div class="card">
-            <label class="label">ธีมพาสเทล 7 สี</label>
-            <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:5px;">
-                <div class="theme-dot" style="background:#A7C7E7;" onclick="setTheme('#2b459a', '#f0f4f8')"></div>
-                <div class="theme-dot" style="background:#C1E1C1;" onclick="setTheme('#3e7c3e', '#f2f8f2')"></div>
-                <div class="theme-dot" style="background:#FFB7B2;" onclick="setTheme('#c0392b', '#fff5f5')"></div>
-                <div class="theme-dot" style="background:#FFDAC1;" onclick="setTheme('#d35400', '#fff9f5')"></div>
-                <div class="theme-dot" style="background:#E2F0CB;" onclick="setTheme('#82954b', '#f9fff0')"></div>
-                <div class="theme-dot" style="background:#B5EAD7;" onclick="setTheme('#4b958e', '#f0fffb')"></div>
-                <div class="theme-dot" style="background:#C7CEEA;" onclick="setTheme('#5b5b8a', '#f5f5ff')"></div>
-            </div>
+            <label>ธีมพาสเทล 7 สี</label>
+            <div class="theme-grid" id="theme-selector"></div>
         </div>
     </div>
 
     <nav class="nav">
-        <div class="nav-item active" id="n-rec" onclick="showPage('rec')"><i class="fas fa-edit"></i><span>บันทึก</span></div>
-        <div class="nav-item" id="n-rep" onclick="showPage('rep')"><i class="fas fa-file-invoice-dollar"></i><span>สรุปงาน</span></div>
-        <div class="nav-item" id="n-history" onclick="showPage('history')"><i class="fas fa-history"></i><span>ย้อนหลัง</span></div>
-        <div class="nav-item" id="n-set" onclick="showPage('set')"><i class="fas fa-cog"></i><span>ตั้งค่า</span></div>
+        <div class="nav-item active" onclick="showPage('rec')"><i class="fas fa-edit"></i><span>บันทึก</span></div>
+        <div class="nav-item" onclick="showPage('rep')"><i class="fas fa-file-invoice-dollar"></i><span>สรุปงาน</span></div>
+        <div class="nav-item" onclick="showPage('his')"><i class="fas fa-history"></i><span>ประวัติ</span></div>
+        <div class="nav-item" onclick="showPage('set')"><i class="fas fa-cog"></i><span>ตั้งค่า</span></div>
     </nav>
 
     <script>
-        const svcs = ["", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
-        const styles = ["", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "เปิดข้าง", "วินเทจ"];
-        
-        let db = JSON.parse(localStorage.getItem('barber_v6_db') || '[]');
-        let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","percent":50,"guarantee":300,"primary":"#2b459a","bg":"#f8fafc"}');
+        const svcs = ["ตัดผม", "โกนหนวด", "กันหน้า", "แก้ผม", "สระผม", "ย้อมผม", "ดัด", "อื่นๆ"];
+        const styles = ["รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "เปิดข้าง / วินเทจ"];
+        const themes = ['#4e7d4e', '#7fb3d5', '#f1948a', '#bb8fce', '#f8c471', '#f7dc6f', '#aab7b8'];
+
+        let db = JSON.parse(localStorage.getItem('barber_v89_db') || '[]');
+        let cfg = JSON.parse(localStorage.getItem('barber_v89_cfg') || '{"name":"BARBER SHOP","percent":50,"guarantee":300,"theme":"#4e7d4e"}');
         let payType = 'เงินสด';
+        let today = new Date().toISOString().split('T')[0];
 
         window.onload = () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('rec-date-raw').value = today;
-            document.getElementById('hist-date-select').value = today;
-            document.getElementById('rec-start').value = new Date().toTimeString().slice(0,5);
-            applyConfig(); addSvcRow();
+            document.getElementById('cur-date').innerText = new Date().toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'});
+            document.getElementById('hist-month').value = today.substring(0, 7);
+            initThemes();
+            applyCfg();
+            addSvcRow();
+            setPay('เงินสด');
         };
 
         function addSvcRow() {
-            const container = document.getElementById('svc-list');
             const div = document.createElement('div');
-            div.className = 'svc-item';
-            // กลับมาเป็น <select> แบบ 6.5 ทั้งคู่
+            div.className = 'svc-row';
             div.innerHTML = `
-                <select class="i-svc">${svcs.map(s => `<option value="${s}">${s}</option>`).join('')}</select>
-                <select class="i-style">${styles.map(s => `<option value="${s}">${s}</option>`).join('')}</select>
-                <input type="number" class="i-price" value="${container.children.length === 0 ? '150' : ''}">
-                <div class="btn-remove-row" onclick="this.parentElement.remove()"><i class="fas fa-times-circle"></i></div>`;
-            container.appendChild(div);
+                <select class="i-svc">${svcs.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
+                <select class="i-style">${styles.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>
+                <input type="number" class="i-price" value="150">
+                <div onclick="this.parentElement.remove()" style="color:#ff7675; text-align:center;"><i class="fas fa-times-circle"></i></div>`;
+            document.getElementById('svc-list').appendChild(div);
         }
 
-        function applyConfig() {
-            ['head-shop-rec', 'head-shop-rep', 'head-shop-hist'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = cfg.name; });
-            document.getElementById('s-name').value = cfg.name;
-            document.getElementById('s-percent').value = cfg.percent;
-            document.getElementById('s-guarantee').value = cfg.guarantee;
-            document.documentElement.style.setProperty('--primary', cfg.primary);
-            document.documentElement.style.setProperty('--bg', cfg.bg);
+        function setPay(t) {
+            payType = t;
+            document.getElementById('p-cash').style.backgroundColor = t==='เงินสด'? 'var(--primary)':'white';
+            document.getElementById('p-cash').style.color = t==='เงินสด'? 'white':'var(--text)';
+            document.getElementById('p-trans').style.backgroundColor = t==='โอนเงิน'? 'var(--primary)':'white';
+            document.getElementById('p-trans').style.color = t==='โอนเงิน'? 'white':'var(--text)';
         }
-
-        function updateConfig() {
-            cfg.name = document.getElementById('s-name').value || "BARBER SHOP";
-            cfg.percent = parseInt(document.getElementById('s-percent').value) || 0;
-            cfg.guarantee = parseInt(document.getElementById('s-guarantee').value) || 0;
-            localStorage.setItem('barber_v6_cfg', JSON.stringify(cfg));
-            applyConfig();
-        }
-
-        function setTheme(p, b) { cfg.primary = p; cfg.bg = b; updateConfig(); }
-        function setPay(t) { payType = t; document.getElementById('p-cash').classList.toggle('active', t === 'เงินสด'); document.getElementById('p-trans').classList.toggle('active', t === 'โอนเงิน'); }
 
         function saveRecord() {
-            const rows = document.querySelectorAll('.svc-item');
             let items = []; let total = 0;
-            rows.forEach(r => {
-                const p = parseInt(r.querySelector('.i-price').value) || 0;
-                if(p > 0) { items.push({ svc: r.querySelector('.i-svc').value, style: r.querySelector('.i-style').value, price: p }); total += p; }
+            document.querySelectorAll('.svc-row').forEach(row => {
+                const p = parseInt(row.querySelector('.i-price').value) || 0;
+                items.push({ svc: row.querySelector('.i-svc').value, style: row.querySelector('.i-style').value, price: p });
+                total += p;
             });
-            if(total === 0) return alert('ใส่ราคาด้วยครับ');
-            db.push({ id: Date.now(), date: document.getElementById('rec-date-raw').value, time: document.getElementById('rec-start').value + '-' + (document.getElementById('rec-end').value || '??'), items, total, pay: payType });
-            localStorage.setItem('barber_v6_db', JSON.stringify(db));
-            const btn = document.getElementById('btn-save'); btn.classList.add('success'); btn.innerHTML = 'บันทึกสำเร็จ';
-            setTimeout(() => { btn.classList.remove('success'); btn.innerHTML = 'SAVE RECORD'; document.getElementById('svc-list').innerHTML = ''; addSvcRow(); }, 1000);
-        }
-
-        function showPage(p) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.getElementById('page-' + p).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-' + p).classList.add('active');
-            if(p === 'rep') renderReport();
-            if(p === 'history') renderHistoryPage();
+            if(total === 0) return alert('กรุณาใส่ราคา');
+            db.push({ id: Date.now(), date: today, items, total, pay: payType, time: new Date().toLocaleTimeString('th-TH',{hour:'2-digit', minute:'2-digit'}) });
+            localStorage.setItem('barber_v89_db', JSON.stringify(db));
+            alert('บันทึกเรียบร้อย'); location.reload();
         }
 
         function renderReport() {
-            const date = document.getElementById('rec-date-raw').value;
-            const data = db.filter(r => r.date === date);
-            document.getElementById('rep-date-th').innerText = new Date(date).toLocaleDateString('th-TH', {dateStyle:'long'});
-            let sumTotal = 0, sumTrans = 0, sumCash = 0;
-            let listHTML = '';
-            data.forEach(r => {
-                sumTotal += r.total;
-                if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
-                listHTML += `<div class="hist-card" style="border-left: 5px solid ${r.pay === 'โอนเงิน'?'var(--primary)':'#f59e0b'};">
-                    <div><b>${r.items.map(i=>`${i.svc} ${i.style}`).join('+')}</b><br><small>${r.time}</small></div>
-                    <div style="text-align:right;"><b>฿${r.total}</b><br><small>${r.pay}</small> <i class="fas fa-trash-alt hist-del" onclick="delItem(${r.id})"></i></div>
+            const daily = db.filter(r => r.date === today);
+            let total = 0, trans = 0, s = {"โกนหนวด":0, "สระผม":0, "ย้อมผม":0};
+            let html = '';
+
+            daily.forEach(r => {
+                total += r.total; if(r.pay === 'โอนเงิน') trans += r.total;
+                r.items.forEach(i => { if(s[i.svc] !== undefined) s[i.svc]++; });
+                html += `<div class="card" style="padding:12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b>${r.items.map(i=>i.svc).join('+')}</b><br><small>${r.time} | ${r.items[0].style}</small></div>
+                    <div style="text-align:right;"><b>฿${r.total}</b><br><small>${r.pay}</small></div>
                 </div>`;
             });
-            let barber = Math.max(cfg.guarantee, (sumTotal * cfg.percent / 100));
-            if(sumTotal === 0) barber = 0;
-            document.getElementById('r-total').innerText = sumTotal.toLocaleString();
-            document.getElementById('r-count').innerText = data.length;
-            document.getElementById('r-trans').innerText = sumTrans.toLocaleString();
-            document.getElementById('r-barber').innerText = Math.floor(barber).toLocaleString();
-            document.getElementById('r-shop').innerText = Math.floor(sumTotal - barber).toLocaleString();
+
+            const barberShare = Math.max(cfg.guarantee, (total * cfg.percent / 100));
+            const shopShare = total - barberShare;
+
+            document.getElementById('r-total').innerText = total.toLocaleString();
+            document.getElementById('r-count').innerText = daily.length;
+            document.getElementById('r-trans').innerText = trans.toLocaleString();
+            document.getElementById('r-barber').innerText = Math.floor(barberShare).toLocaleString();
+            document.getElementById('r-shop').innerText = Math.floor(shopShare).toLocaleString();
+            document.getElementById('s-1').innerText = s["โกนหนวด"];
+            document.getElementById('s-2').innerText = s["สระผม"];
+            document.getElementById('s-3').innerText = s["ย้อมผม"];
+            document.getElementById('gua-display').innerText = `ประกันรายได้วันนี้ ฿${cfg.guarantee}`;
+
+            const settle = (total - trans) - barberShare;
+            document.getElementById('settle-text').innerText = settle >= 0 ? `ช่างคืนร้าน ฿${Math.floor(settle)}` : `ร้านคืนช่าง ฿${Math.floor(Math.abs(settle))}`;
+            document.getElementById('hist-list').innerHTML = html || '<center style="padding:40px; color:#ccc;">ไม่มีข้อมูลของวันนี้</center>';
+        }
+
+        function renderHistory() {
+            const m = document.getElementById('hist-month').value;
+            const data = db.filter(r => r.date.startsWith(m));
+            let tTotal = 0, tBarber = 0, tShop = 0;
             
-            const settle = sumCash - barber;
-            const bar = document.getElementById('status-bar');
-            if(sumTotal===0) { bar.innerText=`ยอดวันนี้: 0`; bar.className="status-bar blue"; }
-            else if(settle >= 0) { bar.innerText = `ช่างคืนร้าน ฿${settle}`; bar.className="status-bar orange"; }
-            else { bar.innerText = `ร้านคืนช่าง ฿${Math.abs(settle)}`; bar.className="status-bar blue"; }
-            document.getElementById('hist-container').innerHTML = listHTML;
+            // สรุปรายเดือนแยกวันเพื่อคำนวณประกันมือแม่นยำ
+            const days = [...new Set(data.map(r => r.date))];
+            days.forEach(d => {
+                const dayData = data.filter(r => r.date === d);
+                const dayTotal = dayData.reduce((a,b) => a + b.total, 0);
+                const dayBarber = Math.max(cfg.guarantee, (dayTotal * cfg.percent / 100));
+                tTotal += dayTotal;
+                tBarber += dayBarber;
+                tShop += (dayTotal - dayBarber);
+            });
+
+            document.getElementById('m-total').innerText = '฿'+tTotal.toLocaleString();
+            document.getElementById('m-barber').innerText = '฿'+Math.floor(tBarber).toLocaleString();
+            document.getElementById('m-shop').innerText = '฿'+Math.floor(tShop).toLocaleString();
+            document.getElementById('m-count').innerText = data.length + ' คน';
         }
 
-        function renderHistoryPage() {
-            const date = document.getElementById('hist-date-select').value;
-            const data = db.filter(r => r.date === date);
-            let total = data.reduce((s, r) => s + r.total, 0);
-            let barber = total > 0 ? Math.max(cfg.guarantee, (total * cfg.percent / 100)) : 0;
-            let html = `<div class="card" style="background:var(--primary); color:white;">
-                <div style="display:flex; justify-content:space-between;">
-                    <div><small>ยอดรวม</small><br><b>฿${total.toLocaleString()}</b></div>
-                    <div style="text-align:right;"><small>ลูกค้า</small><br><b>${data.length} คน</b></div>
-                </div>
-                <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.2); padding-top:5px; font-size:0.85rem; display:flex; justify-content:space-between;">
-                    <span>ช่าง: ฿${Math.floor(barber).toLocaleString()}</span>
-                    <span>ร้าน: ฿${Math.floor(total - barber).toLocaleString()}</span>
-                </div>
-            </div>`;
-            data.forEach(r => {
-                html += `<div class="hist-card">
-                    <div><b>${r.items.map(i=>`${i.svc} ${i.style}`).join('+')}</b><br><small>${r.time}</small></div>
-                    <div style="text-align:right;"><b>฿${r.total}</b></div>
-                </div>`;
+        function initThemes() {
+            const container = document.getElementById('theme-selector');
+            themes.forEach(t => {
+                const dot = document.createElement('div');
+                dot.className = `theme-dot ${cfg.theme === t ? 'active' : ''}`;
+                dot.style.backgroundColor = t;
+                dot.onclick = () => {
+                    cfg.theme = t;
+                    localStorage.setItem('barber_v89_cfg', JSON.stringify(cfg));
+                    location.reload();
+                };
+                container.appendChild(dot);
             });
-            document.getElementById('hist-page-container').innerHTML = html;
+            document.documentElement.style.setProperty('--primary', cfg.theme);
         }
 
-        function delItem(id) { if(confirm('ลบรายการนี้?')) { db = db.filter(r => r.id !== id); localStorage.setItem('barber_v6_db', JSON.stringify(db)); renderReport(); } }
+        function applyCfg() {
+            document.getElementById('sh-n1').innerText = cfg.name;
+            document.getElementById('sh-n2').innerText = cfg.name;
+            document.getElementById('cfg-name').value = cfg.name;
+            document.getElementById('cfg-per').value = cfg.percent;
+            document.getElementById('cfg-gua').value = cfg.guarantee;
+        }
 
-        function renderMonthlySummary() {
-            const [year, month] = document.getElementById('hist-date-select').value.split('-');
-            const monthlyData = db.filter(r => r.date.startsWith(`${year}-${month}`));
-            const dates = [...new Set(monthlyData.map(r => r.date))];
-            let totalSales = 0, totalBarber = 0;
-            dates.forEach(d => {
-                const dayTotal = monthlyData.filter(r => r.date === d).reduce((s, r) => s + r.total, 0);
-                totalSales += dayTotal;
-                totalBarber += Math.max(cfg.guarantee, (dayTotal * cfg.percent / 100));
-            });
-            document.getElementById('hist-page-container').innerHTML = `
-                <div class="card" style="background:#1e293b; color:white;">
-                    <center><small>สรุปรายเดือน ${month}/${parseInt(year)+543}</small></center>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; text-align:center;">
-                        <div><small>ยอดรวม</small><br><b style="font-size:1.4rem; color:var(--green);">฿${totalSales.toLocaleString()}</b></div>
-                        <div><small>ลูกค้า</small><br><b style="font-size:1.4rem; color:var(--primary);">${monthlyData.length}</b></div>
-                    </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; border-top:1px dashed rgba(255,255,255,0.2); padding-top:10px; text-align:center;">
-                        <div><small>ช่างได้รับ</small><br><b>฿${Math.floor(totalBarber).toLocaleString()}</b></div>
-                        <div><small>ร้านได้รับ</small><br><b>฿${Math.floor(totalSales - totalBarber).toLocaleString()}</b></div>
-                    </div>
-                </div>
-                <button onclick="renderHistoryPage()" style="width:100%; border:none; background:none; color:var(--sub); padding:10px;">กลับไปดูรายวัน</button>
-            `;
+        function saveCfg() {
+            cfg.name = document.getElementById('cfg-name').value;
+            cfg.percent = parseInt(document.getElementById('cfg-per').value);
+            cfg.guarantee = parseInt(document.getElementById('cfg-gua').value);
+            localStorage.setItem('barber_v89_cfg', JSON.stringify(cfg));
+            alert('บันทึกสำเร็จ'); location.reload();
+        }
+
+        function clearToday() {
+            if(confirm('ยืนยันการล้างข้อมูลของวันนี้ทั้งหมด?')) {
+                db = db.filter(r => r.date !== today);
+                localStorage.setItem('barber_v89_db', JSON.stringify(db));
+                location.reload();
+            }
+        }
+
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if(p === 'rep') renderReport();
+            if(p === 'his') renderHistory();
         }
     </script>
 </body>
