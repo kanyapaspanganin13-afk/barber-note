@@ -376,10 +376,12 @@
 
             let barber = 0;
             if(cfg.mode === 'percent') {
-                let calcPercent = (sumTotal * cfg.percent / 100);
-                barber = (sumTotal > 0 && calcPercent < cfg.guarantee) ? cfg.guarantee : calcPercent;
+            let calcPercent = (sumTotal * cfg.percent / 100);
+            // ถ้ามียอด > 0 และ เปอร์เซ็นต์ที่ได้น้อยกว่าประกัน -> ให้ใช้ยอดประกัน
+            barber = (sumTotal > 0 && calcPercent < cfg.guarantee) ? cfg.guarantee : calcPercent;
             } else {
-                barber = (sumTotal > 0) ? cfg.guarantee : 0;
+            // ถ้าตั้งโหมดเป็นประกันอย่างเดียว (Fix) -> ถ้ามียอดจะให้ประกันทันที
+            barber = (sumTotal > 0) ? cfg.guarantee : 0;
             }
 
             let shop = sumTotal - barber;
