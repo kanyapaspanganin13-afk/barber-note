@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Barber Note</title>
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --card: #262626;
+            --accent: #d4ff00; /* สีเหลืองมะนาวตามที่ช่างส่งมา */
+            --text: #ffffff;
+            --text-dim: #b3b3b3;
+            --border: #333;
+        }
+
+        * { box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 10px; }
+
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--card); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .header input { background: transparent; border: none; color: var(--accent); font-size: 1.1rem; font-weight: bold; width: 100%; outline: none; }
+        .header small { color: var(--text-dim); font-size: 0.8rem; }
+
+        /* Form Card */
+        .card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 16px; outline: none; }
+        
+        .opts { display: flex; gap: 5px; margin-bottom: 10px; }
+        .opt-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 13px; }
+        .opt-btn.active { background: var(--accent); color: black; font-weight: bold; border-color: var(--accent); }
+
+        .btn-main { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--accent); color: black; font-weight: bold; font-size: 1.1rem; }
+
+        /* Report King Slots */
+        .king-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 15px 0; }
+        .king-box { background: #111; padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #333; }
+        .king-box small { display: block; font-size: 0.65rem; color: var(--text-dim); margin-bottom: 4px; }
+        .king-box b { font-size: 1rem; color: var(--accent); }
+
+        /* Status Toggle */
+        .status { width: 100%; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; border: 1px solid; margin-bottom: 10px; cursor: pointer; }
+        .st-none { color: #f1c40f; border-color: #f1c40f; }
+        .st-done { color: var(--accent); border-color: var(--accent); background: rgba(212, 255, 0, 0.1); }
+
+        .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div style="flex: 1;">
+            <input type="text" id="shopName" placeholder="แตะใส่ชื่อร้าน..." onchange="saveCfg()">
+            <small>ช่าง: <input type="text" id="barberName" style="width: 80px; font-size: 0.8rem; color: #888;" onchange="saveCfg()"></small>
+        </div>
+        <div onclick="openSettings()" style="font-size: 1.2rem;">⚙️</div>
+    </div>
+
+    <div class="card">
+        <div class="row">
+            <input type="date" id="date">
+            <select id="pay">
+                <option value="โอน">โอน</option>
+                <option value="เงินสด">เงินสด</option>
+            </select>
+        </div>
+        <div class="row">
+            <select id="svc">
+                <option value="ตัดผม">ตัดผม</option>
+                <option value="โกนหนวด">โกนหนวด</option>
+                <option value="สระไดร์">สระไดร์</option>
+            </select>
+            <input type="number" id="amt" placeholder="ราคา" inputmode="numeric">
+        </div>
+        <div class="opts">
+            <button class="opt-btn" onclick="this.classList.toggle('active')" data-val="สระ">สระ</button>
+            <button class="opt-btn" onclick="this.classList.toggle('active')" data-val="โกน">โกน</button>
+            <button class="opt-btn" onclick="this.classList.toggle('active')" data-val="กันหน้า">กันหน้า</button>
+        </div>
+        <button class="btn-main" onclick="add()">บันทึกรายการ</button>
+    </div>
+
+    <div id="display"></div>
+
+    <script>
+        let data = JSON.parse(localStorage.getItem('barber_data') || '[]');
+        let cfg = JSON.parse(localStorage.getItem('barber_cfg') || '{"shop":"ชื่อร้านของคุณ","barber":"ชื่อช่าง","min":400,"rate":50}');
+
+        document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('shopName').value = cfg.shop;
+        document.getElementById('barberName').value = cfg.barber;
+
+        function saveCfg() {
+            cfg.shop = document.getElementById('shopName').value;
+            cfg.barber = document.getElementById('barberName').value;
+            localStorage.setItem('barber_cfg', JSON.stringify(cfg));
+            render();
+        }
+
+        function openSettings() {
+            let m = prompt("ใส่ยอดขั้นต่ำส่งร้าน:", cfg.min);
+            let r = prompt("ใส่ % ส่วนแบ่งช่าง (เมื่อเกินขั้นต่ำ):", cfg.rate);
+            if(m) cfg.min = parseInt(m);
+            if(r) cfg.rate = parseInt(r);
+            saveCfg();
+        }
+
+        function add() {
+            let amt = parseFloat(document.getElementById('amt').value);
+            if(!amt) return;
+            let ex = Array.from(document.querySelectorAll('.opt-btn.active')).map(b => b.dataset.val);
+            data.push({ id: Date.now(), date: document.getElementById('date').value, svc: document.getElementById('svc').value, amt: amt, pay: document.getElementById('pay').value, ex: ex, done: false });
+            localStorage.setItem('barber_data', JSON.stringify(data));
+            document.getElementById('amt').value = '';
+            document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+            render();
+        }
+
+        function toggle(date) {
+            let s = !data.find(d => d.date === date).done;
+            data.forEach(d => { if(d.date === date) d.done = s; });
+            localStorage.setItem('barber_data', JSON.stringify(data));
+            render();
+        }
+
+        function del(id) { if(confirm('ลบ?')) { data = data.filter(d => d.id !== id); localStorage.setItem('barber_data', JSON.stringify(data)); render(); } }
+
+        function render() {
+            let div = document.getElementById('display'); div.innerHTML = '';
+            let groups = data.reduce((a, b) => { a[b.date] = a[b.date] || []; a[b.date].push(b); return a; }, {});
+
+            Object.keys(groups).sort().reverse().forEach(date => {
+                let items = groups[date];
+                let total = items.reduce((s, i) => s + i.amt, 0);
+                let transfer = items.filter(i => i.pay === 'โอน').reduce((s, i) => s + i.amt, 0);
+                let done = items[0].done;
+                
+                let shop = total <= cfg.min ? total/2 : (cfg.min/2) + ((total-cfg.min) * ((100-cfg.rate)/100));
+                let barber = total - shop;
+
+                div.innerHTML += `
+                    <div class="card" style="border-top: 4px solid var(--accent)">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <b>${date}</b>
+                            <b style="font-size:1.5rem; color:var(--accent)">฿${total}</b>
+                        </div>
+                        <div class="king-grid">
+                            <div class="king-box"><small>ยอดโอน</small><b>${transfer}</b></div>
+                            <div class="king-box"><small>ช่างได้</small><b>${barber.toFixed(0)}</b></div>
+                            <div class="king-box"><small>ร้านได้</small><b>${shop.toFixed(0)}</b></div>
+                        </div>
+                        <div class="status ${done ? 'st-done' : 'st-none'}" onclick="toggle('${date}')">
+                            ${done ? '✓ เคลียร์เงินแล้ว' : '⚠ ยังไม่เคลียร์เงิน'}
+                        </div>
+                        ${items.map(i => `<div class="history-item"><span>${i.svc} ${i.ex} (${i.pay[0]})</span> <span>฿${i.amt} <span onclick="del(${i.id})">✕</span></span></div>`).join('')}
+                    </div>
+                `;
+            });
+        }
+        render();
+    </script>
+</body>
+</html>
