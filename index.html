@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Barber Note">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2b459a">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
+
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJkZWZhdWx0X2xvY2FsZSI6ICJ0aCIsCiAgIm5hbWUiOiAiQmFyYmVyIE5vdGUgUHJvIiwKICAic2hvcnRfbmFtZSI6ICJCYXJiZXJOb3RlIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmOGZhZmMiLAogICJ0aGVtZV9jb2xvciI6ICIjMmI0NTlhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaHR0cHM6Ly9pLmliYi5jby8yN0dxVFhGL0JhcmJlci1Ob3RlLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfQogIF0KfQ==">
+
     <title>Barber Note Pro V6.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
@@ -244,7 +251,6 @@
                 </div>`;
             });
 
-            // ตรรกะคำนวณเงิน
             let barber = Math.max(cfg.guarantee, (sumTotal * cfg.percent / 100));
             if(sumTotal === 0) barber = 0;
 
