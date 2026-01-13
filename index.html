@@ -23,34 +23,6 @@
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); font-size: var(--font-size); margin: 0; padding-bottom: 90px; transition: 0.4s ease; }
 
-        /* --- ส่วนที่เพิ่มใหม่สำหรับโลโก้แชร์มือถือ --- */
-        #share-header { display: none; text-align: center; padding: 20px 0; }
-        .share-logo-box { 
-            background: var(--primary); color: white; width: 65px; height: 65px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 2rem; margin: 0 auto 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .btn-ss-trigger {
-            background: #64748b; color: white; border: none; padding: 6px 15px;
-            border-radius: 50px; font-size: 0.75rem; cursor: pointer; margin: 0 auto 15px; display: block;
-        }
-        #btn-ss-close { display: none; background: var(--red); position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999; width: auto; padding: 12px 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-
-        /* เงื่อนไขแสดงผลเฉพาะมือถือ (<600px) และอยู่ในโหมด SS */
-        @media screen and (max-width: 600px) {
-            body.ss-mode #share-header { display: block !important; }
-            body.ss-mode .nav, 
-            body.ss-mode .btn-add, 
-            body.ss-mode .btn-clear, 
-            body.ss-mode .hist-del,
-            body.ss-mode .btn-ss-trigger,
-            body.ss-mode .header { display: none !important; }
-            body.ss-mode { padding-bottom: 20px; background: #ffffff; }
-            body.ss-mode .page { padding-top: 0; }
-            body.ss-mode #btn-ss-close { display: block !important; }
-        }
-        /* -------------------------------------- */
-
         .page { display: none; padding: 15px; max-width: 500px; margin: auto; }
         .page.active { display: block; }
 
@@ -142,16 +114,6 @@
     </div>
 
     <div id="page-rep" class="page">
-        <div id="share-header">
-            <div class="share-logo-box"><i class="fas fa-scissors"></i></div>
-            <div id="ss-shop-name" style="font-size: 1.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase;">BARBER SHOP</div>
-            <div style="font-size: 0.75rem; color: var(--sub); letter-spacing: 2px; margin-top: 5px;">DAILY SUMMARY REPORT</div>
-        </div>
-
-        <button class="btn-ss-trigger" onclick="toggleSS(true)">
-            <i class="fas fa-camera"></i> เปิดโหมดแคปหน้าจอ
-        </button>
-
         <div class="report-shop-name" id="head-shop-rep">BARBER SHOP</div>
         <div id="rep-date-th" class="report-date">Loading...</div>
         
@@ -164,7 +126,7 @@
                     ลูกค้า <b><span id="r-count">0</span></b> คน
                 </div>
                 <div style="font-size: 0.7rem; opacity: 0.85; margin-top: 2px;">
-                    โกน <span id="c-shave">0</span> | สระ <span id="c-wash">0</span> |  ย้อม <span id="c-color">0</span>
+                   โกน <span id="c-shave">0</span> | สระ <span id="c-wash">0</span> |  ย้อม <span id="c-color">0</span>
                 </div>
             </div>
 
@@ -179,10 +141,6 @@
 
         <div id="hist-container"></div>
         <button class="btn-clear" onclick="clearData()">ล้างข้อมูลวันนี้</button>
-
-        <button class="btn-main" id="btn-ss-close" onclick="toggleSS(false)">
-            <i class="fas fa-times"></i> ออกจากโหมดแคปจอ
-        </button>
     </div>
 
     <div id="page-history" class="page">
@@ -288,7 +246,7 @@
         }
 
         function applyConfig() {
-            const shopNames = ['head-shop-rec', 'head-shop-rep', 'head-shop-hist', 'ss-shop-name'];
+            const shopNames = ['head-shop-rec', 'head-shop-rep', 'head-shop-hist'];
             shopNames.forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.innerText = cfg.name;
@@ -477,16 +435,6 @@
                 db = db.filter(r => r.date !== today);
                 localStorage.setItem('barber_v6_db', JSON.stringify(db));
                 renderReport();
-            }
-        }
-
-        // --- ส่วนที่เพิ่มใหม่: ฟังก์ชันเปิด/ปิดโหมดแชร์หน้าจอ ---
-        function toggleSS(isOn) {
-            if(isOn) {
-                document.body.classList.add('ss-mode');
-                window.scrollTo(0,0);
-            } else {
-                document.body.classList.remove('ss-mode');
             }
         }
     </script>
