@@ -16,21 +16,19 @@
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
         * { font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* Modern Dark Theme (เทาดำ-เขียวพาสเทล) */
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
-            --accent-color: #bbf7d0; /* เขียวพาสเทล */
+            --accent-color: #bbf7d0; 
             --text-main: #e2e8f0;
             --text-dim: #94a3b8;
         }
 
         body { background: var(--bg-color); color: var(--text-main); margin: 0; padding-bottom: 90px; }
-        
         .header-bar { background: var(--card-bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
         .card { background: var(--card-bg); border-radius: 16px; padding: 15px; margin-bottom: 10px; border: 1px solid #2d2d2d; }
         
-        input, select { background: transparent; color: var(--text-main); font-weight: 600; outline: none; border: none; width: 100%; font-size: 16px; }
+        input, select { background: transparent; color: var(--text-main); font-weight: 600; outline: none; border: none; width: 100%; font-size: 16px; appearance: none; }
         label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
 
         .tag { border: 1px solid #444; border-radius: 12px; padding: 8px 12px; font-size: 13px; cursor: pointer; background: #262626; color: var(--text-dim); }
@@ -41,7 +39,6 @@
 
         .btn-save { background: var(--accent-color); color: #064e3b; width: 100%; padding: 16px; border-radius: 16px; font-weight: 800; font-size: 18px; margin-top: 10px; }
         
-        /* สรุปยอด รายงาน */
         .summary-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 20px; padding: 20px; border: 1px solid #334155; }
         .stat-box { text-align: center; border-right: 1px solid #334155; }
         .stat-box:last-child { border-right: none; }
@@ -69,40 +66,59 @@
                 <div class="card flex-1"><label>เวลา</label><input type="time" id="time-input"></div>
             </div>
 
-            <label class="ml-1 mb-2 block">บริการเสริม</label>
+            <label class="ml-1 mb-2 block text-xs">บริการเสริม (กดเลือกเพิ่มได้)</label>
             <div class="flex flex-wrap gap-2 mb-4">
-                <div class="tag" onclick="toggleExtra(this, 40, 'สระผม')">สระผม +40</div>
-                <div class="tag" onclick="toggleExtra(this, 60, 'โกนหนวด')">โกนหนวด +60</div>
-                <div class="tag" onclick="toggleExtra(this, 40, 'กันหน้า')">กันหน้า +40</div>
-                <div class="tag" onclick="toggleExtra(this, 50, 'แก้ผม')">แก้ผม +50</div>
+                <div class="tag" onclick="toggleExtra(this, 50)">สระผม +50</div>
+                <div class="tag" onclick="toggleExtra(this, 60)">โกนหนวด +60</div>
+                <div class="tag" onclick="toggleExtra(this, 40)">กันหน้า +40</div>
+                <div class="tag" onclick="toggleExtra(this, 50)">แก้ผม +50</div>
             </div>
 
             <div class="card border-l-4 border-emerald-400">
-                <label>บริการหลัก / ทรงผม</label>
-                <div class="flex gap-2 mt-1">
-                    <select id="main-svc" class="flex-1" onchange="updatePrice()">
-                        <option value="ตัดผม" data-p="150">ตัดผม</option>
-                        <option value="ย้อมผม" data-p="300">ย้อมผม</option>
-                        <option value="ดัดผม" data-p="500">ดัดผม</option>
-                        <option value="อื่นๆ" data-p="0">อื่นๆ</option>
+                <label>เลือกบริการหลัก</label>
+                <div class="mt-1">
+                    <select id="main-svc" onchange="updatePrice()">
+                        <option value="ตัดผม" data-p="150">ตัดผม (150)</option>
+                        <option value="สระผม" data-p="100">สระผม (100)</option>
+                        <option value="โกนหนวด" data-p="80">โกนหนวด (80)</option>
+                        <option value="ย้อมผม" data-p="350">ย้อมผม (350)</option>
+                        <option value="ดัดผม" data-p="800">ดัดผม (800)</option>
+                        <option value="ยืดผม" data-p="800">ยืดผม (800)</option>
+                        <option value="อื่นๆ" data-p="0">อื่นๆ (ระบุราคาเอง)</option>
                     </select>
-                    <select id="hair-style" class="flex-1 text-slate-400">
-                        <option>รองทรง</option><option>ทูบล็อค</option><option>สกินเฟด</option><option>วินเทจ</option>
+                </div>
+            </div>
+
+            <div class="card border-l-4 border-slate-500">
+                <label>ทรงผม</label>
+                <div class="mt-1">
+                    <select id="hair-style">
+                        <option>รองทรง (ต่ำ/กลาง/สูง)</option>
+                        <option>ทูบล็อค / แฟชั่น</option>
+                        <option>สกินเฟด (Skin Fade)</option>
+                        <option>ทรงนักเรียน</option>
+                        <option>ทรงอเมริกัน / ลานบิน</option>
+                        <option>วินเทจ / Side Part</option>
+                        <option>ตำรวจ-ทหาร (ขาว 3 ด้าน)</option>
+                        <option>แกะลาย</option>
                     </select>
                 </div>
             </div>
 
             <div class="card flex items-center justify-between">
-                <label>ยอดรวมรับเงิน</label>
-                <div class="text-2xl font-black text-emerald-400">฿<span id="display-total">150</span></div>
+                <label>ยอดรวมรับเงิน (แก้ไขได้)</label>
+                <div class="flex items-center text-emerald-400">
+                    <span class="text-2xl font-black mr-1">฿</span>
+                    <input type="number" id="editable-total" class="text-2xl font-black text-right !w-24" value="150" oninput="manualAdjust = true">
+                </div>
             </div>
 
             <div class="flex gap-2 mb-4">
-                <div onclick="setPay('cash')" id="p-cash" class="pay-btn active font-bold">เงินสด</div>
-                <div onclick="setPay('transfer')" id="p-trans" class="pay-btn font-bold">เงินโอน</div>
+                <div onclick="setPay('cash')" id="p-cash" class="pay-btn active font-bold text-sm">เงินสด</div>
+                <div onclick="setPay('transfer')" id="p-trans" class="pay-btn font-bold text-sm">เงินโอน</div>
             </div>
 
-            <button class="btn-save" onclick="saveData()">บันทึกรายการ</button>
+            <button class="btn-save shadow-lg active:scale-95 transition-transform" onclick="saveData()">บันทึกรายการ</button>
         </div>
 
         <div id="page-rep" class="hidden">
@@ -110,22 +126,22 @@
                 <div class="flex justify-between items-start mb-4 border-b border-white/10 pb-3">
                     <div>
                         <div id="rep-shop-name" class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest">Shop Name</div>
-                        <div id="rep-date" class="text-sm text-slate-400 font-bold">1 ม.ค. 2567</div>
+                        <div id="rep-date" class="text-sm text-slate-400 font-bold">...</div>
                     </div>
                     <div class="text-right">
-                        <div class="text-[10px] text-slate-500 font-bold uppercase">รวมเงินทั้งหมด</div>
+                        <div class="text-[10px] text-slate-500 font-bold uppercase">รวมเงินวันนี้</div>
                         <div class="text-2xl font-black text-white">฿<span id="r-total">0</span></div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-1 mb-4">
+                <div class="grid grid-cols-3 gap-1 mb-4 text-center">
                     <div class="stat-box">
                         <label>ลูกค้า</label>
                         <div class="text-xl font-bold" id="r-count">0</div>
                     </div>
                     <div class="stat-box">
-                        <label>บริการเสริม</label>
-                        <div class="text-sm font-bold text-emerald-400" id="r-extras">โกน 0, สระ 0</div>
+                        <label>โกน/กัน/สระ</label>
+                        <div class="text-xs font-bold text-emerald-400 mt-1" id="r-extras">0 ครั้ง</div>
                     </div>
                     <div class="stat-box">
                         <label>ยอดโอน</label>
@@ -133,7 +149,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 bg-black/30 p-3 rounded-xl">
+                <div class="grid grid-cols-2 gap-4 bg-black/30 p-3 rounded-xl border border-white/5">
                     <div class="text-center">
                         <label>รายได้ช่าง</label>
                         <div class="text-xl font-bold text-emerald-300">฿<span id="r-barber">0</span></div>
@@ -167,7 +183,7 @@
                 <label>ส่วนแบ่งช่าง (%)</label>
                 <input type="number" id="set-percent" placeholder="50" onchange="saveSettings()">
             </div>
-            <button onclick="nav('rec')" class="w-full bg-slate-700 p-4 rounded-xl font-bold">กลับไปหน้าหลัก</button>
+            <button onclick="nav('rec')" class="w-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 p-4 rounded-xl font-bold">บันทึกและกลับ</button>
         </div>
 
     </main>
@@ -179,16 +195,16 @@
 
     <script>
         let db = JSON.parse(localStorage.getItem('barber_v2_db')) || [];
-        let config = JSON.parse(localStorage.getItem('barber_v2_config')) || { shopName: 'My Shop', percent: 50 };
+        let config = JSON.parse(localStorage.getItem('barber_v2_config')) || { shopName: 'LA-MOON CUT', percent: 50 };
         let payType = 'cash';
         let extraTotal = 0;
+        let manualAdjust = false;
 
         window.onload = () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date-input').value = today;
-            document.getElementById('time-input').value = new Date().toTimeString().slice(0, 5);
+            const now = new Date();
+            document.getElementById('date-input').value = now.toISOString().split('T')[0];
+            document.getElementById('time-input').value = now.toTimeString().slice(0, 5);
             
-            // โหลดตั้งค่า
             document.getElementById('set-shop-name').value = config.shopName;
             document.getElementById('set-percent').value = config.percent;
             document.getElementById('shop-name-display').innerText = config.shopName;
@@ -197,27 +213,32 @@
         };
 
         function saveSettings() {
-            config.shopName = document.getElementById('set-shop-name').value || 'My Shop';
+            config.shopName = document.getElementById('set-shop-name').value || 'Barber Shop';
             config.percent = document.getElementById('set-percent').value || 50;
             localStorage.setItem('barber_v2_config', JSON.stringify(config));
             document.getElementById('shop-name-display').innerText = config.shopName;
         }
 
         function updatePrice() {
+            if (manualAdjust) return;
             const sel = document.getElementById('main-svc');
-            const price = sel.options[sel.selectedIndex].getAttribute('data-p');
-            // ไม่ใช้ค่าราคาในแอปถ้าช่างอยากแก้เอง แต่ใส่เป็น Default ให้
-            document.getElementById('display-total').innerText = (parseInt(price) + extraTotal).toLocaleString();
+            const basePrice = parseInt(sel.options[sel.selectedIndex].getAttribute('data-p'));
+            document.getElementById('editable-total').value = basePrice + extraTotal;
         }
 
-        function toggleExtra(el, amt, name) {
+        function toggleExtra(el, amt) {
             el.classList.toggle('active');
+            manualAdjust = false;
+            calculateExtras();
+            updatePrice();
+        }
+
+        function calculateExtras() {
             extraTotal = 0;
             document.querySelectorAll('.tag.active').forEach(t => {
-                const price = t.innerText.split('+')[1];
-                extraTotal += parseInt(price);
+                const price = parseInt(t.innerText.split('+')[1]);
+                extraTotal += price;
             });
-            updatePrice();
         }
 
         function setPay(t) {
@@ -229,7 +250,7 @@
         function saveData() {
             const svc = document.getElementById('main-svc').value;
             const style = document.getElementById('hair-style').value;
-            const total = parseInt(document.getElementById('display-total').innerText.replace(/,/g, ''));
+            const total = parseInt(document.getElementById('editable-total').value) || 0;
             
             let extraNames = [];
             document.querySelectorAll('.tag.active').forEach(t => extraNames.push(t.innerText.split(' +')[0]));
@@ -242,23 +263,20 @@
                 extras: extraNames,
                 style: style,
                 total: total,
-                payType: payType,
-                isSettled: false
+                payType: payType
             };
 
             db.push(record);
             localStorage.setItem('barber_v2_db', JSON.stringify(db));
-            alert('บันทึกแล้ว');
+            alert('บันทึกสำเร็จ!');
             location.reload();
         }
 
         function nav(p) {
             document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
             document.getElementById('page-' + p).classList.remove('hidden');
-            
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if(p !== 'settings') document.getElementById('n-' + p).classList.add('active');
-
             if(p === 'rep') renderReport();
         }
 
@@ -266,35 +284,33 @@
             const today = document.getElementById('date-input').value;
             const todayData = db.filter(r => r.date === today);
             
-            let total = 0, trans = 0, cash = 0, shaves = 0, washes = 0;
+            let total = 0, trans = 0, cash = 0, extraCounts = 0;
             const list = document.getElementById('hist-list');
             list.innerHTML = '';
 
             todayData.forEach(r => {
                 total += r.total;
                 if(r.payType === 'transfer') trans += r.total; else cash += r.total;
-                
-                // นับโกน/สระ ไม่ว่าจะอยู่ในหลักหรือเสริม
-                if(r.service.includes('โกน') || r.extras.some(e => e.includes('โกน'))) shaves++;
-                if(r.service.includes('สระ') || r.extras.some(e => e.includes('สระ'))) washes++;
+                extraCounts += r.extras.length;
 
                 list.innerHTML += `
                     <div class="bg-[#1e1e1e] p-3 rounded-xl flex justify-between items-center border border-white/5">
-                        <div>
-                            <div class="font-bold text-sm">${r.service} ${r.extras.length > 0 ? '+ '+r.extras.join(',') : ''}</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-sm text-emerald-50">${r.service} ${r.extras.length > 0 ? '<span class="text-emerald-400 text-xs">+'+r.extras.join(',')+'</span>' : ''}</div>
                             <div class="text-[10px] text-slate-500">${r.time} น. | ${r.style}</div>
                         </div>
                         <div class="text-right">
                             <div class="font-bold text-emerald-400">฿${r.total}</div>
-                            <div class="text-[9px] uppercase font-bold text-slate-500">${r.payType === 'cash' ? 'เงินสด' : 'เงินโอน'}</div>
+                            <div class="text-[9px] uppercase font-bold text-slate-500">${r.payType === 'cash' ? 'เงินสด' : 'โอน'}</div>
                         </div>
+                        <button onclick="deleteItem(${r.id})" class="ml-3 text-red-500/30"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>
                 `;
             });
 
             const barberShare = (total * config.percent) / 100;
             const shopShare = total - barberShare;
-            const diff = cash - barberShare; // ถ้าบวก คือช่างถือเงินสดเกิน ต้องคืนร้าน
+            const diff = cash - barberShare;
 
             document.getElementById('rep-shop-name').innerText = config.shopName;
             document.getElementById('rep-date').innerText = new Date(today).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'});
@@ -303,7 +319,7 @@
             document.getElementById('r-trans').innerText = trans.toLocaleString();
             document.getElementById('r-barber').innerText = barberShare.toLocaleString();
             document.getElementById('r-shop').innerText = shopShare.toLocaleString();
-            document.getElementById('r-extras').innerText = `โกน ${shaves}, สระ ${washes}`;
+            document.getElementById('r-extras').innerText = extraCounts + ' ครั้ง';
 
             const statusBox = document.getElementById('status-box');
             if(diff > 0) {
@@ -318,6 +334,14 @@
             }
         }
 
+        function deleteItem(id) {
+            if(confirm('ลบรายการนี้?')) {
+                db = db.filter(r => r.id !== id);
+                localStorage.setItem('barber_v2_db', JSON.stringify(db));
+                renderReport();
+            }
+        }
+
         function toggleSettle() {
             const area = document.getElementById('summary-area');
             area.classList.toggle('settled');
@@ -327,12 +351,15 @@
                 btn.className = "w-full mt-3 py-2 rounded-lg text-xs font-bold uppercase bg-emerald-500 text-emerald-950";
             } else {
                 btn.innerText = "คลิกเพื่อยืนยันเคลียร์เงิน";
-                btn.className = "w-full mt-3 py-2 rounded-lg text-xs font-bold uppercase border border-slate-600";
+                btn.className = "w-full mt-3 py-2 rounded-lg text-xs font-bold uppercase border border-slate-600 text-slate-400";
             }
         }
 
         function clearDB() {
-            if(confirm('ลบข้อมูลทั้งหมด?')) { localStorage.removeItem('barber_v2_db'); location.reload(); }
+            if(confirm('⚠️ ลบประวัติทั้งหมดในเครื่อง? ข้อมูลจะหายถาวร')) { 
+                localStorage.removeItem('barber_v2_db'); 
+                location.reload(); 
+            }
         }
     </script>
 </body>
