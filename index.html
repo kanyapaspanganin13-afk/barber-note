@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Barber Note">
+    <meta name="apple-mobile-web-app-title" content="Barber Note V6.4.1">
     <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
     
-    <title>Barber Note Pro V6.4</title>
+    <title>Barber Note Pro V6.4.1</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -36,37 +37,31 @@
         .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); height: 75px; z-index: 999; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; cursor: pointer; font-size: 0.75rem; }
         .nav-item.active { color: var(--primary); font-weight: 600; }
-        .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; font-size: 0.9rem; }
+        .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; font-size: 0.9rem; transition: 0.3s; }
         .status-bar.blue { background: #dbeafe; color: #1e40af; }
         .status-bar.orange { background: #ffedd5; color: #9a3412; }
+        .status-bar.green { background: #dcfce7; color: #166534; }
 
-        /* สไตล์รายการ V6.4: ราคาไม่หนา, เวลาเข้ม, จ่ายเงินอยู่ล่างราคา */
-        .hist-card { 
-            background: var(--card); 
-            border-radius: 15px; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border: 1px solid var(--border); 
-        }
+        /* สไตล์รายการ: ราคาไม่หนา / เวลาเข้ม / จ่ายเงินอยู่ใต้ราคา */
+        .hist-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .hist-info b { font-size: 1.1rem; color: var(--text); display: block; }
-        .hist-info small { color: #1e293b; font-weight: 600; font-size: 0.85rem; } /* เวลาสีเข้มขึ้น */
-        
+        .hist-info small { color: #000000; font-weight: 600; font-size: 0.85rem; }
         .hist-price-group { display: flex; align-items: center; }
         .hist-price-text { text-align: right; }
-        .hist-price-text b { font-size: 1.3rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; } /* ราคาตัวไม่หนา */
-        .hist-price-text span { font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px; } /* วิธีจ่ายเงินบรรทัดล่าง */
-        .btn-del-icon { color: var(--red); opacity: 0.3; margin-left: 12px; font-size: 1rem; }
+        .hist-price-text b { font-size: 1.35rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; }
+        .hist-price-text span { font-size: 0.75rem; color: #64748b; display: block; margin-top: 5px; }
+        .btn-del-icon { color: var(--red); opacity: 0.3; margin-left: 12px; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
     <div id="page-rec" class="page active">
-        <header class="header"><div class="branch" id="head-shop-rec">BARBER SHOP</div></header>
+        <header class="header">
+            <div class="branch" id="head-shop-rec">BARBER SHOP</div>
+            <div style="font-size: 0.6rem; color: #cbd5e1;">V6.4.1 | RECORD</div>
+        </header>
         <div class="card">
-            <label class="label">เวอร์ชัน V6.4 | วันที่บันทึก</label>
+            <label class="label">วันที่บันทึก</label>
             <input type="date" id="rec-date-raw">
             <div class="grid-2" style="margin-top: 10px;">
                 <div><label class="label">เวลาเริ่ม</label><input type="time" id="rec-start"></div>
@@ -184,12 +179,12 @@
         function renderReport() {
             const date = document.getElementById('rec-date-raw').value;
             const data = db.filter(r => r.date === date);
-            let sumTotal = 0, sumTrans = 0, sumCash = 0;
+            let sumTotal = 0, sumCash = 0;
             let listHTML = '';
 
             data.forEach(r => {
                 sumTotal += r.total;
-                if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
+                if(r.pay === 'เงินสด') sumCash += r.total;
                 
                 listHTML += `
                 <div class="hist-card">
@@ -213,7 +208,7 @@
 
             document.getElementById('stat-summary-today').innerHTML = `
                 <div class="card" style="background:var(--primary); color:white; text-align:center;">
-                    <div class="label" style="color:white;opacity:0.7;">รายได้วันนี้</div>
+                    <div class="label" style="color:white;opacity:0.7;">รายได้รวมวันนี้</div>
                     <div style="font-size:2rem; font-weight:700;">฿${sumTotal.toLocaleString()}</div>
                     <div style="display:flex; justify-content:space-around; margin-top:10px; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">
                         <div><small>ช่างได้รับ</small><br><b>฿${Math.floor(barber)}</b></div>
@@ -222,63 +217,25 @@
                 </div>
             `;
             document.getElementById('hist-container').innerHTML = listHTML;
+            
+            // การคำนวณสถานะการจ่ายเงิน
             const settle = sumCash - barber;
             const bar = document.getElementById('status-bar');
 
             if (sumTotal === 0) {
                 bar.innerText = `ประกันรายได้วันนี้ ฿${cfg.guarantee}`;
                 bar.className = "status-bar blue";
+            } else if (Math.floor(settle) === 0) {
+                // เพิ่มเงื่อนไข ยอดพอดี
+                bar.innerText = `ยอดพอดี ไม่ต้องเคลียร์เงิน`;
+                bar.className = "status-bar green";
+            } else if (settle > 0) {
+                bar.innerText = `ช่างคืนเงินสดให้ร้าน ฿${Math.floor(settle)}`;
+                bar.className = "status-bar orange";
             } else {
-                bar.innerText = settle >= 0 ? `ช่างคืนร้าน ฿${Math.floor(settle)}` : `ร้านคืนช่าง ฿${Math.floor(Math.abs(settle))}`;
-                bar.className = settle >= 0 ? "status-bar orange" : "status-bar blue";
+                bar.innerText = `ร้านคืนเงินให้ช่าง ฿${Math.floor(Math.abs(settle))}`;
+                bar.className = "status-bar blue";
             }
-        }
-
-        function renderMonthlySummary() {
-            const selectedDate = document.getElementById('hist-date-select').value;
-            const [year, month] = selectedDate.split('-');
-            const monthlyData = db.filter(r => r.date.startsWith(`${year}-${month}`));
-            const container = document.getElementById('hist-page-container');
-            
-            let totalSales = 0, svcStats = {}, styleStats = {};
-            const dates = [...new Set(monthlyData.map(r => r.date))];
-            let totalBarber = 0;
-
-            dates.forEach(d => {
-                const dayRecs = monthlyData.filter(r => r.date === d);
-                let daySum = dayRecs.reduce((s, r) => s + r.total, 0);
-                totalSales += daySum;
-                totalBarber += Math.max(cfg.guarantee, (daySum * cfg.percent / 100));
-                
-                dayRecs.forEach(r => r.items.forEach(it => {
-                    if(it.svc) svcStats[it.svc] = (svcStats[it.svc] || 0) + 1;
-                    if(it.style) styleStats[it.style] = (styleStats[it.style] || 0) + 1;
-                }));
-            });
-
-            container.innerHTML = `
-                <div class="card" style="background:#1e293b; color:white;">
-                    <center><div class="label">สรุปยอด ${month}/${parseInt(year)+543}</div>
-                    <b style="font-size:1.5rem;">฿${totalSales.toLocaleString()}</b></center>
-                    <div style="display:flex; justify-content:space-around; margin-top:10px; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">
-                        <div><small>ช่างรวม</small><br><b>฿${Math.floor(totalBarber)}</b></div>
-                        <div><small>ร้านรวม</small><br><b>฿${Math.floor(totalSales-totalBarber)}</b></div>
-                    </div>
-                </div>
-                <div class="card">
-                    <label class="label">แยกตามบริการ</label>
-                    <table class="stat-table">
-                        ${Object.entries(svcStats).map(([n, c]) => `<tr><td>${n}</td><td align="right">${c} ครั้ง</td></tr>`).join('')}
-                    </table>
-                </div>
-                <div class="card">
-                    <label class="label">แยกตามทรงผม</label>
-                    <table class="stat-table">
-                        ${Object.entries(styleStats).map(([n, c]) => `<tr><td>${n}</td><td align="right">${c} ครั้ง</td></tr>`).join('')}
-                    </table>
-                </div>
-                <button onclick="renderHistoryPage()" style="width:100%; padding:10px; background:none; border:1px solid #ccc; border-radius:10px;">กลับ</button>
-            `;
         }
 
         function delItem(id) { if(confirm('ลบรายการ?')) { db = db.filter(r => r.id !== id); localStorage.setItem('barber_v6_db', JSON.stringify(db)); renderReport(); } }
@@ -301,7 +258,7 @@
         function renderHistoryPage() {
             const date = document.getElementById('hist-date-select').value;
             const data = db.filter(r => r.date === date);
-            let html = `<div style="margin-top:10px;"><label class="label">รายการของวันที่ ${date}</label></div>`;
+            let html = `<div style="margin-top:10px;"><label class="label">ประวัติวันที่ ${date}</label></div>`;
             data.forEach(r => {
                 html += `
                 <div class="hist-card">
@@ -316,6 +273,30 @@
                 </div>`;
             });
             document.getElementById('hist-page-container').innerHTML = html || '<center style="padding:20px; color:#94a3b8;">ไม่มีข้อมูล</center>';
+        }
+
+        function renderMonthlySummary() {
+            const selectedDate = document.getElementById('hist-date-select').value;
+            const [year, month] = selectedDate.split('-');
+            const monthlyData = db.filter(r => r.date.startsWith(`${year}-${month}`));
+            const container = document.getElementById('hist-page-container');
+            let totalSales = 0; let totalBarber = 0;
+            const dates = [...new Set(monthlyData.map(r => r.date))];
+            dates.forEach(d => {
+                const daySum = monthlyData.filter(r => r.date === d).reduce((s, r) => s + r.total, 0);
+                totalSales += daySum;
+                totalBarber += Math.max(cfg.guarantee, (daySum * cfg.percent / 100));
+            });
+            container.innerHTML = `
+                <div class="card" style="background:#1e293b; color:white; text-align:center;">
+                    <div class="label">สรุปยอด ${month}/${parseInt(year)+543}</div>
+                    <b style="font-size:1.5rem;">฿${totalSales.toLocaleString()}</b>
+                    <div style="display:flex; justify-content:space-around; margin-top:10px;">
+                        <div><small>ช่างรวม</small><br><b>฿${Math.floor(totalBarber)}</b></div>
+                        <div><small>ร้านรวม</small><br><b>฿${Math.floor(totalSales-totalBarber)}</b></div>
+                    </div>
+                </div>
+                <button onclick="renderHistoryPage()" style="width:100%; padding:10px; background:none; border:1px solid #ccc; border-radius:10px;">กลับ</button>`;
         }
     </script>
 </body>
