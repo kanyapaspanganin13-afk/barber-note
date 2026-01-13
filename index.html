@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Barber Note Pro V6.2 (Add/Remove Row)</title>
+    <title>Barber Note Pro V6.2 (Updated UI)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -38,7 +38,6 @@
         }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* ปรับปรุง CSS ส่วนรายการบริการให้มีปุ่มลบ */
         .svc-item { display: grid; grid-template-columns: 1fr 1fr 70px 30px; gap: 8px; margin-bottom: 10px; align-items: center; }
         .btn-remove-row { color: var(--red); opacity: 0.6; cursor: pointer; text-align: center; font-size: 1.2rem; }
         .btn-remove-row:hover { opacity: 1; }
@@ -58,10 +57,10 @@
         }
         .btn-main.success { background: var(--green) !important; }
 
-        .rep-summary { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-bottom: 15px; }
-        .box-blue { background: var(--primary); color: white; padding: 18px; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; }
-        .box-white { background: var(--card); border: 1px solid var(--border); padding: 12px; border-radius: 16px; }
-        .sub-stat { display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px solid #f1f5f9; padding: 6px 0; }
+        .rep-summary { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 10px; margin-bottom: 15px; }
+        .box-blue { background: var(--primary); color: white; padding: 15px; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; }
+        .box-white { background: var(--card); border: 1px solid var(--border); padding: 12px; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; }
+        .sub-stat { display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; padding: 6px 0; }
         
         .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; font-size: 0.95rem; }
         .status-bar.green { background: #dcfce7; color: #166534; }
@@ -118,22 +117,29 @@
     <div id="page-rep" class="page">
         <div class="report-shop-name" id="head-shop-rep">BARBER SHOP</div>
         <div id="rep-date-th" class="report-date">Loading...</div>
+        
         <div class="rep-summary">
             <div class="box-blue">
-                <div class="label" style="color: rgba(255,255,255,0.7);">ยอดเงินรวม</div>
-                <div style="font-size: 1.8rem; font-weight: 700;">฿<span id="r-total">0</span></div>
-                <div style="font-size: 0.8rem; opacity: 0.9;">ลูกค้า <span id="r-count">0</span> คน</div>
+                <div class="label" style="color: rgba(255,255,255,0.7); margin-bottom: 2px;">ยอดเงินรวม</div>
+                <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 5px;">฿<span id="r-total">0</span></div>
+                
+                <div style="font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 5px; margin-top: 2px;">
+                    ลูกค้า <b><span id="r-count">0</span></b> คน
+                </div>
+                <div style="font-size: 0.7rem; opacity: 0.85; margin-top: 2px;">
+                    สระ <span id="c-wash">0</span> | โกน <span id="c-shave">0</span> | ย้อม <span id="c-color">0</span>
+                </div>
             </div>
+
             <div class="box-white">
                 <div class="sub-stat"><span>โอนรวม</span><b id="r-trans">0</b></div>
                 <div class="sub-stat"><span>รายได้ช่าง</span><b id="r-barber">0</b></div>
                 <div class="sub-stat"><span>รายได้ร้าน</span><b id="r-shop">0</b></div>
             </div>
         </div>
+
         <div id="status-bar" class="status-bar">...</div>
-        <div style="font-size: 0.75rem; color: var(--sub); font-weight: 600; margin-bottom: 15px; text-align: center; background: #f1f5f9; padding: 8px; border-radius: 20px;">
-          โกน: <span id="c-shave">0</span> |  สระ: <span id="c-wash">0</span> |  ย้อม: <span id="c-color">0</span>
-        </div>
+
         <div id="hist-container"></div>
         <button class="btn-clear" onclick="clearData()">ล้างข้อมูลวันนี้</button>
     </div>
@@ -215,7 +221,6 @@
             addSvcRow();
         };
 
-        // --- ส่วนที่แก้ไข: การเพิ่มและลบแถว ---
         function addSvcRow() {
             const container = document.getElementById('svc-list');
             const div = document.createElement('div');
@@ -234,14 +239,12 @@
             if (container.children.length > 1) {
                 el.parentElement.remove();
             } else {
-                // ถ้าเหลือแถวสุดท้าย ให้ล้างค่าแทนการลบ
                 const row = el.parentElement;
                 row.querySelector('.i-svc').value = "";
                 row.querySelector('.i-style').value = "";
                 row.querySelector('.i-price').value = "";
             }
         }
-        // ----------------------------------
 
         function applyConfig() {
             const shopNames = ['head-shop-rec', 'head-shop-rep', 'head-shop-hist'];
@@ -307,7 +310,7 @@
             btn.innerHTML = '<i class="fas fa-check"></i> บันทึกสำเร็จ';
             setTimeout(() => {
                 btn.classList.remove('success');
-                btn.innerHTML = 'บันทึกข้อมูล';
+                btn.innerHTML = 'SAVE RECORD';
                 document.getElementById('svc-list').innerHTML = '';
                 addSvcRow();
             }, 1000);
@@ -350,7 +353,6 @@
                 sumTotal += r.total;
                 if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
                 r.items.forEach(it => {
-                 
                     if(it.svc === 'โกนหนวด') cShave++;
                     if(it.svc === 'สระผม') cWash++;
                     if(it.svc === 'ย้อมผม') cColor++;
@@ -358,7 +360,7 @@
                 container.innerHTML += `
                     <div class="hist-card">
                         <div>
-                            <div style="font-weight:600;">${r.items.map(i=> (i.svc === 'None' ? '' : i.svc) + (i.style === 'None' ? '' : ' '+i.style)).join(' + ')}</div>
+                            <div style="font-weight:600;">${r.items.map(i=> (i.svc === '' ? '' : i.svc) + (i.style === '' ? '' : ' '+i.style)).join(' + ')}</div>
                             <div style="font-size:0.7rem; color:var(--sub);">${r.time}</div>
                         </div>
                         <div style="text-align:right; display:flex; align-items:center;">
@@ -376,12 +378,10 @@
 
             let barber = 0;
             if(cfg.mode === 'percent') {
-            let calcPercent = (sumTotal * cfg.percent / 100);
-            // ถ้ามียอด > 0 และ เปอร์เซ็นต์ที่ได้น้อยกว่าประกัน -> ให้ใช้ยอดประกัน
-            barber = (sumTotal > 0 && calcPercent < cfg.guarantee) ? cfg.guarantee : calcPercent;
+                let calcPercent = (sumTotal * cfg.percent / 100);
+                barber = (sumTotal > 0 && calcPercent < cfg.guarantee) ? cfg.guarantee : calcPercent;
             } else {
-            // ถ้าตั้งโหมดเป็นประกันอย่างเดียว (Fix) -> ถ้ามียอดจะให้ประกันทันที
-            barber = (sumTotal > 0) ? cfg.guarantee : 0;
+                barber = (sumTotal > 0) ? cfg.guarantee : 0;
             }
 
             let shop = sumTotal - barber;
