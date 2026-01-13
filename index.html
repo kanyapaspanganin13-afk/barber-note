@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2b459a; --bg: #f8fafc; --card: #ffffff; --text: #334155; --sub: #94a3b8; --border: #e2e8f0; --green: #22c55e; --red: #ef4444; --orange: #f59e0b; }
+        :root { --primary: #2b459a; --bg: #f8fafc; --card: #ffffff; --text: #334155; --sub: #1e293b; --border: #e2e8f0; --green: #22c55e; --red: #ef4444; --orange: #f59e0b; }
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; overflow-x: hidden; }
         .page { display: none; padding: 15px; max-width: 500px; margin: auto; }
@@ -20,26 +20,45 @@
         .header { background: var(--card); padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
         .header .branch { font-weight: 600; color: var(--primary); font-size: 1.3rem; }
         .card { background: var(--card); border-radius: 16px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .label { font-size: 0.75rem; color: var(--sub); font-weight: 600; margin-bottom: 6px; display: block; text-transform: uppercase; }
+        .label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; margin-bottom: 6px; display: block; text-transform: uppercase; }
         input, select { width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-size: 1rem; outline: none; background: #fdfdfd; color: var(--text); appearance: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .svc-item { display: grid; grid-template-columns: 1fr 1.1fr 70px 30px; gap: 6px; margin-bottom: 10px; align-items: center; }
         .btn-remove-row { color: var(--red); opacity: 0.6; cursor: pointer; text-align: center; font-size: 1.2rem; }
         .btn-add { color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 5px; }
         .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .pay-btn { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); text-align: center; cursor: pointer; color: var(--sub); font-weight: 600; }
+        .pay-btn { padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); text-align: center; cursor: pointer; color: #94a3b8; font-weight: 600; }
         .pay-btn.active { background: var(--primary); color: white; }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 14px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
         .btn-main.success { background: var(--green) !important; }
         .stat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
         .stat-table td { padding: 8px 4px; border-bottom: 1px solid #f1f5f9; }
         .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); height: 75px; z-index: 999; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); cursor: pointer; font-size: 0.75rem; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; cursor: pointer; font-size: 0.75rem; }
         .nav-item.active { color: var(--primary); font-weight: 600; }
         .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; font-size: 0.9rem; }
         .status-bar.blue { background: #dbeafe; color: #1e40af; }
         .status-bar.orange { background: #ffedd5; color: #9a3412; }
-        .hist-card { background: var(--card); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+
+        /* สไตล์รายการประวัติที่ปรับปรุงตามบรีฟล่าสุด */
+        .hist-card { 
+            background: var(--card); 
+            border-radius: 15px; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid var(--border); 
+        }
+        .hist-info b { font-size: 1.1rem; color: var(--text); display: block; }
+        .hist-info small { color: #1e293b; font-weight: 500; font-size: 0.85rem; } /* เวลาสีเข้ม */
+        
+        .hist-price-group { display: flex; align-items: center; }
+        .hist-price-text { text-align: right; }
+        .hist-price-text b { font-size: 1.3rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; } /* ราคาไม่หนา */
+        .hist-price-text span { font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px; } /* วิธีจ่ายเงินบรรทัดล่าง */
+        .btn-del-icon { color: var(--red); opacity: 0.2; margin-left: 12px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -55,9 +74,9 @@
             </div>
         </div>
         <div class="card">
-            <label class="label">รายการบริการและทรงผม</label>
+            <label class="label">เลือกบริการ</label>
             <div id="svc-list"></div>
-            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มรายการ</div>
+            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการ</div>
         </div>
         <div class="pay-grid">
             <div class="pay-btn active" id="p-cash" onclick="setPay('เงินสด')"><i class="fas fa-money-bill-wave"></i> เงินสด</div>
@@ -68,7 +87,7 @@
 
     <div id="page-rep" class="page">
         <header class="header"><div class="branch" id="head-shop-rep">BARBER SHOP</div></header>
-        <div id="rep-date-th" style="text-align:center; color:var(--sub); margin-bottom:10px;"></div>
+        <div id="rep-date-th" style="text-align:center; color:#94a3b8; margin-bottom:10px;"></div>
         <div id="stat-summary-today"></div>
         <div id="status-bar" class="status-bar"></div>
         <div id="hist-container"></div>
@@ -171,16 +190,27 @@
             data.forEach(r => {
                 sumTotal += r.total;
                 if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
-                listHTML += `<div class="hist-card">
-                    <div><b>${r.items.map(i=>i.svc||i.style).join('+')}</b><br><small>${r.time} | ${r.pay}</small></div>
-                    <div style="text-align:right;"><b>฿${r.total}</b> <i class="fas fa-trash" style="color:red;margin-left:10px;opacity:0.3" onclick="delItem(${r.id})"></i></div>
+                
+                // ปรับปรุงการแสดงผลรายการประวัติตามที่ต้องการ
+                listHTML += `
+                <div class="hist-card">
+                    <div class="hist-info">
+                        <b>${r.items.map(i=>i.svc||i.style).join('+')}</b>
+                        <small><i class="far fa-clock"></i> ${r.time}</small>
+                    </div>
+                    <div class="hist-price-group">
+                        <div class="hist-price-text">
+                            <b>฿${r.total}</b>
+                            <span>${r.pay}</span>
+                        </div>
+                        <div class="btn-del-icon" onclick="delItem(${r.id})">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                    </div>
                 </div>`;
             });
 
-            // แก้ไข: แสดงยอดช่างตามประกันทันทีแม้ยังไม่มียอดตัด
             let barber = Math.max(cfg.guarantee, (sumTotal * cfg.percent / 100));
-            // ถ้าเป็น 0 ทั้งหมดจริงๆ (ไม่มีการบันทึกเลย) ให้แสดงตามค่าประกันไว้ก่อน แต่ถ้าต้องการให้เป็น 0 เมื่อไม่มีงานจริงๆ ให้เอาคอมเม้นด้านล่างออก
-            // if(sumTotal === 0) barber = cfg.guarantee; 
 
             document.getElementById('stat-summary-today').innerHTML = `
                 <div class="card" style="background:var(--primary); color:white; text-align:center;">
@@ -196,12 +226,11 @@
             const settle = sumCash - barber;
             const bar = document.getElementById('status-bar');
 
-            // แก้ไขสถานะการแสดงผลประกันรายได้
             if (sumTotal === 0) {
                 bar.innerText = `ประกันรายได้วันนี้ ฿${cfg.guarantee}`;
                 bar.className = "status-bar blue";
             } else {
-                bar.innerText = settle >= 0 ? `ช่างคืนเงินสดให้ร้าน ฿${Math.floor(settle)}` : `ร้านคืนเงินให้ช่าง ฿${Math.floor(Math.abs(settle))}`;
+                bar.innerText = settle >= 0 ? `ช่างคืนร้าน ฿${Math.floor(settle)}` : `ร้านคืนช่าง ฿${Math.floor(Math.abs(settle))}`;
                 bar.className = settle >= 0 ? "status-bar orange" : "status-bar blue";
             }
         }
@@ -269,17 +298,25 @@
             document.getElementById('s-guarantee').value = cfg.guarantee;
         }
         function clearData() { if(confirm('ล้างข้อมูลวันนี้?')) { const today = document.getElementById('rec-date-raw').value; db = db.filter(r => r.date !== today); localStorage.setItem('barber_v6_db', JSON.stringify(db)); renderReport(); } }
+        
         function renderHistoryPage() {
             const date = document.getElementById('hist-date-select').value;
             const data = db.filter(r => r.date === date);
             let html = `<div style="margin-top:10px;"><label class="label">รายการของวันที่ ${date}</label></div>`;
             data.forEach(r => {
-                html += `<div class="hist-card">
-                    <div><b>${r.items.map(i=>i.svc||i.style).join('+')}</b><br><small>${r.time} | ${r.pay}</small></div>
-                    <div style="text-align:right;"><b>฿${r.total}</b></div>
+                html += `
+                <div class="hist-card">
+                    <div class="hist-info">
+                        <b>${r.items.map(i=>i.svc||i.style).join('+')}</b>
+                        <small><i class="far fa-clock"></i> ${r.time}</small>
+                    </div>
+                    <div class="hist-price-text">
+                        <b>฿${r.total}</b>
+                        <span>${r.pay}</span>
+                    </div>
                 </div>`;
             });
-            document.getElementById('hist-page-container').innerHTML = html || '<center style="padding:20px; color:var(--sub);">ไม่มีข้อมูล</center>';
+            document.getElementById('hist-page-container').innerHTML = html || '<center style="padding:20px; color:#94a3b8;">ไม่มีข้อมูล</center>';
         }
     </script>
 </body>
