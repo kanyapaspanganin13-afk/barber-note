@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber Note">
     <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
     
-    <title>Barber Note Pro V6.3</title>
+    <title>Barber Note Pro V6.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -40,7 +40,7 @@
         .status-bar.blue { background: #dbeafe; color: #1e40af; }
         .status-bar.orange { background: #ffedd5; color: #9a3412; }
 
-        /* สไตล์รายการประวัติที่ปรับปรุงตามบรีฟล่าสุด */
+        /* สไตล์รายการ V6.4: ราคาไม่หนา, เวลาเข้ม, จ่ายเงินอยู่ล่างราคา */
         .hist-card { 
             background: var(--card); 
             border-radius: 15px; 
@@ -52,13 +52,13 @@
             border: 1px solid var(--border); 
         }
         .hist-info b { font-size: 1.1rem; color: var(--text); display: block; }
-        .hist-info small { color: #1e293b; font-weight: 500; font-size: 0.85rem; } /* เวลาสีเข้ม */
+        .hist-info small { color: #1e293b; font-weight: 600; font-size: 0.85rem; } /* เวลาสีเข้มขึ้น */
         
         .hist-price-group { display: flex; align-items: center; }
         .hist-price-text { text-align: right; }
-        .hist-price-text b { font-size: 1.3rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; } /* ราคาไม่หนา */
+        .hist-price-text b { font-size: 1.3rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; } /* ราคาตัวไม่หนา */
         .hist-price-text span { font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px; } /* วิธีจ่ายเงินบรรทัดล่าง */
-        .btn-del-icon { color: var(--red); opacity: 0.2; margin-left: 12px; font-size: 1rem; }
+        .btn-del-icon { color: var(--red); opacity: 0.3; margin-left: 12px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -66,7 +66,7 @@
     <div id="page-rec" class="page active">
         <header class="header"><div class="branch" id="head-shop-rec">BARBER SHOP</div></header>
         <div class="card">
-            <label class="label">วันที่บันทึก</label>
+            <label class="label">เวอร์ชัน V6.4 | วันที่บันทึก</label>
             <input type="date" id="rec-date-raw">
             <div class="grid-2" style="margin-top: 10px;">
                 <div><label class="label">เวลาเริ่ม</label><input type="time" id="rec-start"></div>
@@ -74,9 +74,9 @@
             </div>
         </div>
         <div class="card">
-            <label class="label">เลือกบริการ</label>
+            <label class="label">รายการบริการและทรงผม</label>
             <div id="svc-list"></div>
-            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการ</div>
+            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มรายการ</div>
         </div>
         <div class="pay-grid">
             <div class="pay-btn active" id="p-cash" onclick="setPay('เงินสด')"><i class="fas fa-money-bill-wave"></i> เงินสด</div>
@@ -191,7 +191,6 @@
                 sumTotal += r.total;
                 if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
                 
-                // ปรับปรุงการแสดงผลรายการประวัติตามที่ต้องการ
                 listHTML += `
                 <div class="hist-card">
                     <div class="hist-info">
