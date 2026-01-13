@@ -3,163 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LA-MOON Professional Barber Tool</title>
+    <title>Barber Note - Ultimate</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1a2a40; --accent: #c5a059; --bg: #f4f7f9; --card-bg: #ffffff; --text-main: #333; --text-sub: #777; }
+        :root { --bg: #121212; --card: #1e1e1e; --accent: #b2ff59; --text: #e0e0e0; --primary: #2c2c2c; }
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); margin: 0; padding-bottom: 80px; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
         
-        /* Header */
-        .app-header { background-color: var(--primary); color: white; text-align: center; padding: 20px; border-bottom: 4px solid var(--accent); }
-        .app-header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); text-transform: uppercase; }
-        .app-header p { margin: 5px 0 0; font-size: 0.8rem; opacity: 0.9; }
-
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .page { display: none; animation: fadeIn 0.3s; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Card & Inputs */
-        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid #e0e0e0; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* Header & Branch */
+        .header { padding: 20px; text-align: center; background: var(--card); border-bottom: 2px solid var(--accent); }
+        .header h1 { margin: 0; font-size: 1.4rem; color: var(--accent); }
+        .header p { margin: 5px 0 0; font-size: 0.8rem; opacity: 0.7; }
+
+        /* Input Form */
+        .input-card { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #333; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; font-weight: bold; }
-        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; outline: none; background: #fafafa; }
+        .input-group label { display: block; font-size: 0.7rem; color: var(--accent); margin-bottom: 4px; text-transform: uppercase; }
+        .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #333; background: #2a2a2a; color: white; font-size: 1rem; outline: none; }
         
-        /* Buttons */
-        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-        .btn-save-cfg { background: #28a745; margin-top: 10px; }
+        .pay-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        .pay-btn { padding: 12px; border-radius: 12px; border: 2px solid #333; text-align: center; cursor: pointer; background: #222; }
+        .pay-btn.active { border-color: var(--accent); background: var(--accent); color: #000; font-weight: bold; }
 
-        /* Payment Selector */
-        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .pay-opt { border: 2px solid #ddd; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; color: var(--text-sub); }
-        .pay-opt.active { border-color: var(--primary); background: var(--primary); color: white; }
+        .btn-main { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--accent); color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(178,255,89,0.2); }
 
-        /* Report Summary */
-        .summary-box { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-        .sum-item { background: white; padding: 10px 5px; border-radius: 10px; text-align: center; border: 1px solid #ddd; }
-        .sum-item small { display: block; font-size: 0.65rem; color: var(--text-sub); }
-        .sum-item b { font-size: 1rem; color: var(--primary); }
+        /* Report Page (The Capture Card) */
+        .report-card { background: #1e1e1e; border-radius: 25px; padding: 20px; border: 1px solid #333; margin-bottom: 15px; }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .report-header b { font-size: 1.8rem; color: var(--accent); display: block; }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .stat-box { background: #262626; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid #333; }
+        .stat-box small { display: block; font-size: 0.65rem; color: #888; margin-bottom: 3px; }
+        .stat-box b { font-size: 1rem; color: #fff; }
+
+        .action-btn { width: 100%; padding: 15px; border-radius: 15px; text-align: center; font-weight: bold; margin-bottom: 15px; cursor: pointer; border: 2px solid transparent; }
+        .status-warn { background: #332b00; color: #ffcc00; border-color: #ffcc00; }
+        .status-done { background: #1b3320; color: #b2ff59; border-color: #b2ff59; }
 
         /* History List */
-        .hist-item { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
-        .hist-info div { font-size: 0.9rem; font-weight: bold; }
-        .hist-info small { font-size: 0.7rem; color: #999; }
+        .hist-item { background: #1e1e1e; padding: 12px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; border-left: 4px solid var(--accent); }
+        .hist-idx { width: 30px; font-weight: bold; color: var(--accent); }
+        .hist-body { flex: 1; }
+        .hist-body div { font-size: 0.9rem; font-weight: bold; }
+        .hist-body small { font-size: 0.7rem; color: #777; }
+        .hist-price { text-align: right; font-weight: bold; }
+        .btn-del { color: #ff5252; margin-left: 15px; padding: 5px; cursor: pointer; }
 
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #ddd; height: 70px; z-index: 100; }
-        .nav-item { text-align: center; padding-top: 15px; color: #aaa; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.2rem; }
-        .nav-item div { font-size: 0.65rem; font-weight: bold; margin-top: 4px; }
+        /* Nav */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a; display: grid; grid-template-columns: 1fr 1fr 1fr; height: 75px; border-top: 1px solid #333; }
+        .nav-item { text-align: center; padding-top: 15px; color: #666; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 1.3rem; }
+        .nav-item div { font-size: 0.7rem; font-weight: bold; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="app-header">
-        <h1 id="display-shop">LA-MOON CUT</h1>
-        <p id="display-date"></p>
+    <div class="header">
+        <h1 id="top-branch">BARBER NOTE</h1>
+        <p id="top-date"></p>
     </div>
 
     <div class="container">
         <div id="page-record" class="page active">
-            <div class="card">
+            <div class="input-card">
                 <div class="input-group">
-                    <label>ราคาค่าบริการ (฿)</label>
-                    <input type="number" id="amt" value="150" inputmode="numeric">
+                    <label>บริการหลัก / ทรงผม</label>
+                    <input type="text" id="svc-main" placeholder="เช่น รองทรงสูง">
                 </div>
                 <div class="input-group">
-                    <label>ประเภทบริการ</label>
-                    <select id="svc">
-                        <option value="ตัดผมชาย">ตัดผมชาย</option>
-                        <option value="โกนหนวด/เครา">โกนหนวด/เครา</option>
+                    <label>งานเสริม (โกนหนวด/สระ/กันหน้า)</label>
+                    <select id="svc-sub">
+                        <option value="">- ไม่มีงานเสริม -</option>
+                        <option value="โกนหนวด">โกนหนวด</option>
                         <option value="สระไดร์">สระไดร์</option>
-                        <option value="แกะลาย">แกะลาย</option>
+                        <option value="กันหน้า">กันหน้า</option>
                     </select>
                 </div>
-                <div class="pay-grid">
-                    <div id="opt-cash" class="pay-opt active" onclick="setPay('cash')"><i class="fas fa-money-bill-wave"></i><br><small>Cash</small></div>
-                    <div id="opt-transfer" class="pay-opt" onclick="setPay('transfer')"><i class="fas fa-qrcode"></i><br><small>Transfer</small></div>
+                <div class="grid-2">
+                    <div class="input-group"><label>ราคา (฿)</label><input type="number" id="amt" value="150" inputmode="numeric"></div>
+                    <div class="input-group"><label>เวลา</label><input type="time" id="time"></div>
                 </div>
-                <button class="btn-main" onclick="addRecord()">บันทึกรายการ</button>
+                <div class="pay-selector">
+                    <div id="p-cash" class="pay-btn active" onclick="setPay('cash')">เงินสด</div>
+                    <div id="p-transfer" class="pay-btn" onclick="setPay('transfer')">โอนเงิน</div>
+                </div>
+                <button class="btn-main" onclick="add()">บันทึกรายการ</button>
             </div>
         </div>
 
         <div id="page-report" class="page">
-            <div class="summary-box" id="summary-area"></div>
-            <div id="history-list"></div>
+            <div class="report-card">
+                <div class="report-header">
+                    <div><span id="res-branch">สาขาหลัก</span><br><small id="res-date"></small></div>
+                    <div style="text-align:right"><span>ยอดรวมทั้งหมด</span><b id="res-total">฿0</b></div>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-box"><small>ลูกค้า (ท่าน)</small><b id="res-count">0</b></div>
+                    <div class="stat-box"><small>งานเสริม</small><b id="res-sub-count">0</b></div>
+                    <div class="stat-box"><small>ยอดเงินโอน</small><b id="res-transfer">0</b></div>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-box" style="border-color: var(--accent);"><small>รายได้ช่าง</small><b id="res-barber">0</b></div>
+                    <div class="stat-box"><small>รายได้ร้าน</small><b id="res-shop">0</b></div>
+                    <div class="stat-box"><small>ประกันมือ</small><b id="res-guarantee">0</b></div>
+                </div>
+            </div>
+
+            <div id="status-btn" class="action-btn status-warn" onclick="toggleStatus()">
+                <span id="status-text">กำลังคำนวณ...</span>
+            </div>
+
+            <h3 style="font-size: 1rem; color: var(--accent); margin-bottom: 10px;">ประวัติบันทึกวันนี้</h3>
+            <div id="hist-list"></div>
+            <button onclick="clearAll()" style="width:100%; background:none; border:none; color:#555; margin-top:20px; font-size:0.8rem;">ล้างข้อมูลทั้งหมดของวันนี้</button>
         </div>
 
         <div id="page-settings" class="page">
-            <div class="card">
-                <h3 style="margin-top:0">ข้อมูลร้าน/ช่าง</h3>
-                <div class="input-group">
-                    <label>ชื่อร้าน หรือ สาขา</label>
-                    <input type="text" id="cfg-shop">
-                </div>
-                <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-                <h3>ตั้งค่าการคำนวณเงิน</h3>
-                <div class="input-group">
-                    <label>รูปแบบการคิดเงิน</label>
-                    <select id="cfg-mode" onchange="toggleCfgMode()">
-                        <option value="step">แบบขั้นบันได (Step)</option>
-                        <option value="percent">แบบส่วนแบ่งเปอร์เซ็นต์ (%)</option>
-                    </select>
-                </div>
-                <div id="cfg-step-wrap">
-                    <div class="input-group">
-                        <label>ยอดขั้นต่ำส่งร้าน (฿)</label>
-                        <input type="number" id="cfg-min">
-                    </div>
+            <div class="input-card">
+                <h3>ตั้งค่าแอป</h3>
+                <div class="input-group"><label>ชื่อสาขา / ชื่อร้าน</label><input type="text" id="cfg-branch" onchange="saveCfg()"></div>
+                <div class="grid-2">
+                    <div class="input-group"><label>ส่วนแบ่งช่าง (%)</label><input type="number" id="cfg-rate" onchange="saveCfg()"></div>
+                    <div class="input-group"><label>ประกันมือ (฿)</label><input type="number" id="cfg-guarantee" onchange="saveCfg()"></div>
                 </div>
                 <div class="input-group">
-                    <label>ส่วนแบ่งที่ช่างได้รับ (%)</label>
-                    <input type="number" id="cfg-rate">
+                    <label>สูตรขั้นบันได (ส่งร้านขั้นต่ำ ฿)</label>
+                    <input type="number" id="cfg-step" onchange="saveCfg()">
+                    <small style="color:#666; font-size:0.7rem;">*ถ้าไม่ใช้ขั้นบันไดให้ใส่เป็น 0</small>
                 </div>
-                <button class="btn-main btn-save-cfg" onclick="saveConfig()">บันทึกการตั้งค่า</button>
             </div>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="showPage('record', this)"><i class="fas fa-plus-circle"></i><div>บันทึก</div></div>
+    <nav class="nav">
+        <div class="nav-item active" onclick="showPage('record', this)"><i class="fas fa-cut"></i><div>บันทึก</div></div>
         <div class="nav-item" onclick="showPage('report', this)"><i class="fas fa-file-invoice-dollar"></i><div>รายงาน</div></div>
         <div class="nav-item" onclick="showPage('settings', this)"><i class="fas fa-cog"></i><div>ตั้งค่า</div></div>
     </nav>
 
     <script>
+        let db = JSON.parse(localStorage.getItem('bb_db') || '[]');
+        let cfg = JSON.parse(localStorage.getItem('bb_cfg') || '{"branch":"My Barber","rate":50,"guarantee":500,"step":400}');
         let payType = 'cash';
-        let db = JSON.parse(localStorage.getItem('barber_db') || '[]');
-        let cfg = JSON.parse(localStorage.getItem('barber_config') || '{"shop":"LA-MOON CUT","mode":"step","min":400,"rate":50}');
+        let isCleared = false;
 
-        // Initial Load
-        document.getElementById('display-date').innerText = new Date().toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'});
-        loadConfigInputs();
+        // Init
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('top-date').innerText = new Date().toLocaleDateString('th-TH', {day:'numeric', month:'long', year:'numeric'});
+        document.getElementById('time').value = new Date().toLocaleTimeString('th-TH', {hour12:false, hour:'2-digit', minute:'2-digit'});
+        loadCfg();
 
-        function loadConfigInputs() {
-            document.getElementById('display-shop').innerText = cfg.shop;
-            document.getElementById('cfg-shop').value = cfg.shop;
-            document.getElementById('cfg-mode').value = cfg.mode;
-            document.getElementById('cfg-min').value = cfg.min;
+        function loadCfg() {
+            document.getElementById('top-branch').innerText = cfg.branch;
+            document.getElementById('cfg-branch').value = cfg.branch;
             document.getElementById('cfg-rate').value = cfg.rate;
-            toggleCfgMode();
+            document.getElementById('cfg-guarantee').value = cfg.guarantee;
+            document.getElementById('cfg-step').value = cfg.step;
         }
 
-        function toggleCfgMode() {
-            document.getElementById('cfg-step-wrap').style.display = document.getElementById('cfg-mode').value === 'step' ? 'block' : 'none';
+        function saveCfg() {
+            cfg.branch = document.getElementById('cfg-branch').value;
+            cfg.rate = parseInt(document.getElementById('cfg-rate').value);
+            cfg.guarantee = parseInt(document.getElementById('cfg-guarantee').value);
+            cfg.step = parseInt(document.getElementById('cfg-step').value);
+            localStorage.setItem('bb_cfg', JSON.stringify(cfg));
+            document.getElementById('top-branch').innerText = cfg.branch;
         }
 
-        function saveConfig() {
-            cfg = {
-                shop: document.getElementById('cfg-shop').value,
-                mode: document.getElementById('cfg-mode').value,
-                min: parseInt(document.getElementById('cfg-min').value),
-                rate: parseInt(document.getElementById('cfg-rate').value)
-            };
-            localStorage.setItem('barber_config', JSON.stringify(cfg));
-            document.getElementById('display-shop').innerText = cfg.shop;
-            alert('บันทึกการตั้งค่าแล้ว!');
+        function setPay(t) {
+            payType = t;
+            document.getElementById('p-cash').classList.toggle('active', t==='cash');
+            document.getElementById('p-transfer').classList.toggle('active', t==='transfer');
         }
 
         function showPage(p, el) {
@@ -170,54 +193,83 @@
             if(p === 'report') renderReport();
         }
 
-        function setPay(t) {
-            payType = t;
-            document.querySelectorAll('.pay-opt').forEach(x => x.classList.remove('active'));
-            document.getElementById('opt-'+t).classList.add('active');
-        }
-
-        function addRecord() {
-            let a = parseFloat(document.getElementById('amt').value);
-            if(!a) return;
-            db.push({ id: Date.now(), date: new Date().toISOString().split('T')[0], svc: document.getElementById('svc').value, amt: a, pay: payType });
-            localStorage.setItem('barber_db', JSON.stringify(db));
+        function add() {
+            let amt = parseFloat(document.getElementById('amt').value);
+            if(!amt) return;
+            db.push({
+                id: Date.now(),
+                date: today,
+                time: document.getElementById('time').value,
+                main: document.getElementById('svc-main').value || 'ตัดผม',
+                sub: document.getElementById('svc-sub').value,
+                amt: amt,
+                pay: payType
+            });
+            localStorage.setItem('bb_db', JSON.stringify(db));
             alert('บันทึกสำเร็จ!');
-            document.getElementById('amt').value = '150';
+            document.getElementById('svc-main').value = '';
+            document.getElementById('svc-sub').value = '';
         }
 
         function renderReport() {
-            let today = new Date().toISOString().split('T')[0];
             let data = db.filter(x => x.date === today);
             let total = data.reduce((s, x) => s + x.amt, 0);
-            
-            let shopShare = 0;
-            if(cfg.mode === 'step') {
-                shopShare = total <= cfg.min ? total/2 : (cfg.min/2) + ((total-cfg.min) * ((100-cfg.rate)/100));
+            let subCount = data.filter(x => x.sub !== "").length;
+            let transfer = data.filter(x => x.pay === 'transfer').reduce((s, x) => s + x.amt, 0);
+            let cash = total - transfer;
+
+            // การคำนวณส่วนแบ่ง
+            let barberBase = 0;
+            if(cfg.step > 0) {
+                let shopBase = total <= cfg.step ? total/2 : (cfg.step/2) + ((total-cfg.step) * ((100-cfg.rate)/100));
+                barberBase = total - shopBase;
             } else {
-                shopShare = total * ((100-cfg.rate)/100);
+                barberBase = total * (cfg.rate/100);
             }
-            let barberShare = total - shopShare;
 
-            document.getElementById('summary-area').innerHTML = `
-                <div class="sum-item"><small>ยอดรวม</small><b>฿${total}</b></div>
-                <div class="sum-item"><small>ช่างได้รับ</small><b>฿${barberShare.toFixed(0)}</b></div>
-                <div class="sum-item" style="border-color:var(--accent)"><small>ส่งร้าน</small><b>฿${shopShare.toFixed(0)}</b></div>
-            `;
+            // ระบบประกันมือ
+            let barberFinal = Math.max(barberBase, data.length > 0 ? cfg.guarantee : 0);
+            let shopFinal = total - barberFinal;
 
-            let html = data.reverse().map(x => `
+            // อัปเดต UI
+            document.getElementById('res-branch').innerText = cfg.branch;
+            document.getElementById('res-date').innerText = document.getElementById('top-date').innerText;
+            document.getElementById('res-total').innerText = '฿' + total.toLocaleString();
+            document.getElementById('res-count').innerText = data.length;
+            document.getElementById('res-sub-count').innerText = subCount;
+            document.getElementById('res-transfer').innerText = transfer.toLocaleString();
+            document.getElementById('res-barber').innerText = barberFinal.toLocaleString();
+            document.getElementById('res-shop').innerText = shopFinal.toLocaleString();
+            document.getElementById('res-guarantee').innerText = cfg.guarantee;
+
+            // สถานะคืนเงิน
+            let statusBtn = document.getElementById('status-btn');
+            let diff = transfer - barberFinal;
+            if(diff > 0) {
+                document.getElementById('status-text').innerText = isCleared ? `✅ เคลียร์แล้ว: ร้านคืนช่าง ฿${diff.toFixed(0)}` : `📢 ร้านคืนช่าง ฿${diff.toFixed(0)}`;
+            } else {
+                document.getElementById('status-text').innerText = isCleared ? `✅ เคลียร์แล้ว: ช่างคืนร้าน ฿${Math.abs(diff).toFixed(0)}` : `📢 ช่างคืนร้าน ฿${Math.abs(diff).toFixed(0)}`;
+            }
+            statusBtn.className = isCleared ? 'action-btn status-done' : 'action-btn status-warn';
+
+            // ประวัติ
+            let html = data.slice().reverse().map((x, i) => `
                 <div class="hist-item">
-                    <div class="hist-info"><div>${x.svc}</div><small>${x.pay.toUpperCase()} | ฿${x.amt}</small></div>
-                    <i class="fas fa-trash-alt" style="color:#ffbcbc" onclick="delRecord(${x.id})"></i>
+                    <div class="hist-idx">${data.length - i}</div>
+                    <div class="hist-body">
+                        <div>${x.main} ${x.sub ? '+ ' + x.sub : ''}</div>
+                        <small>${x.time} | ${x.pay === 'cash' ? 'เงินสด' : 'เงินโอน'}</small>
+                    </div>
+                    <div class="hist-price">฿${x.amt}</div>
+                    <i class="fas fa-trash-alt btn-del" onclick="del(${x.id})"></i>
                 </div>
             `).join('');
-            document.getElementById('history-list').innerHTML = html || '<p style="text-align:center; opacity:0.5">ไม่มีรายการวันนี้</p>';
+            document.getElementById('hist-list').innerHTML = html || '<p style="text-align:center; opacity:0.3;">ไม่มีประวัติวันนี้</p>';
         }
 
-        function delRecord(id) {
-            if(confirm('ลบรายการนี้?')) {
-                db = db.filter(x => x.id !== id);
-                localStorage.setItem('barber_db', JSON.stringify(db));
-                renderReport();
-            }
-        }
+        function toggleStatus() { isCleared = !isCleared; renderReport(); }
+        function del(id) { if(confirm('ลบรายการนี้?')) { db = db.filter(x => x.id !== id); localStorage.setItem('bb_db', JSON.stringify(db)); renderReport(); } }
+        function clearAll() { if(confirm('ยืนยันการลบประวัติทั้งหมดของวันนี้?')) { db = db.filter(x => x.date !== today); localStorage.setItem('bb_db', JSON.stringify(db)); renderReport(); } }
     </script>
+</body>
+</html>
