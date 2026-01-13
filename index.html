@@ -5,387 +5,361 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Barber Note Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e40af; /* น้ำเงินเข้ม */
+            --primary: #2b459a;
             --bg: #f8fafc;
             --card: #ffffff;
-            --text: #1e293b;
+            --text: #334155;
+            --sub: #94a3b8;
+            --border: #e2e8f0;
+            --green: #22c55e;
+            --red: #ef4444;
+            --orange: #f59e0b;
             --font-size: 16px;
         }
 
-        body { 
-            background-color: var(--bg); 
-            color: var(--text); 
-            font-size: var(--font-size);
-            margin: 0; 
-            padding-bottom: 90px;
-            transition: all 0.3s ease;
-        }
+        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); font-size: var(--font-size); margin: 0; padding-bottom: 90px; }
 
-        /* Header */
-        .app-header { background: var(--card); padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .shop-title { font-weight: 600; font-size: 1.1rem; color: var(--primary); }
-
-        .container { padding: 12px; max-width: 500px; margin: auto; }
-        .page { display: none; }
+        /* Navigation & Setup */
+        .page { display: none; padding: 15px; max-width: 500px; margin: auto; }
         .page.active { display: block; }
 
-        /* Card Style */
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .label-sm { font-size: 0.7rem; color: #64748b; font-weight: bold; margin-bottom: 5px; display: block; }
+        /* Header */
+        .header { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+        .header .branch { font-weight: 600; color: var(--primary); font-size: 1.1rem; }
 
-        /* Input Grid */
+        /* Card System */
+        .card { background: var(--card); border-radius: 16px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .label { font-size: 0.75rem; color: var(--sub); font-weight: 600; margin-bottom: 6px; display: block; text-transform: uppercase; }
+
+        /* Input Styles */
+        input, select { 
+            width: 100%; border: 1px solid var(--border); border-radius: 10px; padding: 10px; 
+            font-size: 1rem; outline: none; background: #fdfdfd; color: var(--text);
+        }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .input-box { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; }
-        .input-box input, .input-box select { width: 100%; border: none; background: transparent; font-size: 1rem; font-weight: 500; outline: none; }
 
-        /* Service Row */
-        .svc-row { display: grid; grid-template-columns: 4px 1fr 1fr 80px; gap: 8px; align-items: center; margin-bottom: 10px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-        .blue-bar { background: var(--primary); height: 100%; width: 4px; }
-        
+        /* Service Row Item */
+        .svc-item { display: grid; grid-template-columns: 1fr 1fr 80px; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .btn-add { color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-block; margin-top: 5px; }
+
         /* Payment Buttons */
-        .pay-group { display: flex; gap: 10px; margin: 15px 0; }
-        .pay-btn { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .pay-btn { 
+            padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); 
+            text-align: center; cursor: pointer; font-weight: 500; color: var(--sub);
+        }
         .pay-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* Save Button */
-        .btn-save { width: 100%; background: var(--primary); color: white; padding: 16px; border-radius: 12px; border: none; font-size: 1.1rem; font-weight: bold; transition: 0.3s; }
-        .btn-save.saved { background: #22c55e !important; }
+        .btn-main { 
+            width: 100%; background: var(--primary); color: white; border: none; padding: 16px; 
+            border-radius: 14px; font-size: 1.1rem; font-weight: 600; transition: 0.3s;
+        }
+        .btn-main.success { background: var(--green) !important; }
 
-        /* Report Page UI */
-        .rep-date-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 600; }
-        .summary-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 15px; }
-        .stat-main { background: var(--primary); color: white; padding: 15px; border-radius: 15px; text-align: left; }
-        .stat-sub { display: grid; grid-template-rows: 1fr 1fr 1fr; gap: 5px; }
-        .sub-box { background: white; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; }
+        /* Report View (Minimal for Capture) */
+        .rep-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .box-blue { background: var(--primary); color: white; padding: 15px; border-radius: 16px; }
+        .box-white { background: var(--card); border: 1px solid var(--border); padding: 10px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-around; }
+        .sub-stat { display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #eee; padding: 2px 0; }
+        
+        .status-bar { padding: 12px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; }
+        .status-bar.green { background: #dcfce7; color: #166534; }
+        .status-bar.blue { background: #dbeafe; color: #1e40af; }
+        .status-bar.orange { background: #ffedd5; color: #9a3412; }
 
-        .status-strip { padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 1rem; margin-bottom: 15px; }
-        .status-green { background: #dcfce7; color: #166534; }
-        .status-blue { background: #dbeafe; color: #1e40af; }
-        .status-orange { background: #ffedd5; color: #9a3412; }
+        /* History Cards */
+        .hist-card { background: var(--card); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .hist-del { color: var(--red); opacity: 0.3; padding: 5px; }
 
-        /* History Card */
-        .history-card { background: white; border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .hist-info b { font-size: 1.1rem; display: block; }
-        .hist-info span { font-size: 0.85rem; color: #64748b; }
-        .hist-price { text-align: right; }
-        .hist-price b { font-size: 1.1rem; color: var(--primary); }
-        .btn-del { color: #ef4444; margin-left: 10px; font-size: 1.2rem; }
-
-        /* Navigation */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; height: 75px; border-top: 1px solid #e2e8f0; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.8rem; color: #94a3b8; }
+        /* Bottom Nav */
+        .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); height: 75px; z-index: 100; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--sub); cursor: pointer; }
         .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 3px; }
 
-        /* Settings UI */
-        .setting-row { margin-bottom: 15px; }
-        .setting-row label { display: block; margin-bottom: 5px; font-weight: 500; }
-        .setting-row input, .setting-row select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .btn-clear { display: block; width: 100%; color: var(--red); background: none; border: none; padding: 20px; font-size: 0.8rem; font-weight: 600; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div id="page-record" class="page active">
-        <header class="app-header">
-            <div class="shop-title" id="display-shop-name">SAKHA NAME</div>
-            <button onclick="openPage('settings')"><i class="fas fa-cog text-gray-400"></i></button>
+    <div id="page-rec" class="page active">
+        <header class="header">
+            <div class="branch" id="head-shop">SAKHA NAME</div>
+            <i class="fas fa-sliders-h" style="color: #cbd5e0;" onclick="showPage('set')"></i>
         </header>
 
-        <div class="container">
-            <div class="card">
-                <label class="label-sm">วันที่ทำงาน</label>
-                <div class="input-box"><input type="date" id="date-input"></div>
-                <div class="grid-2 mt-3">
-                    <div><label class="label-sm">เวลาเริ่ม</label><div class="input-box"><input type="time" id="t-start"></div></div>
-                    <div><label class="label-sm">เวลาเสร็จ</label><div class="input-box"><input type="time" id="t-end"></div></div>
-                </div>
+        <div class="card">
+            <label class="label">วันที่ทำงาน</label>
+            <input type="text" id="rec-date" readonly style="margin-bottom: 12px; background: #f1f5f9;">
+            <div class="grid-2">
+                <div><label class="label">เริ่ม</label><input type="time" id="rec-start"></div>
+                <div><label class="label">เสร็จ</label><input type="time" id="rec-end"></div>
             </div>
-
-            <div id="service-container">
-                </div>
-            
-            <button onclick="addServiceRow()" style="background:none; border:none; color:var(--primary); font-weight:bold; font-size:0.9rem; margin-bottom:15px;">
-                <i class="fas fa-plus-circle"></i> เพิ่มบริการ
-            </button>
-
-            <div class="pay-group">
-                <div id="btn-cash" class="pay-btn active" onclick="setPay('เงินสด')"><i class="fas fa-money-bill-wave"></i> เงินสด</div>
-                <div id="btn-transfer" class="pay-btn" onclick="setPay('โอนเงิน')"><i class="fas fa-qrcode"></i> โอนเงิน</div>
-            </div>
-
-            <button id="btn-save-record" class="btn-save" onclick="saveData()">Save Record</button>
         </div>
+
+        <div class="card">
+            <label class="label">รายการบริการ</label>
+            <div id="svc-list">
+                </div>
+            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการเสริม</div>
+        </div>
+
+        <div class="pay-grid">
+            <div class="pay-btn active" id="p-cash" onclick="setPay('เงินสด')"><i class="fas fa-money-bill-wave"></i> เงินสด</div>
+            <div class="pay-btn" id="p-trans" onclick="setPay('โอนเงิน')"><i class="fas fa-qrcode"></i> โอนเงิน</div>
+        </div>
+
+        <button class="btn-main" id="btn-save" onclick="saveRecord()">SAVE RECORD</button>
     </div>
 
-    <div id="page-report" class="page">
-        <div class="container" id="capture-area">
-            <div class="rep-date-bar">
-                <div id="rep-date-th">13 Jan BE 2569</div>
-                <div style="font-size: 0.7rem; color: #94a3b8;">REPORT</div>
+    <div id="page-rep" class="page">
+        <div id="rep-date-th" style="font-weight: 600; margin-bottom: 10px;">13 Jan BE 2569</div>
+        
+        <div class="rep-summary">
+            <div class="box-blue">
+                <div class="label" style="color: rgba(255,255,255,0.7);">ยอดเงินรวม</div>
+                <div style="font-size: 1.8rem; font-weight: 700;">฿<span id="r-total">0</span></div>
+                <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">ลูกค้า <span id="r-count">0</span> คน</div>
             </div>
-
-            <div class="summary-grid">
-                <div class="stat-main">
-                    <label style="font-size:0.7rem; opacity:0.8;">ยอดเงินรวม</label>
-                    <div style="font-size:1.8rem; font-weight:900;">฿<span id="sum-total">0</span></div>
-                    <div style="font-size:0.8rem; margin-top:5px;">ลูกค้า <span id="sum-count">0</span> คน</div>
-                </div>
-                <div class="stat-sub">
-                    <div class="sub-box"><span>ยอดโอน</span><b id="sum-transfer">0</b></div>
-                    <div class="sub-box"><span>ช่าง</span><b id="sum-barber">0</b></div>
-                    <div class="sub-box"><span>ร้าน</span><b id="sum-shop">0</b></div>
-                </div>
+            <div class="box-white">
+                <div class="sub-stat"><span>โอนรวม</span><b id="r-trans">0</b></div>
+                <div class="sub-stat"><span>ช่าง</span><b id="r-barber">0</b></div>
+                <div class="sub-stat"><span>ร้าน</span><b id="r-shop">0</b></div>
             </div>
-
-            <div id="status-strip" class="status-strip">คำนวณยอด...</div>
-            
-            <div style="font-size:0.7rem; font-weight:bold; color:#64748b; margin-bottom:10px;">รายการสระ: <span id="count-wash">0</span> | โกน: <span id="count-shave">0</span> | ย้อม: <span id="count-color">0</span></div>
-
-            <div id="history-list">
-                </div>
-            
-            <button onclick="clearAll()" style="width:100%; color:#ef4444; border:none; background:none; padding:30px; font-size:0.8rem; font-weight:bold;">ลบข้อมูลทั้งหมด</button>
         </div>
+
+        <div id="status-bar" class="status-bar">...</div>
+
+        <div style="font-size: 0.75rem; color: var(--sub); font-weight: 600; margin-bottom: 8px;">
+            งานสระ: <span id="c-wash">0</span> | โกน: <span id="c-shave">0</span> | ย้อม: <span id="c-color">0</span>
+        </div>
+
+        <div id="hist-container"></div>
+        
+        <button class="btn-clear" onclick="clearData()">ลบข้อมูลทั้งหมด</button>
     </div>
 
-    <div id="page-settings" class="page">
-        <header class="app-header">
-            <div class="shop-title">SETTINGS</div>
-            <button onclick="openPage('record')"><i class="fas fa-times text-gray-400"></i></button>
+    <div id="page-set" class="page">
+        <header class="header">
+            <div class="branch">ตั้งค่าแอป</div>
+            <i class="fas fa-times" onclick="showPage('rec')"></i>
         </header>
-        <div class="container">
-            <div class="card">
-                <div class="setting-row">
-                    <label>ชื่อร้าน/สาขา</label>
-                    <input type="text" id="cfg-shop" onchange="saveConfig()">
-                </div>
-                <div class="setting-row">
-                    <label>ระบบคำนวณรายได้</label>
-                    <select id="cfg-mode" onchange="saveConfig()">
-                        <option value="percent">แบ่งเปอร์เซ็นต์ (%)</option>
-                        <option value="guarantee">ประกันรายได้ (รายวัน)</option>
-                    </select>
-                </div>
-                <div id="row-percent" class="setting-row">
-                    <label>ส่วนแบ่งช่าง (%)</label>
-                    <input type="number" id="cfg-percent" onchange="saveConfig()">
-                </div>
-                <div id="row-guarantee" class="setting-row" style="display:none;">
-                    <label>ค่าประกันรายได้ (บาท/วัน)</label>
-                    <input type="number" id="cfg-guarantee" onchange="saveConfig()">
-                </div>
+        <div class="card">
+            <label class="label">ชื่อร้าน/สาขา</label>
+            <input type="text" id="s-name" onchange="updateConfig()">
+            
+            <label class="label" style="margin-top:15px;">ระบบคำนวณ</label>
+            <select id="s-mode" onchange="updateConfig()">
+                <option value="percent">แบ่งเปอร์เซ็นต์ (%)</option>
+                <option value="guarantee">ประกันรายได้ขั้นต่ำ</option>
+            </select>
+
+            <div id="box-percent" style="margin-top:15px;">
+                <label class="label">เปอร์เซ็นต์ช่าง (%)</label>
+                <input type="number" id="s-percent" onchange="updateConfig()">
             </div>
-            <div class="card">
-                <label>ธีมและขนาดตัวอักษร</label>
-                <select id="cfg-font" onchange="saveConfig()" class="mt-2">
-                    <option value="14px">เล็ก</option>
-                    <option value="16px" selected>ปกติ</option>
-                    <option value="18px">ใหญ่</option>
-                </select>
+            <div id="box-guarantee" style="margin-top:15px; display:none;">
+                <label class="label">ประกันรายได้ (บาท/วัน)</label>
+                <input type="number" id="s-guarantee" onchange="updateConfig()">
             </div>
+        </div>
+        <div class="card">
+            <label class="label">ขนาดตัวอักษร</label>
+            <select id="s-font" onchange="updateConfig()">
+                <option value="14px">เล็ก</option>
+                <option value="16px" selected>ปกติ</option>
+                <option value="18px">ใหญ่</option>
+            </select>
         </div>
     </div>
 
-    <nav class="nav-bar">
-        <div class="nav-item active" onclick="openPage('record', this)"><i class="fas fa-edit"></i>บันทึก</div>
-        <div class="nav-item" onclick="openPage('report', this)"><i class="fas fa-file-invoice-dollar"></i>รายงาน</div>
+    <nav class="nav">
+        <div class="nav-item active" id="n-rec" onclick="showPage('rec')"><i class="fas fa-edit"></i><span>บันทึก</span></div>
+        <div class="nav-item" id="n-rep" onclick="showPage('rep')"><i class="fas fa-chart-pie"></i><span>รายงาน</span></div>
     </nav>
 
     <script>
-        const services = ["ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "อื่นๆ"];
-        const styles = ["รองทรง", "แฟชั่น / ทูบล็อค", "เปิดข้าง / วินเทจ", "สกินเฟด", "ทรงอเมริกัน", "ตำรวจ / ทหาร", "นักเรียน"];
+        const svcs = ["ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
+        const styles = ["รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
         
-        let db = JSON.parse(localStorage.getItem('barber_v4_db') || '[]');
-        let config = JSON.parse(localStorage.getItem('barber_v4_cfg') || '{"shop":"SAKHA NAME","mode":"percent","percent":50,"guarantee":0,"fontSize":"16px"}');
-        let currentPay = 'เงินสด';
+        let db = JSON.parse(localStorage.getItem('barber_v5_db') || '[]');
+        let cfg = JSON.parse(localStorage.getItem('barber_v5_cfg') || '{"name":"SAKHA NAME","mode":"percent","percent":50,"guarantee":0,"font":"16px"}');
+        let payType = 'เงินสด';
 
         window.onload = () => {
-            const now = new Date();
-            document.getElementById('date-input').value = now.toISOString().split('T')[0];
-            document.getElementById('t-start').value = now.toTimeString().slice(0,5);
+            initDate();
             applyConfig();
-            addServiceRow();
+            addSvcRow();
         };
 
-        function applyConfig() {
-            document.getElementById('display-shop-name').innerText = config.shop;
-            document.getElementById('cfg-shop').value = config.shop;
-            document.getElementById('cfg-mode').value = config.mode;
-            document.getElementById('cfg-percent').value = config.percent;
-            document.getElementById('cfg-guarantee').value = config.guarantee;
-            document.getElementById('cfg-font').value = config.fontSize;
-            document.documentElement.style.setProperty('--font-size', config.fontSize);
-            
-            document.getElementById('row-percent').style.display = config.mode === 'percent' ? 'block' : 'none';
-            document.getElementById('row-guarantee').style.display = config.mode === 'guarantee' ? 'block' : 'none';
+        function initDate() {
+            const now = new Date();
+            const yearBE = now.getFullYear() + 543;
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const dateStr = `${now.getDate()} ${months[now.getMonth()]} BE ${yearBE}`;
+            document.getElementById('rec-date').value = dateStr;
+            document.getElementById('rec-start').value = now.toTimeString().slice(0,5);
         }
 
-        function saveConfig() {
-            config.shop = document.getElementById('cfg-shop').value;
-            config.mode = document.getElementById('cfg-mode').value;
-            config.percent = document.getElementById('cfg-percent').value;
-            config.guarantee = document.getElementById('cfg-guarantee').value;
-            config.fontSize = document.getElementById('cfg-font').value;
-            localStorage.setItem('barber_v4_cfg', JSON.stringify(config));
+        function applyConfig() {
+            document.getElementById('head-shop').innerText = cfg.name;
+            document.getElementById('s-name').value = cfg.name;
+            document.getElementById('s-mode').value = cfg.mode;
+            document.getElementById('s-percent').value = cfg.percent;
+            document.getElementById('s-guarantee').value = cfg.guarantee;
+            document.getElementById('s-font').value = cfg.font;
+            document.documentElement.style.setProperty('--font-size', cfg.font);
+            document.getElementById('box-percent').style.display = cfg.mode === 'percent' ? 'block' : 'none';
+            document.getElementById('box-guarantee').style.display = cfg.mode === 'guarantee' ? 'block' : 'none';
+        }
+
+        function updateConfig() {
+            cfg.name = document.getElementById('s-name').value;
+            cfg.mode = document.getElementById('s-mode').value;
+            cfg.percent = parseInt(document.getElementById('s-percent').value);
+            cfg.guarantee = parseInt(document.getElementById('s-guarantee').value);
+            cfg.font = document.getElementById('s-font').value;
+            localStorage.setItem('barber_v5_cfg', JSON.stringify(cfg));
             applyConfig();
         }
 
-        function addServiceRow() {
-            const container = document.getElementById('service-container');
-            const row = document.createElement('div');
-            row.className = 'svc-row';
-            row.innerHTML = `
-                <div class="blue-bar"></div>
-                <div class="p-1"><select class="svc-select">${services.map(s => `<option>${s}</option>`).join('')}</select></div>
-                <div class="p-1"><select class="style-select">${styles.map(s => `<option>${s}</option>`).join('')}</select></div>
-                <div class="p-1"><input type="number" class="price-input" placeholder="0" style="width:100%; text-align:right; font-weight:bold;"></div>
+        function addSvcRow() {
+            const container = document.getElementById('svc-list');
+            const div = document.createElement('div');
+            div.className = 'svc-item';
+            div.innerHTML = `
+                <select class="i-svc">${svcs.map(s => `<option>${s}</option>`).join('')}</select>
+                <select class="i-style">${styles.map(s => `<option>${s}</option>`).join('')}</select>
+                <input type="number" class="i-price" placeholder="ราคา" value="${container.children.length === 0 ? '150' : ''}">
             `;
-            container.appendChild(row);
+            container.appendChild(div);
         }
 
-        function setPay(type) {
-            currentPay = type;
-            document.getElementById('btn-cash').classList.toggle('active', type === 'เงินสด');
-            document.getElementById('btn-transfer').classList.toggle('active', type === 'โอนเงิน');
+        function setPay(t) {
+            payType = t;
+            document.getElementById('p-cash').classList.toggle('active', t === 'เงินสด');
+            document.getElementById('p-trans').classList.toggle('active', t === 'โอนเงิน');
         }
 
-        function saveData() {
-            const rows = document.querySelectorAll('.svc-row');
+        function saveRecord() {
+            const rows = document.querySelectorAll('.svc-item');
             let items = [];
             let total = 0;
-            rows.forEach(row => {
-                const svc = row.querySelector('.svc-select').value;
-                const style = row.querySelector('.style-select').value;
-                const price = parseInt(row.querySelector('.price-input').value) || 0;
-                if(price > 0) {
-                    items.push({svc, style, price});
-                    total += price;
+            rows.forEach(r => {
+                const p = parseInt(r.querySelector('.i-price').value) || 0;
+                if(p > 0) {
+                    items.push({ svc: r.querySelector('.i-svc').value, style: r.querySelector('.i-style').value, price: p });
+                    total += p;
                 }
             });
 
-            if(items.length === 0) return alert('กรุณาใส่ราคา');
+            if(total === 0) return alert('ใส่ราคาด้วยครับ');
 
-            const record = {
+            const entry = {
                 id: Date.now(),
-                date: document.getElementById('date-input').value,
-                time: document.getElementById('t-start').value + ' - ' + document.getElementById('t-end').value,
+                date: document.getElementById('rec-date').value,
+                time: document.getElementById('rec-start').value + '-' + document.getElementById('rec-end').value,
                 items: items,
                 total: total,
-                pay: currentPay
+                pay: payType
             };
 
-            db.push(record);
-            localStorage.setItem('barber_v4_db', JSON.stringify(db));
+            db.push(entry);
+            localStorage.setItem('barber_v5_db', JSON.stringify(db));
             
-            // Animation confirm
-            const btn = document.getElementById('btn-save-record');
-            btn.classList.add('saved');
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> บันทึกแล้ว';
-            
-            setTimeout(() => {
-                location.reload();
-            }, 800);
+            const btn = document.getElementById('btn-save');
+            btn.classList.add('success');
+            btn.innerHTML = '<i class="fas fa-check"></i> บันทึกแล้ว';
+            setTimeout(() => location.reload(), 600);
         }
 
-        function openPage(name, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + name).classList.add('active');
-            if(el) {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                el.classList.add('active');
-            }
-            if(name === 'report') renderReport();
-        }
-
-        function formatThaiDate(dateStr) {
-            const d = new Date(dateStr);
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            return `${d.getDate()} ${months[d.getMonth()]} BE ${d.getFullYear() + 543}`;
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(p !== 'set') document.getElementById('n-' + p).classList.add('active');
+            if(p === 'rep') renderReport();
         }
 
         function renderReport() {
-            const today = document.getElementById('date-input').value;
-            const todayData = db.filter(r => r.date === today);
+            const today = document.getElementById('rec-date').value;
+            const data = db.filter(r => r.date === today);
             
-            let total = 0, trans = 0, cash = 0, wash = 0, shave = 0, color = 0;
-            const histList = document.getElementById('history-list');
-            histList.innerHTML = '';
+            let sumTotal = 0, sumTrans = 0, sumCash = 0, cWash = 0, cShave = 0, cColor = 0;
+            const container = document.getElementById('hist-container');
+            container.innerHTML = '';
+            document.getElementById('rep-date-th').innerText = today;
 
-            document.getElementById('rep-date-th').innerText = formatThaiDate(today);
-
-            todayData.forEach((r, index) => {
-                total += r.total;
-                if(r.pay === 'โอนเงิน') trans += r.total; else cash += r.total;
+            data.forEach((r, idx) => {
+                sumTotal += r.total;
+                if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
                 
                 r.items.forEach(it => {
-                    if(it.svc === 'สระผม') wash++;
-                    if(it.svc === 'โกนหนวด') shave++;
-                    if(it.svc === 'ย้อมผม') color++;
+                    if(it.svc === 'สระผม') cWash++;
+                    if(it.svc === 'โกนหนวด') cShave++;
+                    if(it.svc === 'ย้อมผม') cColor++;
                 });
 
-                histList.innerHTML += `
-                    <div class="history-card">
-                        <div class="hist-info">
-                            <span style="font-size:0.7rem;">#${index+1}</span>
-                            <b>${r.items.map(i => i.svc).join(' + ')}</b>
-                            <span>${r.time} | ${r.items[0].style}</span>
+                container.innerHTML += `
+                    <div class="hist-card">
+                        <div>
+                            <div style="font-weight:600; font-size:1rem;">${r.items.map(i=>i.svc).join('+')}</div>
+                            <div style="font-size:0.75rem; color:var(--sub);">${r.time} | ${r.items[0].style}</div>
                         </div>
-                        <div class="hist-price">
-                            <b>฿${r.total}</b>
-                            <div style="font-size:0.6rem; color:#94a3b8;">${r.pay}</div>
+                        <div style="text-align:right; display:flex; align-items:center;">
+                            <div style="margin-right:10px;">
+                                <div style="font-weight:700; color:var(--primary);">฿${r.total}</div>
+                                <div style="font-size:0.6rem; color:var(--sub);">${r.pay}</div>
+                            </div>
+                            <i class="fas fa-trash-alt hist-del" onclick="delItem(${r.id})"></i>
                         </div>
-                        <i class="fas fa-trash-alt btn-del" onclick="deleteItem(${r.id})"></i>
                     </div>
                 `;
             });
 
-            // สูตรคำนวณ
-            let barberIncome = 0;
-            if(config.mode === 'percent') {
-                barberIncome = (total * config.percent) / 100;
-            } else {
-                barberIncome = Math.max(config.guarantee, (total * 50) / 100); // ตัวอย่างประกันรายได้เทียบกับ 50%
-            }
-            
-            const shopIncome = total - barberIncome;
-            const settle = cash - barberIncome;
+            // สูตรคำนวณเงิน
+            let barber = (cfg.mode === 'percent') ? (sumTotal * cfg.percent / 100) : Math.max(cfg.guarantee, (sumTotal * 0.5));
+            let shop = sumTotal - barber;
+            let settle = sumCash - barber;
 
-            document.getElementById('sum-total').innerText = total.toLocaleString();
-            document.getElementById('sum-count').innerText = todayData.length;
-            document.getElementById('sum-transfer').innerText = trans.toLocaleString();
-            document.getElementById('sum-barber').innerText = barberIncome.toLocaleString();
-            document.getElementById('sum-shop').innerText = shopIncome.toLocaleString();
-            document.getElementById('count-wash').innerText = wash;
-            document.getElementById('count-shave').innerText = shave;
-            document.getElementById('count-color').innerText = color;
+            document.getElementById('r-total').innerText = sumTotal.toLocaleString();
+            document.getElementById('r-count').innerText = data.length;
+            document.getElementById('r-trans').innerText = sumTrans.toLocaleString();
+            document.getElementById('r-barber').innerText = barber.toLocaleString();
+            document.getElementById('r-shop').innerText = shop.toLocaleString();
+            document.getElementById('c-wash').innerText = cWash;
+            document.getElementById('c-shave').innerText = cShave;
+            document.getElementById('c-color').innerText = cColor;
 
-            const statusBox = document.getElementById('status-strip');
+            const bar = document.getElementById('status-bar');
             if(settle > 0) {
-                statusBox.innerText = `ช่างคืนเงินร้าน ฿${settle.toLocaleString()}`;
-                statusBox.className = "status-strip status-orange";
+                bar.innerText = `ช่างคืนเงินร้าน ฿${settle.toLocaleString()}`;
+                bar.className = 'status-bar orange';
             } else if (settle < 0) {
-                statusBox.innerText = `ร้านคืนเงินช่าง ฿${Math.abs(settle).toLocaleString()}`;
-                statusBox.className = "status-strip status-blue";
+                bar.innerText = `ร้านคืนเงินช่าง ฿${Math.abs(settle).toLocaleString()}`;
+                bar.className = 'status-bar blue';
             } else {
-                statusBox.innerText = "ยอดเงินเคลียร์พอดี";
-                statusBox.className = "status-strip status-green";
+                bar.innerText = 'ยอดเงินเคลียร์พอดี';
+                bar.className = 'status-bar green';
             }
         }
 
-        function deleteItem(id) {
+        function delItem(id) {
             if(confirm('ลบรายการนี้?')) {
                 db = db.filter(r => r.id !== id);
-                localStorage.setItem('barber_v4_db', JSON.stringify(db));
+                localStorage.setItem('barber_v5_db', JSON.stringify(db));
                 renderReport();
             }
         }
 
-        function clearAll() {
-            if(confirm('ล้างข้อมูลทั้งหมด?')) {
-                localStorage.removeItem('barber_v4_db');
+        function clearData() {
+            if(confirm('⚠️ ลบข้อมูลทั้งหมดถาวร?')) {
+                localStorage.removeItem('barber_v5_db');
                 location.reload();
             }
         }
