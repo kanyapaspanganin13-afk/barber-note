@@ -212,240 +212,247 @@
         <div class="nav-item" id="n-set" onclick="showPage('set')"><i class="fas fa-cog"></i><span>ตั้งค่า</span></div>
     </nav>
 
-    <script>
-        const svcs = ["", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
-        const styles = ["", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
-        
-        let db = JSON.parse(localStorage.getItem('barber_v6_db') || '[]');
-        let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","mode":"percent","percent":50,"guarantee":300,"font":"16px","primary":"#2b459a","bg":"#f8fafc"}');
-        let payType = 'เงินสด';
+   <script>
+    const svcs = ["", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
+    const styles = ["", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
+    
+    let db = JSON.parse(localStorage.getItem('barber_v6_db') || '[]');
+    let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","mode":"percent","percent":50,"guarantee":300,"font":"16px","primary":"#2b459a","bg":"#f8fafc"}');
+    let payType = 'เงินสด';
 
-        window.onload = () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('rec-date-raw').value = today;
-            document.getElementById('hist-date-select').value = today;
-            document.getElementById('rec-start').value = new Date().toTimeString().slice(0,5);
-            applyConfig();
-            addSvcRow();
-        };
+    window.onload = () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('rec-date-raw').value = today;
+        document.getElementById('hist-date-select').value = today;
+        document.getElementById('rec-start').value = new Date().toTimeString().slice(0,5);
+        applyConfig();
+        addSvcRow();
+    };
 
-        function addSvcRow() {
-            const container = document.getElementById('svc-list');
-            const div = document.createElement('div');
-            div.className = 'svc-item';
-            div.innerHTML = `
-                <select class="i-svc">${svcs.map(s => `<option value="${s}">${s}</option>`).join('')}</select>
-                <select class="i-style">${styles.map(s => `<option value="${s}">${s}</option>`).join('')}</select>
-                <input type="number" class="i-price" placeholder="ราคา" value="${container.children.length === 0 ? '150' : ''}">
-                <div class="btn-remove-row" onclick="removeSvcRow(this)"><i class="fas fa-times-circle"></i></div>
-            `;
-            container.appendChild(div);
+    function addSvcRow() {
+        const container = document.getElementById('svc-list');
+        const div = document.createElement('div');
+        div.className = 'svc-item';
+        div.innerHTML = `
+            <select class="i-svc">${svcs.map(s => `<option value="${s}">${s}</option>`).join('')}</select>
+            <select class="i-style">${styles.map(s => `<option value="${s}">${s}</option>`).join('')}</select>
+            <input type="number" class="i-price" placeholder="ราคา" value="${container.children.length === 0 ? '150' : ''}">
+            <div class="btn-remove-row" onclick="removeSvcRow(this)"><i class="fas fa-times-circle"></i></div>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeSvcRow(el) {
+        const container = document.getElementById('svc-list');
+        if (container.children.length > 1) {
+            el.parentElement.remove();
+        } else {
+            const row = el.parentElement;
+            row.querySelector('.i-svc').value = "";
+            row.querySelector('.i-style').value = "";
+            row.querySelector('.i-price').value = "";
         }
+    }
 
-        function removeSvcRow(el) {
-            const container = document.getElementById('svc-list');
-            if (container.children.length > 1) {
-                el.parentElement.remove();
-            } else {
-                const row = el.parentElement;
-                row.querySelector('.i-svc').value = "";
-                row.querySelector('.i-style').value = "";
-                row.querySelector('.i-price').value = "";
-            }
-        }
+    function applyConfig() {
+        const shopNames = ['head-shop-rec', 'head-shop-rep', 'head-shop-hist'];
+        shopNames.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.innerText = cfg.name;
+        });
+        document.getElementById('s-name').value = cfg.name;
+        document.getElementById('s-mode').value = cfg.mode;
+        document.getElementById('s-percent').value = cfg.percent;
+        document.getElementById('s-guarantee').value = cfg.guarantee;
+        document.getElementById('s-font').value = cfg.font;
+        document.documentElement.style.setProperty('--primary', cfg.primary);
+        document.documentElement.style.setProperty('--bg', cfg.bg);
+        document.documentElement.style.setProperty('--font-size', cfg.font);
+    }
 
-        function applyConfig() {
-            const shopNames = ['head-shop-rec', 'head-shop-rep', 'head-shop-hist'];
-            shopNames.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.innerText = cfg.name;
-            });
-            document.getElementById('s-name').value = cfg.name;
-            document.getElementById('s-mode').value = cfg.mode;
-            document.getElementById('s-percent').value = cfg.percent;
-            document.getElementById('s-guarantee').value = cfg.guarantee;
-            document.getElementById('s-font').value = cfg.font;
-            document.documentElement.style.setProperty('--primary', cfg.primary);
-            document.documentElement.style.setProperty('--bg', cfg.bg);
-            document.documentElement.style.setProperty('--font-size', cfg.font);
-        }
+    function updateConfig() {
+        cfg.name = document.getElementById('s-name').value || "BARBER SHOP";
+        cfg.mode = document.getElementById('s-mode').value;
+        cfg.percent = parseInt(document.getElementById('s-percent').value) || 0;
+        cfg.guarantee = parseInt(document.getElementById('s-guarantee').value) || 0;
+        cfg.font = document.getElementById('s-font').value;
+        localStorage.setItem('barber_v6_cfg', JSON.stringify(cfg));
+        applyConfig();
+    }
 
-        function updateConfig() {
-            cfg.name = document.getElementById('s-name').value || "BARBER SHOP";
-            cfg.mode = document.getElementById('s-mode').value;
-            cfg.percent = parseInt(document.getElementById('s-percent').value) || 0;
-            cfg.guarantee = parseInt(document.getElementById('s-guarantee').value) || 0;
-            cfg.font = document.getElementById('s-font').value;
-            localStorage.setItem('barber_v6_cfg', JSON.stringify(cfg));
-            applyConfig();
-        }
+    function setTheme(p, b) {
+        cfg.primary = p; cfg.bg = b; updateConfig();
+    }
 
-        function setTheme(p, b) {
-            cfg.primary = p; cfg.bg = b; updateConfig();
-        }
+    function setPay(t) {
+        payType = t;
+        document.getElementById('p-cash').classList.toggle('active', t === 'เงินสด');
+        document.getElementById('p-trans').classList.toggle('active', t === 'โอนเงิน');
+    }
 
-        function setPay(t) {
-            payType = t;
-            document.getElementById('p-cash').classList.toggle('active', t === 'เงินสด');
-            document.getElementById('p-trans').classList.toggle('active', t === 'โอนเงิน');
-        }
-
-        function saveRecord() {
-            const rows = document.querySelectorAll('.svc-item');
-            let items = []; let total = 0;
-            rows.forEach(r => {
-                const p = parseInt(r.querySelector('.i-price').value) || 0;
-                if(p > 0) {
-                    items.push({ 
-                        svc: r.querySelector('.i-svc').value, 
-                        style: r.querySelector('.i-style').value, 
-                        price: p 
-                    });
-                    total += p;
-                }
-            });
-            if(total === 0) return alert('กรุณาใส่ราคา');
-            const entry = {
-                id: Date.now(),
-                date: document.getElementById('rec-date-raw').value,
-                time: document.getElementById('rec-start').value + '-' + (document.getElementById('rec-end').value || '??'),
-                items: items, total: total, pay: payType
-            };
-            db.push(entry);
-            localStorage.setItem('barber_v6_db', JSON.stringify(db));
-            const btn = document.getElementById('btn-save');
-            btn.classList.add('success');
-            btn.innerHTML = '<i class="fas fa-check"></i> บันทึกสำเร็จ';
-            setTimeout(() => {
-                btn.classList.remove('success');
-                btn.innerHTML = 'SAVE RECORD';
-                document.getElementById('svc-list').innerHTML = '';
-                addSvcRow();
-            }, 1000);
-        }
-
-        function showPage(p) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.getElementById('page-' + p).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const el = document.getElementById('n-' + p);
-            if(el) el.classList.add('active');
-            if(p === 'rep') renderReport();
-            if(p === 'history') renderHistoryPage();
-        }
-
-        function formatDateBE(dateStr) {
-            const d = new Date(dateStr);
-            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            return `${d.getDate()} ${months[d.getMonth()]}  ${d.getFullYear() + 543}`;
-        }
-
-        function renderReport() {
-            const targetDate = document.getElementById('rec-date-raw').value;
-            renderDataView(targetDate, 'hist-container', 'r-total', 'r-count', 'r-trans', 'r-barber', 'r-shop', 'c-wash', 'c-shave', 'c-color', 'status-bar', 'rep-date-th');
-        }
-
-        function renderHistoryPage() {
-            const targetDate = document.getElementById('hist-date-select').value;
-            renderDataView(targetDate, 'hist-page-container', null, null, null, null, null, null, null, null, null, null);
-        }
-
-        function renderDataView(date, containerId, totalId, countId, transId, barberId, shopId, washId, shaveId, colorId, statusId, dateDisplayId) {
-            const data = db.filter(r => r.date === date);
-            let sumTotal = 0, sumTrans = 0, sumCash = 0, cWash = 0, cShave = 0, cColor = 0;
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            if(dateDisplayId) document.getElementById(dateDisplayId).innerText = formatDateBE(date);
-
-            data.forEach((r) => {
-                sumTotal += r.total;
-                const isTrans = r.pay === 'โอนเงิน';
-                const payColor = isTrans ? '#2b459a' : '#f59e0b';
-                const payBg = isTrans ? '#eef2ff' : '#fff7ed';
-
-                if(isTrans) sumTrans += r.total; else sumCash += r.total;
-                
-                r.items.forEach(it => {
-                    if(it.svc === 'โกนหนวด') cShave++;
-                    if(it.svc === 'สระผม') cWash++;
-                    if(it.svc === 'ย้อมผม') cColor++;
+    function saveRecord() {
+        const rows = document.querySelectorAll('.svc-item');
+        let items = []; let total = 0;
+        rows.forEach(r => {
+            const p = parseInt(r.querySelector('.i-price').value) || 0;
+            if(p > 0) {
+                items.push({ 
+                    svc: r.querySelector('.i-svc').value, 
+                    style: r.querySelector('.i-style').value, 
+                    price: p 
                 });
+                total += p;
+            }
+        });
+        if(total === 0) return alert('กรุณาใส่ราคา');
+        const entry = {
+            id: Date.now(),
+            date: document.getElementById('rec-date-raw').value,
+            time: document.getElementById('rec-start').value + '-' + (document.getElementById('rec-end').value || '??'),
+            items: items, total: total, pay: payType
+        };
+        db.push(entry);
+        localStorage.setItem('barber_v6_db', JSON.stringify(db));
+        const btn = document.getElementById('btn-save');
+        btn.classList.add('success');
+        btn.innerHTML = '<i class="fas fa-check"></i> บันทึกสำเร็จ';
+        setTimeout(() => {
+            btn.classList.remove('success');
+            btn.innerHTML = 'SAVE RECORD';
+            document.getElementById('svc-list').innerHTML = '';
+            addSvcRow();
+        }, 1000);
+    }
 
-                container.innerHTML += `
-                    <div class="hist-card" style="border-left: 5px solid ${payColor}; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
-                        <div style="flex: 1;">
-                            <div style="font-weight:600; font-size: 1rem; color: var(--text);">
-                                ${r.items.map(i=> (i.svc === '' ? '' : i.svc) + (i.style === '' ? '' : ' '+i.style)).join(' + ')}
-                            </div>
-                            <div style="font-size:0.75rem; color:var(--sub); margin-top: 2px;">
-                                <i class="far fa-clock"></i> ${r.time}
-                            </div>
+    function showPage(p) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.getElementById('page-' + p).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const el = document.getElementById('n-' + p);
+        if(el) el.classList.add('active');
+        if(p === 'rep') renderReport();
+        if(p === 'history') renderHistoryPage();
+    }
+
+    function formatDateBE(dateStr) {
+        const d = new Date(dateStr);
+        const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+        return `${d.getDate()} ${months[d.getMonth()]}  ${d.getFullYear() + 543}`;
+    }
+
+    function renderReport() {
+        const targetDate = document.getElementById('rec-date-raw').value;
+        renderDataView(targetDate, 'hist-container', 'r-total', 'r-count', 'r-trans', 'r-barber', 'r-shop', 'c-wash', 'c-shave', 'c-color', 'status-bar', 'rep-date-th');
+    }
+
+    function renderHistoryPage() {
+        const targetDate = document.getElementById('hist-date-select').value;
+        renderDataView(targetDate, 'hist-page-container', null, null, null, null, null, null, null, null, null, null);
+    }
+
+    function renderDataView(date, containerId, totalId, countId, transId, barberId, shopId, washId, shaveId, colorId, statusId, dateDisplayId) {
+        const data = db.filter(r => r.date === date);
+        let sumTotal = 0, sumTrans = 0, sumCash = 0, cWash = 0, cShave = 0, cColor = 0;
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        if(dateDisplayId) document.getElementById(dateDisplayId).innerText = formatDateBE(date);
+
+        data.forEach((r) => {
+            sumTotal += r.total;
+            const isTrans = r.pay === 'โอนเงิน';
+            const payColor = isTrans ? '#2b459a' : '#f59e0b';
+            const payBg = isTrans ? '#eef2ff' : '#fff7ed';
+
+            if(isTrans) sumTrans += r.total; else sumCash += r.total;
+            
+            r.items.forEach(it => {
+                if(it.svc === 'โกนหนวด') cShave++;
+                if(it.svc === 'สระผม') cWash++;
+                if(it.svc === 'ย้อมผม') cColor++;
+            });
+
+            container.innerHTML += `
+                <div class="hist-card" style="border-left: 5px solid ${payColor}; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <div style="flex: 1;">
+                        <div style="font-weight:600; font-size: 1rem; color: var(--text);">
+                            ${r.items.map(i=> (i.svc === '' ? '' : i.svc) + (i.style === '' ? '' : ' '+i.style)).join(' + ')}
                         </div>
-                        <div style="text-align:right; display:flex; align-items:center;">
-                            <div style="margin-right:12px;">
-                                <div style="font-weight:700; color:${payColor}; font-size: 1.15rem;">฿${r.total.toLocaleString()}</div>
-                                <div style="display:inline-block; font-size:0.65rem; padding: 2px 8px; border-radius: 50px; background: ${payBg}; color: ${payColor}; font-weight:bold; border: 1px solid ${payColor}33;">
-                                    ${r.pay}
-                                </div>
-                            </div>
-                            <i class="fas fa-trash-alt hist-del" style="font-size: 1rem; color: var(--red); opacity: 0.4;" onclick="delItem(${r.id}, '${date}')"></i>
+                        <div style="font-size:0.75rem; color:var(--sub); margin-top: 2px;">
+                            <i class="far fa-clock"></i> ${r.time}
                         </div>
                     </div>
-                `;
-            });
+                    <div style="text-align:right; display:flex; align-items:center;">
+                        <div style="margin-right:12px;">
+                            <div style="font-weight:700; color:${payColor}; font-size: 1.15rem;">฿${r.total.toLocaleString()}</div>
+                            <div style="display:inline-block; font-size:0.65rem; padding: 2px 8px; border-radius: 50px; background: ${payBg}; color: ${payColor}; font-weight:bold; border: 1px solid ${payColor}33;">
+                                ${r.pay}
+                            </div>
+                        </div>
+                        <i class="fas fa-trash-alt hist-del" style="font-size: 1rem; color: var(--red); opacity: 0.4;" onclick="delItem(${r.id}, '${date}')"></i>
+                    </div>
+                </div>
+            `;
+        });
 
-            if (data.length === 0) container.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">ไม่มีข้อมูล</div>';
+        if (data.length === 0) container.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">ไม่มีข้อมูล</div>';
 
-            let barber = 0;
-            if(cfg.mode === 'percent') {
-                let calcPercent = (sumTotal * cfg.percent / 100);
-                barber = (sumTotal > 0 && calcPercent < cfg.guarantee) ? cfg.guarantee : calcPercent;
+        // ✅ แก้ไขตรรกะใหม่: จ่ายเปอร์เซ็นต์แต่ไม่ต่ำกว่าประกัน (แสดงยอดประกันทันทีแม้ลูกค้าเป็น 0)
+        let barber = 0;
+        if(cfg.mode === 'percent') {
+            // สูตร: เลือกค่าที่มากที่สุดระหว่าง ประกัน กับ (ยอดรวม * เปอร์เซ็นต์)
+            barber = Math.max(cfg.guarantee, (sumTotal * cfg.percent / 100));
+        } else {
+            // โหมดประกันฟิกซ์: จ่ายยอดประกันทันที
+            barber = cfg.guarantee;
+        }
+
+        let shop = sumTotal - barber;
+        let settle = sumCash - barber;
+
+        if(totalId) document.getElementById(totalId).innerText = sumTotal.toLocaleString();
+        if(countId) document.getElementById(countId).innerText = data.length;
+        if(transId) document.getElementById(transId).innerText = sumTrans.toLocaleString();
+        if(barberId) document.getElementById(barberId).innerText = Math.floor(barber).toLocaleString();
+        if(shopId) document.getElementById(shopId).innerText = Math.floor(shop).toLocaleString();
+        if(washId) document.getElementById(washId).innerText = cWash;
+        if(shaveId) document.getElementById(shaveId).innerText = cShave;
+        if(colorId) document.getElementById(colorId).innerText = cColor;
+
+        if(statusId) {
+            const bar = document.getElementById(statusId);
+            // กรณีไม่มีลูกค้า แต่ต้องแจ้งประกันรายที่ต้องจ่าย
+            if(sumTotal === 0) { 
+                bar.innerText = `ประกันรายได้วันนี้ ฿${barber.toLocaleString()}`; 
+                bar.className = "status-bar blue"; 
+                return; 
+            }
+            
+            if(settle > 0) {
+                bar.innerText = `ช่างคืนร้าน ฿${settle.toLocaleString()}`;
+                bar.className = 'status-bar orange';
+            } else if (settle < 0) {
+                bar.innerText = `ร้านคืนช่าง ฿${Math.abs(settle).toLocaleString()}`;
+                bar.className = 'status-bar blue';
             } else {
-                barber = (sumTotal > 0) ? cfg.guarantee : 0;
-            }
-            let shop = sumTotal - barber;
-            let settle = sumCash - barber;
-
-            if(totalId) document.getElementById(totalId).innerText = sumTotal.toLocaleString();
-            if(countId) document.getElementById(countId).innerText = data.length;
-            if(transId) document.getElementById(transId).innerText = sumTrans.toLocaleString();
-            if(barberId) document.getElementById(barberId).innerText = Math.floor(barber).toLocaleString();
-            if(shopId) document.getElementById(shopId).innerText = Math.floor(shop).toLocaleString();
-            if(washId) document.getElementById(washId).innerText = cWash;
-            if(shaveId) document.getElementById(shaveId).innerText = cShave;
-            if(colorId) document.getElementById(colorId).innerText = cColor;
-
-            if(statusId) {
-                const bar = document.getElementById(statusId);
-                if(sumTotal === 0) { bar.innerText = "ยังไม่มีความเคลื่อนไหว"; bar.className = "status-bar"; return; }
-                if(settle > 0) {
-                    bar.innerText = `ช่างคืนร้าน ฿${settle.toLocaleString()}`;
-                    bar.className = 'status-bar orange';
-                } else if (settle < 0) {
-                    bar.innerText = `ร้านคืนช่าง ฿${Math.abs(settle).toLocaleString()}`;
-                    bar.className = 'status-bar blue';
-                } else {
-                    bar.innerText = 'ยอดพอดีไม่ต้องเคลียร์'; bar.className = 'status-bar green';
-                }
+                bar.innerText = 'ยอดพอดีไม่ต้องเคลียร์'; bar.className = 'status-bar green';
             }
         }
+    }
 
-        function delItem(id, date) {
-            if(confirm('ลบรายการนี้?')) {
-                db = db.filter(r => r.id !== id);
-                localStorage.setItem('barber_v6_db', JSON.stringify(db));
-                renderReport(); renderHistoryPage();
-            }
+    function delItem(id, date) {
+        if(confirm('ลบรายการนี้?')) {
+            db = db.filter(r => r.id !== id);
+            localStorage.setItem('barber_v6_db', JSON.stringify(db));
+            renderReport(); renderHistoryPage();
         }
+    }
 
-        function clearData() {
-            if(confirm('ล้างข้อมูลทั้งหมดของวันนี้?')) {
-                const today = document.getElementById('rec-date-raw').value;
-                db = db.filter(r => r.date !== today);
-                localStorage.setItem('barber_v6_db', JSON.stringify(db));
-                renderReport();
-            }
+    function clearData() {
+        if(confirm('ล้างข้อมูลทั้งหมดของวันนี้?')) {
+            const today = document.getElementById('rec-date-raw').value;
+            db = db.filter(r => r.date !== today);
+            localStorage.setItem('barber_v6_db', JSON.stringify(db));
+            renderReport();
         }
-    </script>
-</body>
-</html>
+    }
+</script>
