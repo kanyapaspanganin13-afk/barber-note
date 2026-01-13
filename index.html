@@ -3,195 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Barber Pro Station</title>
+    <title>Barber Manager Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1a2a40; --accent: #c5a059; --bg: #f4f7f9; --card: #ffffff; --text: #1a2a40; --sub: #8e8e93; }
-        body.theme-dark { --primary: #1c1c1e; --accent: #ccff00; --bg: #000000; --card: #2c2c2e; --text: #ffffff; }
-        body.theme-grey { --primary: #3a3a3c; --accent: #5ac8fa; --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; }
-
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; transition: 0.3s; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         
-        /* Header */
-        .app-header { background: var(--primary); color: white; text-align: center; padding: 20px 15px; border-bottom: 2px solid var(--accent); }
-        .app-header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 1px; }
+        /* Header ปรับปุ่มตั้งค่ามาไว้ข้างบน */
+        .app-header { background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 1000; }
+        .app-header h1 { margin: 0; font-size: 1.1rem; text-transform: uppercase; }
+        .btn-cfg-small { background: rgba(255,255,255,0.15); border: none; color: white; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; }
 
         .container { padding: 15px; max-width: 500px; margin: auto; }
         .page { display: none; }
         .page.active { display: block; }
 
-        /* Input Styles */
-        .input-box { background: var(--card); border-radius: 12px; border: 1px solid #e5e5ea; padding: 10px 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .input-box { background: var(--card); border-radius: 12px; border: 1px solid #e5e5ea; padding: 10px 15px; margin-bottom: 12px; }
         .input-box label { display: block; font-size: 0.7rem; color: var(--sub); margin-bottom: 4px; font-weight: bold; }
         .input-box input, .input-box select { width: 100%; border: none; font-size: 1.1rem; font-weight: 500; background: transparent; color: var(--text); outline: none; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* Service Quick Buttons */
+        /* บริการเสริม (Pills) */
+        .svc-label { font-size: 0.8rem; font-weight: bold; color: var(--sub); margin-bottom: 8px; display: block; }
         .svc-pills { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .pill { background: var(--card); border: 1px solid #ddd; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; cursor: pointer; transition: 0.2s; }
+        .pill { background: var(--card); border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; }
         .pill.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* Payment Buttons */
-        .pay-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
-        .pay-btn { background: var(--card); border: 1px solid #e5e5ea; border-radius: 12px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .total-banner { background: var(--primary); color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 15px; }
+        .total-banner span { color: var(--accent); font-size: 1.5rem; }
+
+        .pay-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .pay-btn { background: var(--card); border: 1px solid #ddd; border-radius: 12px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; }
         .pay-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 10px; }
+        .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; }
 
-        /* Summary Card */
-        .summary-card { background: var(--primary); color: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .sum-row-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-        .sum-row-main b { font-size: 2rem; color: var(--accent); }
-        .sum-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; }
-        .sum-item span { font-size: 0.7rem; opacity: 0.7; display: block; margin-bottom: 5px; }
-        .sum-item b { font-size: 1.1rem; }
+        /* รายงานประจำวัน */
+        .summary-card { background: var(--primary); color: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .sum-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 15px; }
+        .sum-val { font-size: 1.8rem; font-weight: bold; color: var(--accent); }
 
-        /* Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; height: 80px; z-index: 100; }
-        .nav-item { text-align: center; color: #8e8e93; font-size: 0.75rem; font-weight: bold; cursor: pointer; flex: 1; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; height: 80px; }
+        .nav-item { text-align: center; color: #8e8e93; font-size: 0.75rem; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--primary); }
         .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
 
-        /* History */
-        .hist-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border: 1px solid #efefef; }
-        .hist-num { background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
-        .hist-info { flex: 1; }
-        .hist-info h4 { margin: 0; font-size: 1rem; }
-        .hist-info p { margin: 0; font-size: 0.75rem; color: var(--sub); }
-        .hist-right { text-align: right; }
-        .hist-del { color: #ff3b30; opacity: 0.3; padding: 10px; }
+        .hist-card { background: var(--card); border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #efefef; }
     </style>
 </head>
 <body>
 
     <div class="app-header">
-        <h1 id="shop-name-display">BARBER STATION</h1>
+        <h1 id="shop-name">LA-MOON CUT</h1>
+        <button class="btn-cfg-small" onclick="goPage('settings')"><i class="fas fa-cog"></i></button>
     </div>
 
     <div class="container">
         <div id="page-record" class="page active">
-            <div class="input-box"><label>วันที่</label><input type="text" id="disp-date" readonly></div>
-            <div class="grid-2">
-                <div class="input-box"><label>เวลาเริ่ม</label><input type="time" id="t-start"></div>
-                <div class="input-box"><label>เวลาเสร็จ</label><input type="time" id="t-end"></div>
-            </div>
+            <div class="input-box"><label>วันที่ทำงาน</label><input type="text" id="disp-date" readonly></div>
             
-            <label style="font-size: 0.75rem; font-weight: bold; color: var(--sub); margin-bottom: 8px; display: block;">บริการเสริม (เลือกได้หลายรายการ)</label>
+            <span class="svc-label">บริการเสริม (ราคาจะบวกเพิ่มอัตโนมัติ)</span>
             <div class="svc-pills">
-                <div class="pill" onclick="toggleSvc('สระ', this)">สระ</div>
-                <div class="pill" onclick="toggleSvc('โกน', this)">โกน</div>
-                <div class="pill" onclick="toggleSvc('กันหน้า', this)">กันหน้า</div>
-                <div class="pill" onclick="toggleSvc('แก้ผม', this)">แก้ผม</div>
+                <div class="pill" onclick="toggleExtra('สระ', 20, this)">สระ (+20)</div>
+                <div class="pill" onclick="toggleExtra('โกน', 40, this)">โกน (+40)</div>
+                <div class="pill" onclick="toggleExtra('กันหน้า', 30, this)">กันหน้า (+30)</div>
+                <div class="pill" onclick="toggleExtra('แก้ผม', 50, this)">แก้ผม (+50)</div>
             </div>
 
-            <div class="input-box" style="border: 2px solid var(--primary);"><label>บริการหลัก</label><select id="svc-main"></select></div>
-            <div class="input-box"><label>ทรงผม</label><select id="style-main"></select></div>
-            <div class="input-box"><label>ราคา (บาท)</label><input type="number" id="amt" value="150"></div>
+            <div class="input-box"><label>บริการหลัก</label>
+                <select id="svc-main">
+                    <option value="ตัดผม">ตัดผม</option><option value="สระผม">สระผม</option><option value="ย้อมผม">ย้อมผม</option>
+                </select>
+            </div>
+            <div class="input-box"><label>ทรงผม</label>
+                <select id="style-main">
+                    <option value="รองทรง">รองทรง</option><option value="สกินเฟด">สกินเฟด</option><option value="ทูบล็อค">ทูบล็อค</option>
+                </select>
+            </div>
+            <div class="input-box"><label>ราคาปกติ (บาท)</label><input type="number" id="amt-main" value="150" oninput="calcTotal()"></div>
             
+            <div class="total-banner">ยอดเงินรวม: <span id="total-text">150</span> บาท</div>
+
             <div class="pay-group">
-                <div id="p-cash" class="pay-btn active" onclick="setPay('เงินสด')"><i class="fas fa-money-bill-wave"></i>เงินสด</div>
-                <div id="p-tran" class="pay-btn" onclick="setPay('โอนเงิน')"><i class="fas fa-qrcode"></i>โอนเงิน</div>
+                <div id="p-cash" class="pay-btn active" onclick="setPay('เงินสด')">เงินสด</div>
+                <div id="p-tran" class="pay-btn" onclick="setPay('โอนเงิน')">โอนเงิน</div>
             </div>
             <button class="btn-save" onclick="doSave()">SAVE RECORD</button>
         </div>
 
         <div id="page-report" class="page">
             <div class="summary-card">
-                <div class="sum-row-main">
-                    <div><span id="res-date">--</span><span id="res-count-label">ลูกค้า 0 คน / 0 งาน</span></div>
-                    <b id="res-total">฿0</b>
+                <div style="display:flex; justify-content:space-between;">
+                    <div><small>วันที่</small><br><b id="res-date">--</b></div>
+                    <div style="text-align:right;"><small>ลูกค้า</small><br><b id="res-count">0</b> คน</div>
+                </div>
+                <div style="text-align:center; margin-top:10px;">
+                    <small>ยอดเงินรวมทั้งหมด</small><br><span class="sum-val" id="res-total">฿0</span>
                 </div>
                 <div class="sum-grid">
-                    <div class="sum-item"><span>เงินโอน</span><b style="color:#5ac8fa" id="res-tran">0</b></div>
-                    <div class="sum-item"><span>รายได้ช่าง</span><b style="color:var(--accent)" id="res-barber">0</b></div>
-                    <div class="sum-item"><span>รายได้ร้าน</span><b id="res-shop">0</b></div>
+                    <div><small>เงินโอน</small><br><b id="res-tran">0</b></div>
+                    <div><small>รายได้ช่าง</small><br><b id="res-barber" style="color:var(--accent)">0</b></div>
+                    <div><small>ส่งร้าน</small><br><b id="res-shop">0</b></div>
                 </div>
             </div>
             <div id="history-list"></div>
         </div>
 
         <div id="page-settings" class="page">
-            <h3 style="margin-top:0;">ตั้งค่าระบบ</h3>
-            <div class="input-box"><label>ชื่อร้าน / สาขา</label><input type="text" id="cfg-shop" oninput="updateSettings()"></div>
-            
-            <h4 style="color:var(--accent); margin-bottom:10px;">สูตรคำนวณรายได้</h4>
-            <div class="grid-2">
-                <div class="input-box"><label>ประกันมือ (บาท)</label><input type="number" id="cfg-min" onchange="updateSettings()"></div>
-                <div class="input-box"><label>ส่วนแบ่งช่าง (%)</label><input type="number" id="cfg-rate" onchange="updateSettings()"></div>
-            </div>
-
-            <div class="input-box">
-                <label>โทนสีแอป</label>
-                <select id="cfg-theme" onchange="updateSettings()">
-                    <option value="default">LA-MOON Blue</option>
-                    <option value="dark">Lime Dark</option>
-                    <option value="grey">Grey Premium</option>
-                </select>
-            </div>
-            <button class="btn-save" style="background:#ff3b30; margin-top:30px;" onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
+            <h3>ตั้งค่าระบบ</h3>
+            <div class="input-box"><label>ชื่อร้าน</label><input type="text" id="cfg-shop" oninput="saveCfg()"></div>
+            <div class="input-box"><label>ประกันมือ (บาท)</label><input type="number" id="cfg-min" onchange="saveCfg()"></div>
+            <div class="input-box"><label>ส่วนแบ่งช่าง (%)</label><input type="number" id="cfg-rate" onchange="saveCfg()"></div>
+            <button class="btn-save" style="background:#ff3b30;" onclick="clearAll()">ล้างข้อมูลงานทั้งหมด</button>
         </div>
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="goPage('record', this)"><i class="fas fa-cut"></i>บันทึก</div>
-        <div class="nav-item" onclick="goPage('report', this)"><i class="fas fa-chart-line"></i>รายงาน</div>
-        <div class="nav-item" onclick="goPage('settings', this)"><i class="fas fa-cog"></i>ตั้งค่า</div>
+        <div class="nav-item active" id="nav-record" onclick="goPage('record')"><i class="fas fa-edit"></i>บันทึก</div>
+        <div class="nav-item" id="nav-report" onclick="goPage('report')"><i class="fas fa-chart-bar"></i>รายงาน</div>
     </nav>
 
     <script>
+        let extraAmt = 0;
         let currentPay = 'เงินสด';
-        let selectedExtras = [];
-        let db = JSON.parse(localStorage.getItem('barber_db_v9') || '[]');
-        let cfg = JSON.parse(localStorage.getItem('barber_cfg_v9') || '{"theme":"default","shop":"MY BARBER","min":400,"rate":50}');
-
-        const mainServices = ["ตัดผม", "สระผม", "ย้อมผม", "ยืด/ดัด", "อื่นๆ"];
-        const hairStyles = ["รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "วินเทจ", "ตำรวจ/ทหาร", "เปิดข้าง"];
+        let db = JSON.parse(localStorage.getItem('barber_pro_db') || '[]');
+        let cfg = JSON.parse(localStorage.getItem('barber_pro_cfg') || '{"shop":"LA-MOON CUT","min":400,"rate":50}');
 
         window.onload = () => {
-            initInputs();
-            applySettings();
+            document.getElementById('disp-date').value = new Date().toLocaleDateString('th-TH');
+            loadCfg();
         };
 
-        function initInputs() {
-            const now = new Date();
-            document.getElementById('disp-date').value = now.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'}).replace('พ.ศ.', 'BE');
-            document.getElementById('t-start').value = now.getHours().toString().padStart(2,'0')+":00";
-            document.getElementById('svc-main').innerHTML = mainServices.map(s => `<option value="${s}">${s}</option>`).join('');
-            document.getElementById('style-main').innerHTML = hairStyles.map(s => `<option value="${s}">${s}</option>`).join('');
-        }
-
-        function applySettings() {
-            document.body.className = 'theme-' + cfg.theme;
-            document.getElementById('shop-name-display').innerText = cfg.shop;
-            document.getElementById('cfg-shop').value = cfg.shop;
-            document.getElementById('cfg-min').value = cfg.min;
-            document.getElementById('cfg-rate').value = cfg.rate;
-            document.getElementById('cfg-theme').value = cfg.theme;
-        }
-
-        function updateSettings() {
-            cfg.shop = document.getElementById('cfg-shop').value;
-            cfg.min = parseInt(document.getElementById('cfg-min').value) || 0;
-            cfg.rate = parseInt(document.getElementById('cfg-rate').value) || 0;
-            cfg.theme = document.getElementById('cfg-theme').value;
-            localStorage.setItem('barber_cfg_v9', JSON.stringify(cfg));
-            applySettings();
-        }
-
-        function toggleSvc(name, el) {
+        function toggleExtra(name, price, el) {
             el.classList.toggle('active');
-            if(el.classList.contains('active')) selectedExtras.push(name);
-            else selectedExtras = selectedExtras.filter(x => x !== name);
+            if(el.classList.contains('active')) extraAmt += price;
+            else extraAmt -= price;
+            calcTotal();
         }
 
-        function goPage(p, el) {
-            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
-            document.getElementById('page-'+p).classList.add('active');
-            el.classList.add('active');
-            if(p === 'report') renderReport();
+        function calcTotal() {
+            let main = parseFloat(document.getElementById('amt-main').value) || 0;
+            document.getElementById('total-text').innerText = (main + extraAmt).toLocaleString();
         }
 
         function setPay(t) {
@@ -200,23 +154,40 @@
             document.getElementById(t === 'เงินสด' ? 'p-cash' : 'p-tran').classList.add('active');
         }
 
-        function doSave() {
-            let fullSvc = document.getElementById('svc-main').value;
-            if(selectedExtras.length > 0) fullSvc += " + " + selectedExtras.join(',');
+        function goPage(p) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            document.getElementById('page-'+p).classList.add('active');
+            if(p !== 'settings') document.getElementById('nav-'+p).classList.add('active');
+            if(p === 'report') renderReport();
+        }
 
+        function loadCfg() {
+            document.getElementById('shop-name').innerText = cfg.shop;
+            document.getElementById('cfg-shop').value = cfg.shop;
+            document.getElementById('cfg-min').value = cfg.min;
+            document.getElementById('cfg-rate').value = cfg.rate;
+        }
+
+        function saveCfg() {
+            cfg.shop = document.getElementById('cfg-shop').value;
+            cfg.min = parseInt(document.getElementById('cfg-min').value);
+            cfg.rate = parseInt(document.getElementById('cfg-rate').value);
+            localStorage.setItem('barber_pro_cfg', JSON.stringify(cfg));
+            document.getElementById('shop-name').innerText = cfg.shop;
+        }
+
+        function doSave() {
+            let mainAmt = parseFloat(document.getElementById('amt-main').value) || 0;
             db.push({
                 id: Date.now(),
                 date: new Date().toISOString().split('T')[0],
-                time: document.getElementById('t-start').value,
-                svc: fullSvc,
-                style: document.getElementById('style-main').value,
-                amt: parseFloat(document.getElementById('amt').value) || 0,
-                pay: currentPay,
-                minAtTime: cfg.min,
-                rateAtTime: cfg.rate
+                svc: document.getElementById('svc-main').value,
+                amt: mainAmt + extraAmt,
+                pay: currentPay
             });
-            localStorage.setItem('barber_db_v9', JSON.stringify(db));
-            alert('บันทึกสำเร็จ!');
+            localStorage.setItem('barber_pro_db', JSON.stringify(db));
+            alert('บันทึกสำเร็จ');
             location.reload();
         }
 
@@ -226,48 +197,27 @@
             let total = data.reduce((s, x) => s + x.amt, 0);
             let tran = data.filter(x => x.pay === 'โอนเงิน').reduce((s, x) => s + x.amt, 0);
 
-            // คำนวณตามสูตรประกันมือ
-            let shopShare = (total <= cfg.min) ? total/2 : (cfg.min/2) + ((total - cfg.min) * ((100 - cfg.rate)/100));
+            // คำนวณประกันมือ
+            let shopShare = (total <= cfg.min) ? total/2 : (cfg.min/2) + ((total - cfg.min) * ((100-cfg.rate)/100));
             let barberShare = total - shopShare;
 
-            document.getElementById('res-date').innerText = document.getElementById('disp-date').value;
-            document.getElementById('res-count-label').innerText = `ลูกค้า ${data.length} คน / ${data.length} งาน`;
-            document.getElementById('res-total').innerText = '฿' + total.toLocaleString();
+            document.getElementById('res-date').innerText = new Date().toLocaleDateString('th-TH');
+            document.getElementById('res-count').innerText = data.length;
+            document.getElementById('res-total').innerText = "฿" + total.toLocaleString();
             document.getElementById('res-tran').innerText = tran.toLocaleString();
             document.getElementById('res-barber').innerText = barberShare.toFixed(0);
             document.getElementById('res-shop').innerText = shopShare.toFixed(0);
 
-            let html = data.slice().reverse().map((x, i) => `
+            let html = data.reverse().map(x => `
                 <div class="hist-card">
-                    <div class="hist-num">${data.length - i}</div>
-                    <div class="hist-info">
-                        <h4>${x.svc}</h4>
-                        <p>${x.time} | ${x.style}</p>
-                    </div>
-                    <div class="hist-right">
-                        <b>฿${x.amt}</b>
-                        <span style="font-size:0.65rem; display:block; color:${x.pay==='เงินสด'?'#4cd964':'#5ac8fa'}">${x.pay}</span>
-                    </div>
-                    <i class="fas fa-trash hist-del" onclick="delItem(${x.id})"></i>
+                    <div><b>${x.svc}</b><br><small>${x.pay}</small></div>
+                    <div style="font-weight:bold; color:var(--primary)">฿${x.amt}</div>
                 </div>
             `).join('');
-            document.getElementById('history-list').innerHTML = html || '<p style="text-align:center; opacity:0.5; margin-top:50px;">ยังไม่มีข้อมูลวันนี้</p>';
+            document.getElementById('history-list').innerHTML = html || '<p style="text-align:center">ไม่มีข้อมูล</p>';
         }
 
-        function delItem(id) {
-            if(confirm('ลบรายการนี้?')) {
-                db = db.filter(x => x.id !== id);
-                localStorage.setItem('barber_db_v9', JSON.stringify(db));
-                renderReport();
-            }
-        }
-
-        function clearAll() {
-            if(confirm('ยืนยันการล้างข้อมูลทั้งหมด?')) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
+        function clearAll() { if(confirm('ลบข้อมูลทั้งหมด?')) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
