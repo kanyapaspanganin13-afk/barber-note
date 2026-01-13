@@ -93,18 +93,18 @@
         </header>
 
         <div class="card">
-            <label class="label">วันที่ / ช่วงเวลา</label>
+            <label class="label">วันที่ </label>
             <input type="date" id="rec-date-raw" style="margin-bottom: 10px;">
             <div class="grid-2">
-                <div><label class="label">เริ่ม</label><input type="time" id="rec-start"></div>
-                <div><label class="label">เสร็จ</label><input type="time" id="rec-end"></div>
+                <div><label class="label">เวลาเริ่ม</label><input type="time" id="rec-start"></div>
+                <div><label class="label">เวลาเสร็จ</label><input type="time" id="rec-end"></div>
             </div>
         </div>
 
         <div class="card">
-            <label class="label">รายการบริการ</label>
+            <label class="label">เลือกบริการ</label>
             <div id="svc-list"></div>
-            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการเสริม</div>
+            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการ</div>
         </div>
 
         <div class="pay-grid">
@@ -126,13 +126,13 @@
             </div>
             <div class="box-white">
                 <div class="sub-stat"><span>โอนรวม</span><b id="r-trans">0</b></div>
-                <div class="sub-stat"><span>ช่าง</span><b id="r-barber">0</b></div>
-                <div class="sub-stat"><span>ร้าน</span><b id="r-shop">0</b></div>
+                <div class="sub-stat"><span>รายได้ช่าง</span><b id="r-barber">0</b></div>
+                <div class="sub-stat"><span>รายได้ร้าน</span><b id="r-shop">0</b></div>
             </div>
         </div>
         <div id="status-bar" class="status-bar">...</div>
         <div style="font-size: 0.75rem; color: var(--sub); font-weight: 600; margin-bottom: 15px; text-align: center; background: #f1f5f9; padding: 8px; border-radius: 20px;">
-            สระ: <span id="c-wash">0</span> | โกน: <span id="c-shave">0</span> | ย้อม: <span id="c-color">0</span>
+          โกน: <span id="c-shave">0</span> |  สระ: <span id="c-wash">0</span> |  ย้อม: <span id="c-color">0</span>
         </div>
         <div id="hist-container"></div>
         <button class="btn-clear" onclick="clearData()">ล้างข้อมูลวันนี้</button>
@@ -199,8 +199,8 @@
     </nav>
 
     <script>
-        const svcs = ["None", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
-        const styles = ["None", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
+        const svcs = ["ว่าง", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
+        const styles = ["ว่าง", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
         
         let db = JSON.parse(localStorage.getItem('barber_v6_db') || '[]');
         let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","mode":"percent","percent":50,"guarantee":300,"font":"16px","primary":"#2b459a","bg":"#f8fafc"}');
@@ -236,8 +236,8 @@
             } else {
                 // ถ้าเหลือแถวสุดท้าย ให้ล้างค่าแทนการลบ
                 const row = el.parentElement;
-                row.querySelector('.i-svc').value = "None";
-                row.querySelector('.i-style').value = "None";
+                row.querySelector('.i-svc').value = "ว่าง";
+                row.querySelector('.i-style').value = "ว่าง";
                 row.querySelector('.i-price').value = "";
             }
         }
@@ -293,7 +293,7 @@
                     total += p;
                 }
             });
-            if(total === 0) return alert('ใส่ราคาด้วยครับ');
+            if(total === 0) return alert('กรุณาใส่ราคา');
             const entry = {
                 id: Date.now(),
                 date: document.getElementById('rec-date-raw').value,
@@ -307,7 +307,7 @@
             btn.innerHTML = '<i class="fas fa-check"></i> บันทึกสำเร็จ';
             setTimeout(() => {
                 btn.classList.remove('success');
-                btn.innerHTML = 'SAVE RECORD';
+                btn.innerHTML = 'บันทึกข้อมูล';
                 document.getElementById('svc-list').innerHTML = '';
                 addSvcRow();
             }, 1000);
@@ -326,7 +326,7 @@
         function formatDateBE(dateStr) {
             const d = new Date(dateStr);
             const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            return `${d.getDate()} ${months[d.getMonth()]} พ.ศ. ${d.getFullYear() + 543}`;
+            return `${d.getDate()} ${months[d.getMonth()]}  ${d.getFullYear() + 543}`;
         }
 
         function renderReport() {
@@ -350,8 +350,9 @@
                 sumTotal += r.total;
                 if(r.pay === 'โอนเงิน') sumTrans += r.total; else sumCash += r.total;
                 r.items.forEach(it => {
-                    if(it.svc === 'สระผม') cWash++;
+                 
                     if(it.svc === 'โกนหนวด') cShave++;
+                    if(it.svc === 'สระผม') cWash++;
                     if(it.svc === 'ย้อมผม') cColor++;
                 });
                 container.innerHTML += `
@@ -397,13 +398,13 @@
                 const bar = document.getElementById(statusId);
                 if(sumTotal === 0) { bar.innerText = "ยังไม่มีความเคลื่อนไหว"; bar.className = "status-bar"; return; }
                 if(settle > 0) {
-                    bar.innerText = `ช่างคืนเงินร้าน ฿${settle.toLocaleString()}`;
+                    bar.innerText = `ช่างคืนร้าน ฿${settle.toLocaleString()}`;
                     bar.className = 'status-bar orange';
                 } else if (settle < 0) {
-                    bar.innerText = `ร้านคืนเงินช่าง ฿${Math.abs(settle).toLocaleString()}`;
+                    bar.innerText = `ร้านคืนช่าง ฿${Math.abs(settle).toLocaleString()}`;
                     bar.className = 'status-bar blue';
                 } else {
-                    bar.innerText = 'ยอดเงินเคลียร์พอดี'; bar.className = 'status-bar green';
+                    bar.innerText = 'ยอดพอดีไม่ต้องเคลียร์'; bar.className = 'status-bar green';
                 }
             }
         }
