@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <meta name="apple-mobile-web-app-title" content="Barber Note V6.4.1">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
     
     <title>Barber Note Pro V6.4.1</title>
     
+    <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
         :root { --primary: #2b459a; --bg: #f8fafc; --card: #ffffff; --text: #334155; --sub: #1e293b; --border: #e2e8f0; --green: #22c55e; --red: #ef4444; --orange: #f59e0b; }
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
         .page { display: none; padding: 15px; max-width: 500px; margin: auto; }
         .page.active { display: block; }
         .header { background: var(--card); padding: 20px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
@@ -32,24 +34,27 @@
         .pay-btn.active { background: var(--primary); color: white; }
         .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 14px; font-size: 1.1rem; font-weight: 600; cursor: pointer; }
         .btn-main.success { background: var(--green) !important; }
-        .stat-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
-        .stat-table td { padding: 8px 4px; border-bottom: 1px solid #f1f5f9; }
+        
         .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); height: 75px; z-index: 999; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; cursor: pointer; font-size: 0.75rem; }
         .nav-item.active { color: var(--primary); font-weight: 600; }
-        .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; font-size: 0.9rem; transition: 0.3s; }
+        
+        .status-bar { padding: 14px; border-radius: 12px; text-align: center; font-weight: 600; margin-bottom: 15px; font-size: 0.9rem; }
         .status-bar.blue { background: #dbeafe; color: #1e40af; }
         .status-bar.orange { background: #ffedd5; color: #9a3412; }
-        .status-bar.green { background: #dcfce7; color: #166534; }
+        .status-bar.green { background: #dcfce7; color: #166534; } /* สีใหม่สำหรับยอดพอดี */
 
-        /* สไตล์รายการ: ราคาไม่หนา / เวลาเข้ม / จ่ายเงินอยู่ใต้ราคา */
+        /* CSS รายการตามบรีฟ V6.4.1 */
         .hist-card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .hist-info b { font-size: 1.1rem; color: var(--text); display: block; }
-        .hist-info small { color: #000000; font-weight: 600; font-size: 0.85rem; }
+        .hist-info small { color: #000000; font-weight: 600; font-size: 0.85rem; } /* เวลาเข้มตามรูป 7ff325 */
+        
         .hist-price-group { display: flex; align-items: center; }
         .hist-price-text { text-align: right; }
-        .hist-price-text b { font-size: 1.35rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; }
-        .hist-price-text span { font-size: 0.75rem; color: #64748b; display: block; margin-top: 5px; }
+        /* ราคาไม่หนาตามสั่ง */
+        .hist-price-text b { font-size: 1.35rem; color: var(--orange); font-weight: 400; display: block; line-height: 1; } 
+        /* จ่ายเงินบรรทัดล่างตามรูป 7ff325 */
+        .hist-price-text span { font-size: 0.75rem; color: #64748b; display: block; margin-top: 4px; padding: 2px 8px; border: 1px solid #e2e8f0; border-radius: 10px; display: inline-block; }
         .btn-del-icon { color: var(--red); opacity: 0.3; margin-left: 12px; font-size: 1.1rem; }
     </style>
 </head>
@@ -58,7 +63,7 @@
     <div id="page-rec" class="page active">
         <header class="header">
             <div class="branch" id="head-shop-rec">BARBER SHOP</div>
-            <div style="font-size: 0.6rem; color: #cbd5e1;">V6.4.1 | RECORD</div>
+            <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 5px;">APPLICATION VERSION 6.4.1</div>
         </header>
         <div class="card">
             <label class="label">วันที่บันทึก</label>
@@ -84,19 +89,19 @@
         <header class="header"><div class="branch" id="head-shop-rep">BARBER SHOP</div></header>
         <div id="rep-date-th" style="text-align:center; color:#94a3b8; margin-bottom:10px;"></div>
         <div id="stat-summary-today"></div>
+        
         <div id="status-bar" class="status-bar"></div>
+        
         <div id="hist-container"></div>
         <button style="width:100%; color:var(--red); border:none; background:none; padding:20px; opacity:0.5;" onclick="clearData()">ล้างข้อมูลวันนี้</button>
     </div>
 
     <div id="page-history" class="page">
-        <header class="header"><div class="branch" id="head-shop-hist">ประวัติ/สถิติ</div></header>
+        <header class="header"><div class="branch">ประวัติ/สถิติ</div></header>
         <div class="card">
             <label class="label">เลือกวันที่</label>
             <input type="date" id="hist-date-select" onchange="renderHistoryPage()">
-            <button onclick="renderMonthlySummary()" style="width:100%; margin-top:12px; background:var(--orange); color:white; border:none; padding:12px; border-radius:10px; font-weight:600;">
-                <i class="fas fa-chart-bar"></i> ดูสรุปรายเดือน
-            </button>
+            <button onclick="renderMonthlySummary()" style="width:100%; margin-top:12px; background:var(--orange); color:white; border:none; padding:12px; border-radius:10px; font-weight:600;">สรุปรายเดือน</button>
         </div>
         <div id="hist-page-container"></div>
     </div>
@@ -107,8 +112,8 @@
             <label class="label">ชื่อร้าน</label>
             <input type="text" id="s-name" onchange="updateConfig()">
             <div class="grid-2" style="margin-top:15px;">
-                <div><label class="label">เปอร์เซ็นต์ช่าง (%)</label><input type="number" id="s-percent" onchange="updateConfig()"></div>
-                <div><label class="label">ประกันรายวัน (฿)</label><input type="number" id="s-guarantee" onchange="updateConfig()"></div>
+                <div><label class="label">ช่าง (%)</label><input type="number" id="s-percent" onchange="updateConfig()"></div>
+                <div><label class="label">ประกัน (฿)</label><input type="number" id="s-guarantee" onchange="updateConfig()"></div>
             </div>
         </div>
     </div>
@@ -125,7 +130,7 @@
         const styles = ["รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "เปิดข้าง / วินเทจ"];
         
         let db = JSON.parse(localStorage.getItem('barber_v6_db') || '[]');
-        let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","percent":50,"guarantee":300,"primary":"#2b459a","bg":"#f8fafc"}');
+        let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","percent":50,"guarantee":300}');
         let payType = 'เงินสด';
 
         window.onload = () => {
@@ -172,7 +177,7 @@
             if(total === 0) return alert('กรุณาระบุข้อมูล');
             db.push({ id: Date.now(), date: document.getElementById('rec-date-raw').value, time: document.getElementById('rec-start').value, items, total, pay: payType });
             localStorage.setItem('barber_v6_db', JSON.stringify(db));
-            const btn = document.getElementById('btn-save'); btn.classList.add('success'); btn.innerHTML = 'บันทึกแล้ว';
+            const btn = document.getElementById('btn-save'); btn.classList.add('success'); btn.innerHTML = 'บันทึกเรียบร้อย';
             setTimeout(() => { btn.classList.remove('success'); btn.innerHTML = 'SAVE RECORD'; document.getElementById('svc-list').innerHTML = ''; addSvcRow(); }, 800);
         }
 
@@ -185,7 +190,6 @@
             data.forEach(r => {
                 sumTotal += r.total;
                 if(r.pay === 'เงินสด') sumCash += r.total;
-                
                 listHTML += `
                 <div class="hist-card">
                     <div class="hist-info">
@@ -197,36 +201,32 @@
                             <b>฿${r.total}</b>
                             <span>${r.pay}</span>
                         </div>
-                        <div class="btn-del-icon" onclick="delItem(${r.id})">
-                            <i class="fas fa-trash"></i>
-                        </div>
+                        <div class="btn-del-icon" onclick="delItem(${r.id})"><i class="fas fa-trash"></i></div>
                     </div>
                 </div>`;
             });
 
             let barber = Math.max(cfg.guarantee, (sumTotal * cfg.percent / 100));
-
             document.getElementById('stat-summary-today').innerHTML = `
                 <div class="card" style="background:var(--primary); color:white; text-align:center;">
                     <div class="label" style="color:white;opacity:0.7;">รายได้รวมวันนี้</div>
                     <div style="font-size:2rem; font-weight:700;">฿${sumTotal.toLocaleString()}</div>
                     <div style="display:flex; justify-content:space-around; margin-top:10px; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">
-                        <div><small>ช่างได้รับ</small><br><b>฿${Math.floor(barber)}</b></div>
-                        <div><small>ร้านได้รับ</small><br><b>฿${Math.floor(sumTotal-barber)}</b></div>
+                        <div><small>ช่าง</small><br><b>฿${Math.floor(barber)}</b></div>
+                        <div><small>ร้าน</small><br><b>฿${Math.floor(sumTotal-barber)}</b></div>
                     </div>
-                </div>
-            `;
+                </div>`;
+            
             document.getElementById('hist-container').innerHTML = listHTML;
             
-            // การคำนวณสถานะการจ่ายเงิน
+            // ตรรกะแสดงแถบสถานะ "ยอดพอดี"
             const settle = sumCash - barber;
             const bar = document.getElementById('status-bar');
 
             if (sumTotal === 0) {
                 bar.innerText = `ประกันรายได้วันนี้ ฿${cfg.guarantee}`;
                 bar.className = "status-bar blue";
-            } else if (Math.floor(settle) === 0) {
-                // เพิ่มเงื่อนไข ยอดพอดี
+            } else if (Math.abs(settle) < 1) { // ถ้ายอดหักล้างกันแล้วเหลือ 0
                 bar.innerText = `ยอดพอดี ไม่ต้องเคลียร์เงิน`;
                 bar.className = "status-bar green";
             } else if (settle > 0) {
@@ -238,6 +238,7 @@
             }
         }
 
+        // ฟังก์ชันเสริมอื่นๆ
         function delItem(id) { if(confirm('ลบรายการ?')) { db = db.filter(r => r.id !== id); localStorage.setItem('barber_v6_db', JSON.stringify(db)); renderReport(); } }
         function setPay(t) { payType = t; document.getElementById('p-cash').classList.toggle('active', t === 'เงินสด'); document.getElementById('p-trans').classList.toggle('active', t === 'โอนเงิน'); }
         function updateConfig() {
@@ -260,43 +261,20 @@
             const data = db.filter(r => r.date === date);
             let html = `<div style="margin-top:10px;"><label class="label">ประวัติวันที่ ${date}</label></div>`;
             data.forEach(r => {
-                html += `
-                <div class="hist-card">
-                    <div class="hist-info">
-                        <b>${r.items.map(i=>i.svc||i.style).join('+')}</b>
-                        <small><i class="far fa-clock"></i> ${r.time}</small>
-                    </div>
-                    <div class="hist-price-text">
-                        <b>฿${r.total}</b>
-                        <span>${r.pay}</span>
-                    </div>
+                html += `<div class="hist-card">
+                    <div class="hist-info"><b>${r.items.map(i=>i.svc||i.style).join('+')}</b><small>${r.time}</small></div>
+                    <div class="hist-price-text"><b>฿${r.total}</b><span>${r.pay}</span></div>
                 </div>`;
             });
-            document.getElementById('hist-page-container').innerHTML = html || '<center style="padding:20px; color:#94a3b8;">ไม่มีข้อมูล</center>';
+            document.getElementById('hist-page-container').innerHTML = html || '<center style="padding:20px;">ไม่มีข้อมูล</center>';
         }
 
         function renderMonthlySummary() {
-            const selectedDate = document.getElementById('hist-date-select').value;
-            const [year, month] = selectedDate.split('-');
-            const monthlyData = db.filter(r => r.date.startsWith(`${year}-${month}`));
-            const container = document.getElementById('hist-page-container');
-            let totalSales = 0; let totalBarber = 0;
-            const dates = [...new Set(monthlyData.map(r => r.date))];
-            dates.forEach(d => {
-                const daySum = monthlyData.filter(r => r.date === d).reduce((s, r) => s + r.total, 0);
-                totalSales += daySum;
-                totalBarber += Math.max(cfg.guarantee, (daySum * cfg.percent / 100));
-            });
-            container.innerHTML = `
-                <div class="card" style="background:#1e293b; color:white; text-align:center;">
-                    <div class="label">สรุปยอด ${month}/${parseInt(year)+543}</div>
-                    <b style="font-size:1.5rem;">฿${totalSales.toLocaleString()}</b>
-                    <div style="display:flex; justify-content:space-around; margin-top:10px;">
-                        <div><small>ช่างรวม</small><br><b>฿${Math.floor(totalBarber)}</b></div>
-                        <div><small>ร้านรวม</small><br><b>฿${Math.floor(totalSales-totalBarber)}</b></div>
-                    </div>
-                </div>
-                <button onclick="renderHistoryPage()" style="width:100%; padding:10px; background:none; border:1px solid #ccc; border-radius:10px;">กลับ</button>`;
+            const date = document.getElementById('hist-date-select').value;
+            const [y, m] = date.split('-');
+            const mData = db.filter(r => r.date.startsWith(`${y}-${m}`));
+            let total = mData.reduce((s, r) => s + r.total, 0);
+            alert(`ยอดรวมเดือนนี้: ฿${total.toLocaleString()}`);
         }
     </script>
 </body>
