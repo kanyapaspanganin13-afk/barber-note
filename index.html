@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Barber Note Pro V6.2 (Updated UI)</title>
+    <title>Barber Note Pro V6.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -40,7 +40,6 @@
 
         .svc-item { display: grid; grid-template-columns: 1fr 1fr 70px 30px; gap: 8px; margin-bottom: 10px; align-items: center; }
         .btn-remove-row { color: var(--red); opacity: 0.6; cursor: pointer; text-align: center; font-size: 1.2rem; }
-        .btn-remove-row:hover { opacity: 1; }
         
         .btn-add { color: var(--primary); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-block; margin-top: 5px; padding: 5px 0; }
 
@@ -342,7 +341,7 @@
             renderDataView(targetDate, 'hist-page-container', null, null, null, null, null, null, null, null, null, null);
         }
 
-       function renderDataView(date, containerId, totalId, countId, transId, barberId, shopId, washId, shaveId, colorId, statusId, dateDisplayId) {
+        function renderDataView(date, containerId, totalId, countId, transId, barberId, shopId, washId, shaveId, colorId, statusId, dateDisplayId) {
             const data = db.filter(r => r.date === date);
             let sumTotal = 0, sumTrans = 0, sumCash = 0, cWash = 0, cShave = 0, cColor = 0;
             const container = document.getElementById(containerId);
@@ -351,11 +350,9 @@
 
             data.forEach((r) => {
                 sumTotal += r.total;
-                
-                // กำหนดสีตามประเภทการชำระเงิน
                 const isTrans = r.pay === 'โอนเงิน';
-                const payColor = isTrans ? '#2b459a' : '#f59e0b'; // โอน=น้ำเงิน, สด=ส้ม
-                const payBg = isTrans ? '#eef2ff' : '#fff7ed';   // พื้นหลังอ่อนๆ
+                const payColor = isTrans ? '#2b459a' : '#f59e0b';
+                const payBg = isTrans ? '#eef2ff' : '#fff7ed';
 
                 if(isTrans) sumTrans += r.total; else sumCash += r.total;
                 
@@ -365,7 +362,6 @@
                     if(it.svc === 'ย้อมผม') cColor++;
                 });
 
-                // สร้าง HTML การ์ดรายการใหม่ที่ชัดเจนขึ้น
                 container.innerHTML += `
                     <div class="hist-card" style="border-left: 5px solid ${payColor}; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
                         <div style="flex: 1;">
@@ -391,7 +387,6 @@
 
             if (data.length === 0) container.innerHTML = '<div style="text-align:center; color:#ccc; padding:20px;">ไม่มีข้อมูล</div>';
 
-            // --- ส่วนคำนวณรายได้ (คงเดิม) ---
             let barber = 0;
             if(cfg.mode === 'percent') {
                 let calcPercent = (sumTotal * cfg.percent / 100);
@@ -425,3 +420,23 @@
                 }
             }
         }
+
+        function delItem(id, date) {
+            if(confirm('ลบรายการนี้?')) {
+                db = db.filter(r => r.id !== id);
+                localStorage.setItem('barber_v6_db', JSON.stringify(db));
+                renderReport(); renderHistoryPage();
+            }
+        }
+
+        function clearData() {
+            if(confirm('ล้างข้อมูลทั้งหมดของวันนี้?')) {
+                const today = document.getElementById('rec-date-raw').value;
+                db = db.filter(r => r.date !== today);
+                localStorage.setItem('barber_v6_db', JSON.stringify(db));
+                renderReport();
+            }
+        }
+    </script>
+</body>
+</html>
