@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Barber Note Pro V6.1 (Edited)</title>
+    <title>Barber Note Pro V6.1 (No Image)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -77,9 +77,9 @@
 
         .btn-clear { width: 100%; color: var(--red); background: none; border: none; padding: 20px; font-size: 0.8rem; font-weight: 600; opacity: 0.5; cursor: pointer; }
         
-        /* แก้ไขส่วนชื่อร้านให้เด่นขึ้น (บรรทัด 82-84) */
-        .report-shop-name { text-align: center; font-weight: 700; font-size: 1.8rem; color: var(--primary); margin-bottom: 2px; text-transform: uppercase; }
-        .report-date { text-align: center; font-size: 0.9rem; color: var(--sub); margin-bottom: 15px; border-bottom: 2px dashed var(--border); padding-bottom: 10px; }
+        /* สไตล์พิเศษสำหรับชื่อร้านในหน้าสรุปยอด */
+        .report-shop-name { text-align: center; font-weight: 600; font-size: 1.4rem; color: var(--primary); margin-bottom: 5px; }
+        .report-date { text-align: center; font-size: 0.9rem; color: var(--sub); margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -90,7 +90,7 @@
         </header>
 
         <div class="card">
-            <label class="label">วันที่</label>
+            <label class="label">วันที่ / ช่วงเวลา</label>
             <input type="date" id="rec-date-raw" style="margin-bottom: 10px;">
             <div class="grid-2">
                 <div><label class="label">เริ่ม</label><input type="time" id="rec-start"></div>
@@ -99,9 +99,9 @@
         </div>
 
         <div class="card">
-            <label class="label">เลือกบริการ</label>
+            <label class="label">รายการบริการ</label>
             <div id="svc-list"></div>
-            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการ</div>
+            <div class="btn-add" onclick="addSvcRow()"><i class="fas fa-plus-circle"></i> เพิ่มบริการเสริม</div>
         </div>
 
         <div class="pay-grid">
@@ -157,8 +157,8 @@
             <div class="branch">ตั้งค่า & ธีม</div>
         </header>
         <div class="card">
-            <label class="label">ชื่อร้าน/สาขา (สำหรับแคปจอ)</label>
-            <input type="text" id="s-name" onchange="updateConfig()" placeholder="ระบุชื่อร้านที่นี่">
+            <label class="label">ชื่อร้าน/สาขา</label>
+            <input type="text" id="s-name" onchange="updateConfig()" placeholder="ระบุชื่อร้าน">
             
             <label class="label" style="margin-top:15px;">ระบบคำนวณรายได้</label>
             <select id="s-mode" onchange="updateConfig()">
@@ -205,8 +205,8 @@
     </nav>
 
     <script>
-        const svcs = ["ว่าง", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
-        const styles = ["ว่าง", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
+        const svcs = ["None", "ตัดผม", "โกนหนวด", "กันหน้า", "สระผม", "ย้อมผม", "แก้ผม", "ดัดผม", "ยืดผม", "อื่นๆ"];
+        const styles = ["None", "รองทรง", "แฟชั่น / ทูบล็อค", "สกินเฟด", "นักเรียน", "ตำรวจ / ทหาร", "ทรงอเมริกัน", "วินเทจ"];
         
         let db = JSON.parse(localStorage.getItem('barber_v6_db') || '[]');
         let cfg = JSON.parse(localStorage.getItem('barber_v6_cfg') || '{"name":"BARBER SHOP","mode":"percent","percent":50,"guarantee":300,"font":"16px","primary":"#2b459a","bg":"#f8fafc"}');
@@ -329,7 +329,7 @@
         function formatDateBE(dateStr) {
             const d = new Date(dateStr);
             const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            return `${d.getDate()} ${months[d.getMonth()]}  ${d.getFullYear() + 543}`;
+            return `${d.getDate()} ${months[d.getMonth()]} พ.ศ. ${d.getFullYear() + 543}`;
         }
 
         function renderReport() {
@@ -390,4 +390,47 @@
             let settle = sumCash - barber;
 
             if(totalId) document.getElementById(totalId).innerText = sumTotal.toLocaleString();
-            if(countId) document.getElementById(countId).innerText =
+            if(countId) document.getElementById(countId).innerText = data.length;
+            if(transId) document.getElementById(transId).innerText = sumTrans.toLocaleString();
+            if(barberId) document.getElementById(barberId).innerText = Math.floor(barber).toLocaleString();
+            if(shopId) document.getElementById(shopId).innerText = Math.floor(shop).toLocaleString();
+            if(washId) document.getElementById(washId).innerText = cWash;
+            if(shaveId) document.getElementById(shaveId).innerText = cShave;
+            if(colorId) document.getElementById(colorId).innerText = cColor;
+
+            if(statusId) {
+                const bar = document.getElementById(statusId);
+                if(sumTotal === 0) { bar.innerText = "ยังไม่มีความเคลื่อนไหว"; bar.className = "status-bar"; return; }
+                if(settle > 0) {
+                    bar.innerText = `ช่างคืนเงินร้าน ฿${settle.toLocaleString()}`;
+                    bar.className = 'status-bar orange';
+                } else if (settle < 0) {
+                    bar.innerText = `ร้านคืนเงินช่าง ฿${Math.abs(settle).toLocaleString()}`;
+                    bar.className = 'status-bar blue';
+                } else {
+                    bar.innerText = 'ยอดเงินเคลียร์พอดี';
+                    bar.className = 'status-bar green';
+                }
+            }
+        }
+
+        function delItem(id, date) {
+            if(confirm('ลบรายการนี้?')) {
+                db = db.filter(r => r.id !== id);
+                localStorage.setItem('barber_v6_db', JSON.stringify(db));
+                renderReport();
+                renderHistoryPage();
+            }
+        }
+
+        function clearData() {
+            if(confirm('ล้างข้อมูลทั้งหมดของวันนี้?')) {
+                const today = document.getElementById('rec-date-raw').value;
+                db = db.filter(r => r.date !== today);
+                localStorage.setItem('barber_v6_db', JSON.stringify(db));
+                renderReport();
+            }
+        }
+    </script>
+</body>
+</html>
