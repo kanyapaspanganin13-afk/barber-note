@@ -1,279 +1,343 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>Barber Note</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barber Note v3 FINAL</title>
 
-<!-- PWA / App-like -->
-<link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/2/2d/Barber_Pole.svg">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- โลโก้สำหรับติดตั้งเป็นแอป -->
+<link rel="apple-touch-icon" href="https://i.imgur.com/8Km9tLL.png">
 
 <style>
-/* ====== ธีมมินิมอลโมเดิร์น ====== */
 :root{
-  --primary:#222;
-  --bg:#f6f7fb;
-  --card:#fff;
-  --green:#16a34a;
-  --red:#dc2626;
-  --blue:#2563eb;
-  --gray:#6b7280;
+  --primary:#111827;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --accent:#16a34a;
+  --danger:#dc2626;
+  --info:#2563eb;
+  --muted:#6b7280;
 }
 
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);
   color:var(--primary);
 }
 
 header{
+  padding:12px 16px;
+  background:#fff;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:12px 16px;
-  font-weight:600;
+  border-bottom:1px solid #e5e7eb;
+}
+
+header h1{
+  font-size:18px;
+  margin:0;
 }
 
 button{
-  padding:10px 14px;
   border:none;
   border-radius:10px;
-  font-size:16px;
+  padding:10px 14px;
+  font-size:15px;
 }
+
+.btn-primary{background:#111827;color:#fff;}
+.btn-green{background:var(--accent);color:#fff;}
+.btn-blue{background:var(--info);color:#fff;}
+.btn-red{background:var(--danger);color:#fff;}
+.btn-outline{background:#fff;border:1px solid #d1d5db;}
+
+.page{display:none;padding:14px;}
+.page.active{display:block;}
 
 .card{
   background:var(--card);
-  border-radius:14px;
+  border-radius:16px;
   padding:14px;
-  margin:10px;
+  margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
 }
 
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+label{font-size:13px;color:var(--muted);}
 input,select{
   width:100%;
-  padding:12px;
-  font-size:16px;
-  margin-top:6px;
-}
-
-.nav{
-  display:flex;
-  justify-content:space-around;
   padding:10px;
-  background:#fff;
-  position:fixed;
-  bottom:0;
-  width:100%;
+  border-radius:10px;
+  border:1px solid #d1d5db;
+  font-size:15px;
 }
 
-.hidden{display:none}
+.big-number{
+  font-size:22px;
+  font-weight:700;
+}
 
-.line-btn{
-  background:#06c755;
-  color:#fff;
+.status-ok{color:#16a34a;}
+.status-back{color:#dc2626;}
+.status-equal{color:#6b7280;}
+
+.record-row{
   display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px dashed #e5e7eb;
+  padding:6px 0;
+  font-size:14px;
+}
+
+.footer-nav{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:#fff;
+  display:flex;
+  border-top:1px solid #e5e7eb;
+}
+.footer-nav button{
+  flex:1;
+  border-radius:0;
+  padding:14px;
+  background:#fff;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
   align-items:center;
   justify-content:center;
-  gap:8px;
 }
-
-.line-btn img{
-  width:24px;
-  height:24px;
+.modal-content{
+  background:#fff;
+  width:90%;
+  border-radius:16px;
+  padding:16px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= PAGE 1 : RECORD ================= -->
-<section id="page-record">
+<!-- HEADER -->
 <header>
-  <div id="shopName">ร้านตัดผม</div>
-  <button onclick="toggleSetting()">⚙️</button>
+  <h1 id="shopName">ร้านตัดผม</h1>
+  <button class="btn-outline" onclick="openSetting()">⚙️</button>
 </header>
 
-<div class="card hidden" id="settingBox">
-  <label>ชื่อร้าน / สาขา</label>
-  <input id="setShop" />
+<!-- PAGE 1 RECORD -->
+<div class="page active" id="page1">
+  <div class="card">
+    <label>วันที่</label>
+    <input type="date" id="dateInput">
 
-  <label>เปอร์เซ็นต์รายได้ช่าง (%)</label>
-  <input type="number" id="setPercent" />
-
-  <label>รายได้ประกันต่อวัน</label>
-  <input type="number" id="setGuarantee" />
-</div>
-
-<div class="card">
-  <label>วันที่</label>
-  <input type="date" id="dateInput">
-
-  <label>เวลาเริ่ม</label>
-  <input type="time" id="startTime">
-
-  <label>เวลาสิ้นสุด</label>
-  <input type="time" id="endTime">
-</div>
-
-<div class="card">
-  <label>บริการ</label>
-  <select id="service">
-    <option>ตัดผม</option><option>โกนหนวด</option><option>กันหน้า</option>
-    <option>แก้ผม</option><option>โกนผม</option><option>สระผม</option>
-    <option>ย้อมผม</option><option>ดัดผม</option><option>อื่นๆ</option>
-  </select>
-
-  <label>ทรงผม</label>
-  <select id="style">
-    <option>รองทรง</option><option>สกินเฟด</option><option>แฟชั่น</option>
-    <option>นักเรียน</option><option>ตำรวจ / ทหาร</option>
-    <option>ทรงอเมริกัน</option><option>เปิดข้าง</option>
-    <option>วินเทจ</option><option>อื่นๆ</option>
-  </select>
-
-  <label>ราคา</label>
-  <input type="number" id="price">
-</div>
-
-<div class="card">
-  <label>การชำระเงิน</label>
-  <button id="cashBtn" onclick="setPay('เงินสด')">เงินสด</button>
-  <button id="transferBtn" onclick="setPay('โอนเงิน')">โอนเงิน</button>
-</div>
-
-<button style="margin:10px;width:calc(100% - 20px)" onclick="saveRecord()">บันทึกข้อมูล</button>
-</section>
-
-<!-- ================= PAGE 2 : DAILY REPORT ================= -->
-<section id="page-report" class="hidden">
-<header style="justify-content:center">
-  <div id="reportShop"></div>
-</header>
-
-<div class="card" id="reportDate"></div>
-
-<div style="display:flex">
-  <div class="card" style="flex:1">
-    <div id="totalMoney"></div>
-    <div id="totalCustomer"></div>
-    <div id="extraService"></div>
+    <div class="grid-2">
+      <div>
+        <label>เวลาเริ่ม</label>
+        <input type="time" id="startTime">
+      </div>
+      <div>
+        <label>เวลาสิ้นสุด</label>
+        <input type="time" id="endTime">
+      </div>
+    </div>
   </div>
 
-  <div class="card" style="flex:1">
-    <div id="transferTotal"></div>
-    <div id="barberIncome"></div>
-    <div id="shopIncome"></div>
+  <div class="card">
+    <label>บริการ</label>
+    <select id="service">
+      <option value="ตัดผม">ตัดผม</option>
+      <option value="โกนหนวด">โกนหนวด</option>
+      <option value="กันหน้า">กันหน้า</option>
+      <option value="แก้ผม">แก้ผม</option>
+      <option value="โกนผม">โกนผม</option>
+      <option value="สระผม">สระผม</option>
+      <option value="ย้อมผม">ย้อมผม</option>
+      <option value="ดัดผม">ดัดผม</option>
+      <option value="อื่นๆ">อื่นๆ</option>
+    </select>
+
+    <label>ทรงผม</label>
+    <select id="hair">
+      <option value="">ไม่ระบุ</option>
+      <option>รองทรง</option>
+      <option>สกินเฟด</option>
+      <option>แฟชั่น</option>
+      <option>นักเรียน</option>
+      <option>ตำรวจ / ทหาร</option>
+      <option>ทรงอเมริกัน</option>
+      <option>เปิดข้าง</option>
+      <option>วินเทจ</option>
+      <option>อื่นๆ</option>
+    </select>
+
+    <label>ราคา</label>
+    <input type="number" id="price">
+  </div>
+
+  <div class="card">
+    <label>วิธีชำระเงิน</label>
+    <div class="grid-2">
+      <button id="cashBtn" class="btn-outline" onclick="setPay('เงินสด')">เงินสด</button>
+      <button id="transferBtn" class="btn-outline" onclick="setPay('โอนเงิน')">โอนเงิน</button>
+    </div>
+  </div>
+
+  <button class="btn-primary" style="width:100%" onclick="saveRecord()">บันทึกข้อมูล</button>
+</div>
+
+<!-- PAGE 2 DAILY -->
+<div class="page" id="page2">
+  <div class="card" style="text-align:center">
+    <div id="dailyDate" class="big-number"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div>ยอดรวม</div>
+      <div id="sumTotal" class="big-number"></div>
+      <div>ลูกค้า <span id="sumCount"></span> คน</div>
+      <div>บริการเพิ่ม <span id="extraCount"></span></div>
+    </div>
+
+    <div class="card">
+      <div>ยอดโอน</div>
+      <div id="sumTransfer" class="big-number"></div>
+      <div>รายได้ช่าง <span id="barberIncome"></span></div>
+      <div>รายได้ร้าน <span id="shopIncome"></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="clearStatus" class="big-number"></div>
+  </div>
+
+  <div class="card">
+    <div id="todayList"></div>
+    <button class="btn-red" style="width:100%" onclick="deleteToday()">ลบข้อมูลวันนี้</button>
+  </div>
+
+  <button class="btn-blue" style="width:100%" onclick="goPage(3)">ไปดูย้อนหลัง / สถิติ</button>
+</div>
+
+<!-- PAGE 3 HISTORY -->
+<div class="page" id="page3">
+  <div class="card">
+    <label>เลือกวันที่</label>
+    <input type="date" id="historyDate" onchange="renderHistory()">
+  </div>
+  <div id="historyResult"></div>
+</div>
+
+<!-- SETTING MODAL -->
+<div class="modal" id="settingModal">
+  <div class="modal-content">
+    <label>ชื่อร้าน</label>
+    <input id="shopInput">
+    <label>% คอมมิชชั่น</label>
+    <input type="number" id="percentInput">
+    <label>รายได้ประกัน</label>
+    <input type="number" id="guaranteeInput">
+    <button class="btn-green" style="width:100%" onclick="saveSetting()">บันทึก</button>
   </div>
 </div>
 
-<div class="card" id="clearStatus"></div>
-
-<div class="card" id="recordList"></div>
-
-<button class="line-btn" onclick="sendLine()">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg">
-  ส่งรายงานเข้า LINE
-</button>
-</section>
-
-<!-- ================= PAGE 3 : HISTORY ================= -->
-<section id="page-history" class="hidden">
-<div class="card" id="historyBox"></div>
-</section>
-
-<div class="nav">
-  <button onclick="showPage('record')">บันทึก</button>
-  <button onclick="showPage('report')">รายงาน</button>
-  <button onclick="showPage('history')">ย้อนหลัง</button>
+<!-- NAV -->
+<div class="footer-nav">
+  <button onclick="goPage(1)">บันทึก</button>
+  <button onclick="goPage(2)">รายวัน</button>
+  <button onclick="goPage(3)">ย้อนหลัง</button>
 </div>
 
 <script>
-/* ===== CONFIG ===== */
-const TEST_MODE = true;
-let payType = "เงินสด";
+/* ====== DATA ====== */
+let payType="";
+let setting=JSON.parse(localStorage.getItem("setting"))||{
+  shop:"ร้านตัดผม",
+  percent:50,
+  guarantee:0
+};
+document.getElementById("shopName").innerText=setting.shop;
 
-/* ===== STORAGE ===== */
-function getData(){return JSON.parse(localStorage.getItem("records")||"[]")}
-function setData(d){localStorage.setItem("records",JSON.stringify(d))}
-
-/* ===== PAGE ===== */
-function showPage(p){
-  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-  document.getElementById("page-"+p).classList.remove("hidden");
-  if(p==="report") renderReport();
-  if(p==="history") renderHistory();
+/* ====== PAGE ====== */
+function goPage(n){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page"+n).classList.add("active");
+  if(n===2) renderDaily();
 }
 
-/* ===== SETTING ===== */
-function toggleSetting(){
-  settingBox.classList.toggle("hidden");
+/* ====== RECORD ====== */
+function setPay(p){
+  payType=p;
+  cashBtn.style.background=p==="เงินสด"?"#d1fae5":"#fff";
+  transferBtn.style.background=p==="โอนเงิน"?"#dbeafe":"#fff";
 }
 
-/* ===== PAY ===== */
-function setPay(t){
-  payType=t;
-  cashBtn.style.background=t==="เงินสด"?"#ddd":"";
-  transferBtn.style.background=t==="โอนเงิน"?"#ddd":"";
-}
-
-/* ===== SAVE ===== */
 function saveRecord(){
+  if(!payType) return alert("เลือกวิธีชำระเงิน");
   const rec={
     date:dateInput.value,
-    service:service.value,
-    style:style.value,
     price:+price.value,
-    pay:payType
+    pay:payType,
+    service:service.value
   };
-  const d=getData();
-  d.push(rec);
-  setData(d);
+  const arr=JSON.parse(localStorage.getItem("records")||"[]");
+  arr.push(rec);
+  localStorage.setItem("records",JSON.stringify(arr));
   alert("บันทึกสำเร็จ");
-  price.value="";
+  price.value=""; payType="";
 }
 
-/* ===== REPORT ===== */
-function renderReport(){
-  const data=getData();
-  const today=data.filter(r=>r.date===dateInput.value);
-
-  let total=0,transfer=0;
-  today.forEach(r=>{
-    total+=r.price;
+/* ====== DAILY ====== */
+function renderDaily(){
+  const today=new Date().toISOString().slice(0,10);
+  const arr=JSON.parse(localStorage.getItem("records")||"[]").filter(r=>r.date===today);
+  let sum=0,transfer=0,extra=0;
+  arr.forEach(r=>{
+    sum+=r.price;
     if(r.pay==="โอนเงิน") transfer+=r.price;
+    if(["โกนหนวด","สระผม","ย้อมผม"].includes(r.service)) extra++;
   });
+  const barber=Math.max(sum*setting.percent/100,setting.guarantee);
+  const shop=sum-barber;
+  document.getElementById("sumTotal").innerText=sum;
+  document.getElementById("sumCount").innerText=arr.length;
+  document.getElementById("extraCount").innerText=extra;
+  document.getElementById("sumTransfer").innerText=transfer;
+  document.getElementById("barberIncome").innerText=barber;
+  document.getElementById("shopIncome").innerText=shop;
 
-  const percent=+setPercent.value||50;
-  const guarantee=+setGuarantee.value||0;
-
-  let barber=Math.max(total*percent/100,guarantee);
-  let shop=total-barber;
-
-  totalMoney.innerText="ยอดรวม "+total+" บาท";
-  totalCustomer.innerText="ลูกค้า "+today.length+" คน";
-  transferTotal.innerText="ยอดโอน "+transfer+" บาท";
-  barberIncome.innerText="รายได้ช่าง "+barber;
-  shopIncome.innerText="รายได้ร้าน "+shop;
-
-  let status="ยอดพอดีไม่ต้องคืน";
-  if(barber>total*percent/100) status="ร้านคืนช่าง";
-  if(barber<total*percent/100) status="ช่างคืนร้าน";
-  clearStatus.innerText=status;
-
-  recordList.innerHTML=today.map(r=>`• ${r.service} ${r.price} (${r.pay})`).join("<br>");
+  let diff=transfer-shop;
+  clearStatus.innerText=diff>0?"ร้านคืนช่าง":diff<0?"ช่างคืนร้าน":"ยอดพอดีไม่ต้องคืน";
 }
 
-/* ===== LINE ===== */
-function sendLine(){
-  const text=encodeURIComponent(document.getElementById("page-report").innerText);
-  window.open("https://line.me/R/msg/text/?"+text);
+/* ====== SETTING ====== */
+function openSetting(){
+  settingModal.style.display="flex";
+  shopInput.value=setting.shop;
+  percentInput.value=setting.percent;
+  guaranteeInput.value=setting.guarantee;
 }
-
-/* ===== HISTORY ===== */
-function renderHistory(){
-  historyBox.innerText=JSON.stringify(getData(),null,2);
+function saveSetting(){
+  setting={
+    shop:shopInput.value,
+    percent:+percentInput.value,
+    guarantee:+guaranteeInput.value
+  };
+  localStorage.setItem("setting",JSON.stringify(setting));
+  shopName.innerText=setting.shop;
+  settingModal.style.display="none";
 }
 </script>
 
