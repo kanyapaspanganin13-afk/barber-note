@@ -166,16 +166,18 @@
             <option value="pastel">Pastel Mode</option>
         </select>
         <label style="margin-top:15px">สีพื้นหลัง</label>
-       <div id="colorPicker">
+        <div id="colorPicker" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px;">
     <div class="color-dot" style="background:#fdf2f8" onclick="setBg('#fdf2f8')"></div>
     <div class="color-dot" style="background:#f0fdf4" onclick="setBg('#f0fdf4')"></div>
     <div class="color-dot" style="background:#f0f9ff" onclick="setBg('#f0f9ff')"></div>
     <div class="color-dot" style="background:#fffbeb" onclick="setBg('#fffbeb')"></div>
     <div class="color-dot" style="background:#f1f5f9" onclick="setBg('#f1f5f9')"></div>
-    <div class="color-dot" style="background:#eef2ff" onclick="setBg('#eef2ff')"></div> <div class="color-dot" style="background:#fff7ed" onclick="setBg('#fff7ed')"></div> </div>
-        <button class="btn-save" onclick="saveSettings()">บันทึกการตั้งค่า</button>
-        <button onclick="clearAllData()" style="width:100%; margin-top:20px; color:var(--danger); border:none; background:none; font-size:12px;">ล้างข้อมูลทั้งหมด</button>
-        <button onclick="closeSettings()" style="width:100%; margin-top:10px; border:none; background:none;">ปิดหน้าต่าง</button>
+    <div class="color-dot" style="background:#eef2ff" onclick="setBg('#eef2ff')"></div>
+    <div class="color-dot" style="background:#fff7ed" onclick="setBg('#fff7ed')"></div>
+</div>
+        
+       <button class="btn-save" onclick="saveSettings()">บันทึกการตั้งค่า</button>
+        <button onclick="closeSettings()" style="width:100%; margin-top:15px; border:none; background:none; color:#666; text-decoration:underline; cursor:pointer;">ปิดหน้าต่าง</button>
     </div>
 </div>
 
@@ -433,6 +435,7 @@ function shareLine() {
 </script>
 </body>
 </html>
+
 
 
 
