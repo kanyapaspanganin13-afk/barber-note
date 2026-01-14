@@ -323,28 +323,27 @@ function applyCfg() {
         const dRecs = db.filter(r => r.date === date);
         const total = dRecs.reduce((s, r) => s + r.total, 0);
         const trans = dRecs.filter(r => r.payType === 'โอนเงิน').reduce((s, r) => s + r.total, 0);
-        
         function renderReport() {
         const date = document.getElementById('recDate').value;
         const dRecs = db.filter(r => r.date === date);
         
-        // 1. คำนวณยอดรวมและยอดโอน (ประกาศตัวแปรแค่ครั้งเดียว)
+        // 1. คำนวณยอดรวมและยอดโอน
         const total = dRecs.reduce((s, r) => s + r.total, 0);
         const trans = dRecs.filter(r => r.payType === 'โอนเงิน').reduce((s, r) => s + r.total, 0);
         
-        // 2. คำนวณรายได้ช่าง (คิดคอมมิชชั่นก่อน)
+        // 2. คำนวณรายได้ช่าง (คิดตาม % ที่ตั้งไว้)
         let barber = total * (cfg.per / 100);
 
-        // 3. กฎเหล็กประกันรายได้: ถ้ามียอดคอมน้อยกว่าประกัน ให้ใช้ค่าประกัน
+        // 3. กฎประกันรายได้: ถ้ามีลูกค้าแต่คอมฯ ไม่ถึงเป้า ให้ได้ค่าประกัน
         if (dRecs.length > 0 && barber < cfg.gua) {
             barber = cfg.gua;
         }
 
-        // 4. คำนวณรายได้ร้าน และ ส่วนต่างการเคลียร์เงิน
+        // 4. รายได้ร้าน และ ส่วนต่างการเคลียร์เงิน
         const shop = total - barber;
         const diff = trans - barber;
 
-        // 5. นับบริการเสริม (โกน, สระ, ย้อม)
+        // 5. นับบริการเสริม
         let counts = { "โกน": 0, "สระ": 0, "ย้อม": 0 };
         dRecs.forEach(r => r.items.forEach(i => {
             if(i.n.includes("โกน")) counts["โกน"]++;
@@ -352,7 +351,7 @@ function applyCfg() {
             if(i.n.includes("ย้อม")) counts["ย้อม"]++;
         }));
 
-        // --- เริ่มต้นการแสดงผลบนหน้าจอ ---
+        // --- แสดงผลบนหน้าจอ ---
         const d = new Date(date);
         document.getElementById('repDateThai').innerText = `${d.getDate()} ${d.toLocaleDateString('th-TH', {month:'long'})} ${d.getFullYear()+543}`;
         document.getElementById('sumTotal').innerText = total.toLocaleString();
@@ -492,6 +491,7 @@ function saveToHistory() {
 </script>
 </body>
 </html>
+
 
 
 
