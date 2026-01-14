@@ -2,17 +2,17 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Barber Note">
 <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
-<title>Barber Note v2.1</title>
+<title>Barber Note v3 FINAL</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-/* ================== THEME ================== */
+/* ===== LOCKED THEME SYSTEM (DO NOT EXTEND) ===== */
 :root{
   --primary:#2b459a;
   --bg:#f8fafc;
@@ -23,11 +23,8 @@
 }
 .theme-blue{--primary:#2b459a}
 .theme-dark{
-  --primary:#111827;
-  --bg:#020617;
-  --card:#020617;
-  --text:#f8fafc;
-  --border:#1e293b;
+  --primary:#111827;--bg:#020617;--card:#020617;
+  --text:#f8fafc;--border:#1e293b;
 }
 .theme-green{--primary:#166534}
 
@@ -39,102 +36,77 @@
 .bg-purple{--bg:#faf5ff}
 .bg-gray{--bg:#f8fafc}
 
-/* ================== BASE ================== */
+/* ===== BASE ===== */
 *{box-sizing:border-box;font-family:'Kanit',sans-serif}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  padding-bottom:80px;
-}
-.page{display:none;padding:15px;max-width:500px;margin:auto}
+body{margin:0;background:var(--bg);color:var(--text);padding-bottom:80px}
+.page{display:none;padding:14px;max-width:500px;margin:auto}
 .page.active{display:block}
 .header{
-  background:var(--card);
-  border-bottom:1px solid var(--border);
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:14px;display:flex;justify-content:space-between;align-items:center
 }
-.header .shop{font-weight:600;color:var(--primary)}
+.header .app{font-weight:600}
+.header .shop{color:var(--primary);font-weight:600}
 .card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:14px;margin-bottom:12px
 }
-.label{font-size:12px;color:var(--sub);margin-bottom:6px}
+.label{font-size:13px;color:var(--sub);margin-bottom:6px}
 input,select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid var(--border);
+  width:100%;padding:14px;font-size:16px;
+  border-radius:12px;border:1px solid var(--border)
 }
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{
-  width:100%;
-  background:var(--primary);
-  color:#fff;
-  border:none;
-  padding:16px;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:600;
+  width:100%;border:none;border-radius:14px;
+  padding:16px;font-size:16px;font-weight:600
 }
-.svc-row{
-  display:grid;
-  grid-template-columns:1fr 1fr 70px 30px;
-  gap:6px;
-  margin-bottom:8px;
-}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.cash{background:#e5f0ff;color:#1e40af}
+.btn.transfer{background:#dcfce7;color:#166534}
 .nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:70px;
-  display:flex;
-  background:var(--card);
-  border-top:1px solid var(--border);
+  position:fixed;bottom:0;width:100%;height:70px;
+  display:flex;background:var(--card);border-top:1px solid var(--border)
 }
 .nav div{
-  flex:1;
-  text-align:center;
-  padding-top:10px;
-  font-size:12px;
-  color:var(--sub);
+  flex:1;text-align:center;padding-top:10px;
+  font-size:12px;color:var(--sub)
 }
 .nav .active{color:var(--primary);font-weight:600}
-.stat{
-  text-align:center;
-  background:var(--primary);
-  color:#fff;
-  border-radius:14px;
-  padding:14px;
+.svc-row{
+  display:grid;grid-template-columns:1fr 1fr 80px 30px;
+  gap:6px;margin-bottom:8px
 }
-.hist{
+.hist{border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px}
+
+/* ===== REPORT (CAPTURE MODE) ===== */
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.report-card{
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:10px;
-  margin-bottom:8px;
+  border-radius:16px;padding:16px;background:var(--card)
 }
+.big{font-size:28px;font-weight:600}
+.mid{font-size:20px;font-weight:600}
+.small{font-size:13px;color:var(--sub)}
 </style>
 </head>
 
 <body>
 
-<!-- ================== PAGE : RECORD ================== -->
+<!-- ================= RECORD ================= -->
 <div id="rec" class="page active">
   <div class="header">
-    <div class="shop" id="shopNameRec"></div>
+    <div>
+      <div class="app">Barber Note</div>
+      <div class="shop" id="shopName"></div>
+    </div>
     <i class="fas fa-cog" onclick="go('set')"></i>
   </div>
 
   <div class="card">
     <div class="label">วันที่</div>
     <input type="date" id="recDate">
-    <div class="grid2" style="margin-top:10px">
+    <div class="grid2" style="margin-top:8px">
       <input type="time" id="start">
       <input type="time" id="end">
     </div>
@@ -143,46 +115,58 @@ input,select{
   <div class="card">
     <div class="label">บริการ</div>
     <div id="svcList"></div>
-    <small onclick="addRow()" style="color:var(--primary)">+ เพิ่มบริการ</small>
+    <small style="color:var(--primary)" onclick="addRow()">+ เพิ่มบริการ</small>
   </div>
 
   <div class="grid2">
-    <button onclick="pay='เงินสด'" class="btn">เงินสด</button>
-    <button onclick="pay='โอนเงิน'" class="btn">โอนเงิน</button>
+    <button class="btn cash" onclick="pay='เงินสด'">เงินสด</button>
+    <button class="btn transfer" onclick="pay='โอนเงิน'">โอนเงิน</button>
   </div>
 
-  <button class="btn" style="margin-top:10px" onclick="save()">บันทึก</button>
+  <button class="btn primary" style="margin-top:10px" onclick="save()">บันทึก</button>
 </div>
 
-<!-- ================== PAGE : REPORT ================== -->
+<!-- ================= REPORT ================= -->
 <div id="rep" class="page">
-  <div class="header"><div class="shop" id="shopNameRep"></div></div>
-  <div class="stat">
-    <div id="repDate"></div>
-    <h2>฿ <span id="sumTotal">0</span></h2>
-    <small>ช่าง <span id="barber">0</span> | ร้าน <span id="shop">0</span></small>
+  <div class="header">
+    <div class="shop" id="shopNameRep"></div>
   </div>
+
+  <div class="report-grid">
+    <div class="report-card">
+      <div id="repDate" class="small"></div>
+      <div class="big">฿ <span id="sumTotal">0</span></div>
+      <div class="mid">ลูกค้า <span id="cust">0</span></div>
+    </div>
+
+    <div class="report-card">
+      <div class="mid">ช่าง ฿ <span id="barber">0</span></div>
+      <div class="mid">ร้าน ฿ <span id="shopIncome">0</span></div>
+      <div class="small">ยอดโอน ฿ <span id="transfer">0</span></div>
+    </div>
+  </div>
+
   <div id="repList"></div>
 </div>
 
-<!-- ================== PAGE : HISTORY ================== -->
+<!-- ================= HISTORY ================= -->
 <div id="his" class="page">
   <div class="header"><div class="shop">ประวัติย้อนหลัง</div></div>
   <input type="date" id="hisDate" onchange="renderHistory()">
   <div id="hisList"></div>
 </div>
 
-<!-- ================== PAGE : SETTING ================== -->
+<!-- ================= SETTING ================= -->
 <div id="set" class="page">
   <div class="header"><div class="shop">ตั้งค่า</div></div>
 
   <div class="card">
-    <div class="label">ชื่อร้าน</div>
+    <div class="label">ชื่อร้าน / สาขา</div>
     <input id="shopInput">
   </div>
 
   <div class="card">
-    <div class="label">เปอร์เซ็นต์ช่าง</div>
+    <div class="label">% ช่าง</div>
     <input type="number" id="percent">
     <div class="label">ประกันรายวัน</div>
     <input type="number" id="guarantee">
@@ -195,7 +179,6 @@ input,select{
       <option value="theme-dark">Dark Barber</option>
       <option value="theme-green">Green Minimal</option>
     </select>
-
     <div class="label">พื้นหลัง</div>
     <select id="bg">
       <option value="bg-white">ขาว</option>
@@ -208,31 +191,27 @@ input,select{
     </select>
   </div>
 
-  <button class="btn" onclick="saveCfg()">บันทึกการตั้งค่า</button>
+  <button class="btn primary" onclick="saveCfg()">บันทึกการตั้งค่า</button>
 </div>
 
-<!-- ================== NAV ================== -->
+<!-- ================= NAV ================= -->
 <div class="nav">
   <div class="active" onclick="go('rec')">บันทึก</div>
   <div onclick="go('rep')">รายงาน</div>
   <div onclick="go('his')">ย้อนหลัง</div>
-  <div onclick="go('set')">ตั้งค่า</div>
 </div>
 
 <script>
-/* ================== DATA ================== */
-const SERVICES=["ตัดผม","โกนหนวด","กันหน้า","สระผม","ย้อมผม","ดัดผม","ยืดผม","แก้ผม","อื่นๆ"];
-const STYLES=["รองทรง","สกินเฟด","แฟชั่น","นักเรียน","ทหาร","อเมริกัน","วินเทจ","อื่นๆ"];
-
+/* ===== LOCKED DATA MODEL ===== */
+const SERVICES=["ตัดผม","โกนหนวด","สระผม","ย้อมผม","อื่นๆ"];
 let db=JSON.parse(localStorage.getItem("bn_db")||"[]");
 let cfg=JSON.parse(localStorage.getItem("bn_cfg")||
 '{"shop":"BARBER SHOP","percent":50,"guarantee":300,"theme":"theme-blue","bg":"bg-gray"}');
 let pay="เงินสด";
 
-/* ================== INIT ================== */
 function init(){
   document.body.className=cfg.theme+" "+cfg.bg;
-  shopNameRec.innerText=shopNameRep.innerText=cfg.shop;
+  shopName.innerText=shopNameRep.innerText=cfg.shop;
   shopInput.value=cfg.shop;
   percent.value=cfg.percent;
   guarantee.value=cfg.guarantee;
@@ -243,30 +222,31 @@ function init(){
 }
 init();
 
-/* ================== FUNCTIONS ================== */
 function addRow(){
   let d=document.createElement("div");
   d.className="svc-row";
   d.innerHTML=`
-    <select>${SERVICES.map(s=>`<option>${s}</option>`)}</select>
-    <select>${STYLES.map(s=>`<option>${s}</option>`)}</select>
+    <select>${SERVICES.map(s=>`<option>${s}</option>`).join("")}</select>
+    <input placeholder="ทรง / หมายเหตุ">
     <input type="number" value="150">
     <span onclick="this.parentNode.remove()">✕</span>`;
   svcList.appendChild(d);
 }
 
 function save(){
-  let total=0,items=[];
+  let total=0,cust=0,transfer=0,items=[];
   document.querySelectorAll(".svc-row").forEach(r=>{
-    let p=parseInt(r.children[2].value)||0;
-    total+=p;
-    items.push({svc:r.children[0].value,style:r.children[1].value,price:p});
+    let svc=r.children[0].value;
+    let price=parseInt(r.children[2].value)||0;
+    total+=price;
+    if(svc==="ตัดผม")cust+=1;
+    if(["โกนหนวด","สระผม","ย้อมผม"].includes(svc))cust+=1;
+    items.push({svc,price});
   });
-  if(total===0)return alert("กรุณาใส่ราคา");
-  db.push({id:Date.now(),date:recDate.value,items,total,pay});
+  if(pay==="โอนเงิน")transfer=total;
+  db.push({date:recDate.value,total,cust,transfer,items});
   localStorage.setItem("bn_db",JSON.stringify(db));
-  svcList.innerHTML="";
-  addRow();
+  svcList.innerHTML="";addRow();
 }
 
 function go(p){
@@ -280,20 +260,23 @@ function renderReport(){
   let d=recDate.value;
   let day=db.filter(x=>x.date===d);
   let sum=day.reduce((s,x)=>s+x.total,0);
+  let cust=day.reduce((s,x)=>s+x.cust,0);
+  let transfer=day.reduce((s,x)=>s+x.transfer,0);
   let barber=Math.max(cfg.guarantee,sum*cfg.percent/100);
+
   sumTotal.innerText=sum;
-  barberSpan=barber;
-  shop.innerText=sum-barber;
+  custEl=cust;
+  barber.innerText=barber;
+  shopIncome.innerText=sum-barber;
+  transferEl=transfer;
   repDate.innerText=new Date(d).toLocaleDateString("th-TH",{dateStyle:"long"});
-  repList.innerHTML=day.map(x=>`
-    <div class="hist">${x.items.map(i=>i.svc).join("+")} ฿${x.total}</div>`).join("");
 }
 
 function renderHistory(){
   let d=hisDate.value;
   let day=db.filter(x=>x.date===d);
   hisList.innerHTML=day.map(x=>`
-    <div class="hist">${x.items.map(i=>i.svc).join("+")} ฿${x.total}</div>`).join("")||"ไม่มีข้อมูล";
+    <div class="hist">฿${x.total} (${x.cust} ลูกค้า)</div>`).join("")||"ไม่มีข้อมูล";
 }
 
 function saveCfg(){
@@ -310,3 +293,4 @@ function saveCfg(){
 </script>
 </body>
 </html>
+
