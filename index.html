@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Barber Note v3 FINAL</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Barber Note">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
+    <title>Barber Note Pro V6.4</title>
 
-<!-- โลโก้สำหรับติดตั้งเป็นแอป -->
-<link rel="apple-touch-icon" href="https://i.imgur.com/8Km9tLL.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+
 
 <style>
 :root{
@@ -24,6 +29,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);
   color:var(--primary);
+  padding-bottom: 80px; /* กันโดน nav ทับ */
 }
 
 header{
@@ -45,6 +51,7 @@ button{
   border-radius:10px;
   padding:10px 14px;
   font-size:15px;
+  cursor: pointer;
 }
 
 .btn-primary{background:#111827;color:#fff;}
@@ -70,13 +77,14 @@ button{
   gap:10px;
 }
 
-label{font-size:13px;color:var(--muted);}
+label{font-size:13px;color:var(--muted); display: block; margin-bottom: 4px; margin-top: 8px;}
 input,select{
   width:100%;
   padding:10px;
   border-radius:10px;
   border:1px solid #d1d5db;
   font-size:15px;
+  box-sizing: border-box;
 }
 
 .big-number{
@@ -93,7 +101,7 @@ input,select{
   justify-content:space-between;
   align-items:center;
   border-bottom:1px dashed #e5e7eb;
-  padding:6px 0;
+  padding:10px 0;
   font-size:14px;
 }
 
@@ -107,8 +115,13 @@ input,select{
 .footer-nav button{
   flex:1;
   border-radius:0;
-  padding:14px;
+  padding:16px;
   background:#fff;
+  color: var(--muted);
+}
+.footer-nav button.active {
+  color: var(--primary);
+  font-weight: bold;
 }
 
 .modal{
@@ -118,6 +131,7 @@ input,select{
   display:none;
   align-items:center;
   justify-content:center;
+  z-index: 1000;
 }
 .modal-content{
   background:#fff;
@@ -130,13 +144,11 @@ input,select{
 
 <body>
 
-<!-- HEADER -->
 <header>
   <h1 id="shopName">ร้านตัดผม</h1>
   <button class="btn-outline" onclick="openSetting()">⚙️</button>
 </header>
 
-<!-- PAGE 1 RECORD -->
 <div class="page active" id="page1">
   <div class="card">
     <label>วันที่</label>
@@ -145,11 +157,11 @@ input,select{
     <div class="grid-2">
       <div>
         <label>เวลาเริ่ม</label>
-        <input type="time" id="startTime">
+        <input type="time" id="startTime" value="09:00">
       </div>
       <div>
         <label>เวลาสิ้นสุด</label>
-        <input type="time" id="endTime">
+        <input type="time" id="endTime" value="09:30">
       </div>
     </div>
   </div>
@@ -171,19 +183,19 @@ input,select{
     <label>ทรงผม</label>
     <select id="hair">
       <option value="">ไม่ระบุ</option>
-      <option>รองทรง</option>
-      <option>สกินเฟด</option>
-      <option>แฟชั่น</option>
-      <option>นักเรียน</option>
-      <option>ตำรวจ / ทหาร</option>
-      <option>ทรงอเมริกัน</option>
-      <option>เปิดข้าง</option>
-      <option>วินเทจ</option>
-      <option>อื่นๆ</option>
+      <option value="รองทรง">รองทรง</option>
+      <option value="สกินเฟด">สกินเฟด</option>
+      <option value="แฟชั่น">แฟชั่น</option>
+      <option value="นักเรียน">นักเรียน</option>
+      <option value="ตำรวจ / ทหาร">ตำรวจ / ทหาร</option>
+      <option value="ทรงอเมริกัน">ทรงอเมริกัน</option>
+      <option value="เปิดข้าง">เปิดข้าง</option>
+      <option value="วินเทจ">วินเทจ</option>
+      <option value="อื่นๆ">อื่นๆ</option>
     </select>
 
     <label>ราคา</label>
-    <input type="number" id="price">
+    <input type="number" id="price" placeholder="0">
   </div>
 
   <div class="card">
@@ -197,7 +209,6 @@ input,select{
   <button class="btn-primary" style="width:100%" onclick="saveRecord()">บันทึกข้อมูล</button>
 </div>
 
-<!-- PAGE 2 DAILY -->
 <div class="page" id="page2">
   <div class="card" style="text-align:center">
     <div id="dailyDate" class="big-number"></div>
@@ -205,33 +216,32 @@ input,select{
 
   <div class="grid-2">
     <div class="card">
-      <div>ยอดรวม</div>
-      <div id="sumTotal" class="big-number"></div>
-      <div>ลูกค้า <span id="sumCount"></span> คน</div>
-      <div>บริการเพิ่ม <span id="extraCount"></span></div>
+      <div style="font-size:13px; color:var(--muted)">ยอดรวม</div>
+      <div id="sumTotal" class="big-number">0</div>
+      <div style="font-size:13px; margin-top:8px;">ลูกค้า <span id="sumCount">0</span> คน</div>
+      <div style="font-size:13px;">บริการเพิ่ม <span id="extraCount">0</span></div>
     </div>
 
     <div class="card">
-      <div>ยอดโอน</div>
-      <div id="sumTransfer" class="big-number"></div>
-      <div>รายได้ช่าง <span id="barberIncome"></span></div>
-      <div>รายได้ร้าน <span id="shopIncome"></span></div>
+      <div style="font-size:13px; color:var(--muted)">ยอดโอน</div>
+      <div id="sumTransfer" class="big-number">0</div>
+      <div style="font-size:13px; margin-top:8px;">ช่าง <span id="barberIncome">0</span></div>
+      <div style="font-size:13px;">ร้าน <span id="shopIncome">0</span></div>
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" style="text-align:center">
     <div id="clearStatus" class="big-number"></div>
   </div>
 
   <div class="card">
     <div id="todayList"></div>
-    <button class="btn-red" style="width:100%" onclick="deleteToday()">ลบข้อมูลวันนี้</button>
+    <button class="btn-red" style="width:100%; margin-top: 10px;" onclick="deleteToday()">ลบข้อมูลวันนี้</button>
   </div>
 
   <button class="btn-blue" style="width:100%" onclick="goPage(3)">ไปดูย้อนหลัง / สถิติ</button>
 </div>
 
-<!-- PAGE 3 HISTORY -->
 <div class="page" id="page3">
   <div class="card">
     <label>เลือกวันที่</label>
@@ -240,24 +250,24 @@ input,select{
   <div id="historyResult"></div>
 </div>
 
-<!-- SETTING MODAL -->
-<div class="modal" id="settingModal">
+<div class="modal" id="settingModal" onclick="if(event.target == this) this.style.display='none'">
   <div class="modal-content">
+    <h3 style="margin-top:0">ตั้งค่าระบบ</h3>
     <label>ชื่อร้าน</label>
     <input id="shopInput">
     <label>% คอมมิชชั่น</label>
     <input type="number" id="percentInput">
     <label>รายได้ประกัน</label>
     <input type="number" id="guaranteeInput">
+    <br><br>
     <button class="btn-green" style="width:100%" onclick="saveSetting()">บันทึก</button>
   </div>
 </div>
 
-<!-- NAV -->
 <div class="footer-nav">
-  <button onclick="goPage(1)">บันทึก</button>
-  <button onclick="goPage(2)">รายวัน</button>
-  <button onclick="goPage(3)">ย้อนหลัง</button>
+  <button id="nav1" onclick="goPage(1)" class="active">บันทึก</button>
+  <button id="nav2" onclick="goPage(2)">รายวัน</button>
+  <button id="nav3" onclick="goPage(3)">ย้อนหลัง</button>
 </div>
 
 <script>
@@ -268,76 +278,161 @@ let setting=JSON.parse(localStorage.getItem("setting"))||{
   percent:50,
   guarantee:0
 };
+
+// Initial Load
 document.getElementById("shopName").innerText=setting.shop;
+document.getElementById("dateInput").value = new Date().toISOString().slice(0, 10);
+document.getElementById("historyDate").value = new Date().toISOString().slice(0, 10);
 
 /* ====== PAGE ====== */
 function goPage(n){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".footer-nav button").forEach(b=>b.classList.remove("active"));
   document.getElementById("page"+n).classList.add("active");
+  document.getElementById("nav"+n).classList.add("active");
   if(n===2) renderDaily();
+  if(n===3) renderHistory();
 }
 
 /* ====== RECORD ====== */
 function setPay(p){
   payType=p;
+  const cashBtn = document.getElementById("cashBtn");
+  const transferBtn = document.getElementById("transferBtn");
   cashBtn.style.background=p==="เงินสด"?"#d1fae5":"#fff";
   transferBtn.style.background=p==="โอนเงิน"?"#dbeafe":"#fff";
 }
 
 function saveRecord(){
+  const dateInput = document.getElementById("dateInput");
+  const priceInput = document.getElementById("price");
+  const serviceInput = document.getElementById("service");
+  const hairInput = document.getElementById("hair");
+
   if(!payType) return alert("เลือกวิธีชำระเงิน");
+  if(!priceInput.value) return alert("กรุณาใส่ราคา");
+
   const rec={
-    date:dateInput.value,
-    price:+price.value,
-    pay:payType,
-    service:service.value
+    id: Date.now(),
+    date: dateInput.value,
+    price: +priceInput.value,
+    pay: payType,
+    service: serviceInput.value,
+    hair: hairInput.value
   };
+
   const arr=JSON.parse(localStorage.getItem("records")||"[]");
   arr.push(rec);
   localStorage.setItem("records",JSON.stringify(arr));
+  
   alert("บันทึกสำเร็จ");
-  price.value=""; payType="";
+  
+  // Clear Input
+  priceInput.value=""; 
+  setPay("");
 }
 
 /* ====== DAILY ====== */
 function renderDaily(){
-  const today=new Date().toISOString().slice(0,10);
-  const arr=JSON.parse(localStorage.getItem("records")||"[]").filter(r=>r.date===today);
-  let sum=0,transfer=0,extra=0;
-  arr.forEach(r=>{
-    sum+=r.price;
-    if(r.pay==="โอนเงิน") transfer+=r.price;
-    if(["โกนหนวด","สระผม","ย้อมผม"].includes(r.service)) extra++;
-  });
-  const barber=Math.max(sum*setting.percent/100,setting.guarantee);
-  const shop=sum-barber;
-  document.getElementById("sumTotal").innerText=sum;
-  document.getElementById("sumCount").innerText=arr.length;
-  document.getElementById("extraCount").innerText=extra;
-  document.getElementById("sumTransfer").innerText=transfer;
-  document.getElementById("barberIncome").innerText=barber;
-  document.getElementById("shopIncome").innerText=shop;
+  const today = document.getElementById("dateInput").value;
+  const arr = JSON.parse(localStorage.getItem("records")||"[]").filter(r=>r.date===today);
+  
+  let sum=0, transfer=0, extra=0;
+  let listHtml = "";
 
-  let diff=transfer-shop;
-  clearStatus.innerText=diff>0?"ร้านคืนช่าง":diff<0?"ช่างคืนร้าน":"ยอดพอดีไม่ต้องคืน";
+  arr.forEach(r=>{
+    sum += r.price;
+    if(r.pay==="โอนเงิน") transfer += r.price;
+    if(["โกนหนวด","สระผม","ย้อมผม","ดัดผม"].includes(r.service)) extra++;
+    
+    listHtml += `<div class="record-row">
+      <span>${r.service} ${r.hair?'('+r.hair+')':''}</span>
+      <span style="color:${r.pay==='เงินสด'?'#16a34a':'#2563eb'}">${r.pay} ฿${r.price}</span>
+    </div>`;
+  });
+
+  const barber = Math.max(sum * (setting.percent / 100), setting.guarantee);
+  const shop = sum - barber;
+
+  document.getElementById("dailyDate").innerText = today;
+  document.getElementById("sumTotal").innerText = sum.toLocaleString();
+  document.getElementById("sumCount").innerText = arr.length;
+  document.getElementById("extraCount").innerText = extra;
+  document.getElementById("sumTransfer").innerText = transfer.toLocaleString();
+  document.getElementById("barberIncome").innerText = barber.toLocaleString();
+  document.getElementById("shopIncome").innerText = shop.toLocaleString();
+  document.getElementById("todayList").innerHTML = listHtml || "<p style='text-align:center;color:#999'>ไม่มีข้อมูล</p>";
+
+  const clearStatus = document.getElementById("clearStatus");
+  let diff = transfer - barber;
+  
+  if(sum === 0) {
+    clearStatus.innerText = "ไม่มีรายการ";
+    clearStatus.className = "big-number status-equal";
+  } else if(diff > 0) {
+    clearStatus.innerText = "ช่างคืนร้าน ฿" + Math.abs(diff).toLocaleString();
+    clearStatus.className = "big-number status-back";
+  } else if(diff < 0) {
+    clearStatus.innerText = "ร้านคืนช่าง ฿" + Math.abs(diff).toLocaleString();
+    clearStatus.className = "big-number status-ok";
+  } else {
+    clearStatus.innerText = "ยอดพอดีไม่ต้องคืน";
+    clearStatus.className = "big-number status-equal";
+  }
+}
+
+/* ====== HISTORY ====== */
+function renderHistory(){
+  const hDate = document.getElementById("historyDate").value;
+  const arr = JSON.parse(localStorage.getItem("records")||"[]").filter(r=>r.date===hDate);
+  let html = "";
+  let daySum = 0;
+
+  arr.forEach(r=>{
+    daySum += r.price;
+    html += `<div class="record-row">
+      <span>${r.service} ${r.hair?'('+r.hair+')':''}</span>
+      <strong>฿${r.price}</strong>
+    </div>`;
+  });
+
+  document.getElementById("historyResult").innerHTML = arr.length ? `
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <b>ยอดรวมวันที่เลือก</b>
+        <b class="status-ok">฿${daySum.toLocaleString()}</b>
+      </div>
+      ${html}
+    </div>
+  ` : "<p style='text-align:center; padding:20px; color:#999'>ไม่พบข้อมูลในวันนี้</p>";
+}
+
+function deleteToday(){
+  if(!confirm("ยืนยันการลบข้อมูลทั้งหมดของวันนี้?")) return;
+  const today = document.getElementById("dateInput").value;
+  let arr = JSON.parse(localStorage.getItem("records")||"[]");
+  arr = arr.filter(r=>r.date !== today);
+  localStorage.setItem("records", JSON.stringify(arr));
+  renderDaily();
 }
 
 /* ====== SETTING ====== */
 function openSetting(){
-  settingModal.style.display="flex";
-  shopInput.value=setting.shop;
-  percentInput.value=setting.percent;
-  guaranteeInput.value=setting.guarantee;
+  document.getElementById("settingModal").style.display="flex";
+  document.getElementById("shopInput").value=setting.shop;
+  document.getElementById("percentInput").value=setting.percent;
+  document.getElementById("guaranteeInput").value=setting.guarantee;
 }
+
 function saveSetting(){
   setting={
-    shop:shopInput.value,
-    percent:+percentInput.value,
-    guarantee:+guaranteeInput.value
+    shop: document.getElementById("shopInput").value,
+    percent: +document.getElementById("percentInput").value,
+    guarantee: +document.getElementById("guaranteeInput").value
   };
   localStorage.setItem("setting",JSON.stringify(setting));
-  shopName.innerText=setting.shop;
-  settingModal.style.display="none";
+  document.getElementById("shopName").innerText=setting.shop;
+  document.getElementById("settingModal").style.display="none";
 }
 </script>
 
