@@ -12,10 +12,16 @@
         :root {
             --primary: #1e3a8a; --accent: #16a34a; --danger: #dc2626; --info: #0284c7; --muted: #64748b;
             --bg-p1: #fdf2f8; --bg-p2: #f0fdf4; --bg-p3: #f0f9ff;
+            --main-bg: #f1f5f9;
         }
-        body { margin: 0; font-family: 'Kanit', sans-serif; background: var(--bg-p3); color: #1e293b; padding-bottom: 100px; transition: 0.3s; }
+        /* Theme Styles */
+        body.theme-dark { --main-bg: #0f172a; color: #f8fafc; }
+        body.theme-dark header, body.theme-dark .card, body.theme-dark .nav { background: #1e293b; color: white; border-color: #334155; }
+        body.theme-dark input, body.theme-dark select { background: #334155; color: white; border-color: #475569; }
+
+        body { margin: 0; font-family: 'Kanit', sans-serif; background: var(--main-bg); color: #1e293b; padding-bottom: 100px; transition: 0.3s; }
         header { padding: 15px; background: #fff; display: flex; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top:0; z-index:100; }
-        header h1 { flex: 1; text-align: center; font-size: 20px; margin: 0; font-weight: 600; }
+        header h1 { flex: 1; text-align: center; font-size: 18px; margin: 0; font-weight: 600; }
         .page { display: none; padding: 15px; animation: fadeIn 0.2s; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -39,11 +45,12 @@
         .nav-item.active { color: var(--primary); font-weight: 700; }
         .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: #fff; width: 85%; border-radius: 24px; padding: 25px; }
-        .badge { background: #f1f5f9; padding: 3px 8px; border-radius: 8px; font-size: 11px; margin: 2px; display: inline-block; border: 1px solid #e2e8f0; }
+        .modal-content { background: #fff; width: 85%; border-radius: 24px; padding: 25px; max-height: 80vh; overflow-y: auto; }
+        .badge { background: #f1f5f9; padding: 3px 8px; border-radius: 8px; font-size: 11px; margin: 2px; display: inline-block; border: 1px solid #e2e8f0; color: #1e3a8a; }
+        .color-dot { width: 30px; height: 30px; border-radius: 50%; display: inline-block; margin: 5px; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
     </style>
 </head>
-<body>
+<body id="bodyTag">
 
 <header>
     <div style="width:30px"></div>
@@ -52,23 +59,18 @@
 </header>
 
 <div class="page active" id="p1">
-    <div class="card">
-        <label>วันที่รายการ</label>
-        <input type="date" id="dateInp">
-    </div>
+    <div class="card"><label>วันที่รายการ</label><input type="date" id="dateInp"></div>
     <div class="card">
         <label>เลือกบริการ & ทรงผม</label>
         <div id="svcList">
             <div class="svc-row">
                 <select class="svc-sel">
-                    <option>ตัดผม</option><option>โกนหนวด</option><option>กันหน้า</option>
-                    <option>แก้ผม</option><option>โกนผม</option><option>สระผม</option>
-                    <option>ย้อมผม</option><option>ดัดผม</option><option>อื่นๆ</option>
+                    <option>ตัดผม</option><option>โกนหนวด</option><option>กันหน้า</option><option>แก้ผม</option>
+                    <option>โกนผม</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>อื่นๆ</option>
                 </select>
                 <select class="hair-sel">
-                    <option value="">(ไม่ระบุทรง)</option><option>รองทรง</option><option>สกินเฟด</option>
-                    <option>แฟชั่น</option><option>นักเรียน</option><option>ตำรวจ / ทหาร</option>
-                    <option>ทรงอเมริกัน</option><option>เปิดข้าง</option><option>วินเทจ</option><option>อื่นๆ</option>
+                    <option value="">(ไม่ระบุทรง)</option><option>รองทรง</option><option>สกินเฟด</option><option>แฟชั่น</option>
+                    <option>นักเรียน</option><option>ตำรวจ / ทหาร</option><option>ทรงอเมริกัน</option><option>เปิดข้าง</option><option>วินเทจ</option><option>อื่นๆ</option>
                 </select>
             </div>
         </div>
@@ -92,7 +94,7 @@
         <div class="card" style="border-left:5px solid var(--primary)">
             <label>ยอดรวมวันนี้</label>
             <div id="sumTotal" style="font-size:26px; font-weight:700">0</div>
-            <div style="font-size:12px; color:var(--muted)">ลูกค้า <span id="sumCust">0</span> | บริการ <span id="sumEx">0</span></div>
+            <div style="font-size:12px; color:var(--muted)">ลูกค้า <span id="sumCust">0</span> | บริการเพิ่ม <span id="sumEx">0</span></div>
         </div>
         <div class="card">
             <div style="font-size:12px">โอน: <b id="sumTrans">0</b></div>
@@ -100,20 +102,20 @@
             <div style="font-size:12px">ร้าน: <b id="incShop" style="color:var(--accent)">0</b></div>
         </div>
     </div>
-    <div id="settlementBar" class="status-bar status-gray">⚪️ ยอดพอดีไม่ต้องคืน</div>
+    <div id="settlementBar" class="status-bar status-blue">⚪️ ยอดพอดีไม่ต้องคืน</div>
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <label>รายการวันนี้</label>
             <i class="fab fa-line" style="color:#06C755; font-size:24px;" onclick="shareToLine()"></i>
         </div>
         <div id="todayRecords" style="margin-top:10px"></div>
-        <button onclick="deleteDayRecords()" style="width:100%; margin-top:20px; color:var(--danger); background:none; font-size:12px;">ลบข้อมูลทั้งหมดของวันนี้</button>
+        <button onclick="deleteDayRecords()" style="width:100%; margin-top:20px; color:var(--danger); background:none; font-size:12px;">ล้างข้อมูลวันนี้ทั้งหมด</button>
     </div>
 </div>
 
 <div class="page" id="p3">
     <div class="card">
-        <label>เลือกดูข้อมูล</label>
+        <label>เลือกดูรายวัน / รายเดือน</label>
         <div class="grid-2">
             <input type="date" id="histDate" onchange="showDailyHist()">
             <input type="month" id="histMonth" onchange="showMonthlyHist()">
@@ -128,6 +130,21 @@
         <label>ชื่อร้าน</label><input id="sShop">
         <label>% คอมมิชชั่น</label><input type="number" id="sPerc">
         <label>รายได้ประกัน</label><input type="number" id="sGuar">
+        <label style="margin-top:10px">ธีมหลัก</label>
+        <select id="sTheme">
+            <option value="light">Light Mode</option>
+            <option value="dark">Dark Mode</option>
+        </select>
+        <label style="margin-top:10px">สีพื้นหลังพาสเทล (7 สี)</label>
+        <div id="colorOptions">
+            <div class="color-dot" style="background:#fdf2f8" onclick="setBg('#fdf2f8')"></div>
+            <div class="color-dot" style="background:#f0fdf4" onclick="setBg('#f0fdf4')"></div>
+            <div class="color-dot" style="background:#f0f9ff" onclick="setBg('#f0f9ff')"></div>
+            <div class="color-dot" style="background:#fffbeb" onclick="setBg('#fffbeb')"></div>
+            <div class="color-dot" style="background:#faf5ff" onclick="setBg('#faf5ff')"></div>
+            <div class="color-dot" style="background:#fff7ed" onclick="setBg('#fff7ed')"></div>
+            <div class="color-dot" style="background:#f1f5f9" onclick="setBg('#f1f5f9')"></div>
+        </div>
         <div class="grid-2" style="margin-top:20px">
             <button class="btn-pay" onclick="toggleModal(false)">ปิด</button>
             <button class="btn-save" onclick="saveSettings()">บันทึก</button>
@@ -143,13 +160,22 @@
 
 <script>
     let payType = "";
-    let conf = JSON.parse(localStorage.getItem("bn3_conf")) || {shop:"ร้านตัดผม", perc:50, guar:0};
+    let conf = JSON.parse(localStorage.getItem("bn3_conf")) || {shop:"ร้านตัดผม", perc:50, guar:0, theme:"light", bg:"#f1f5f9"};
     let db = JSON.parse(localStorage.getItem("bn3_db")) || [];
+    let currentBg = conf.bg;
 
     window.onload = () => {
         document.getElementById("dateInp").valueAsDate = new Date();
-        document.getElementById("shopTitleDisplay").innerText = conf.shop;
+        applySettings();
     };
+
+    function applySettings() {
+        document.getElementById("shopTitleDisplay").innerText = conf.shop;
+        document.getElementById("bodyTag").className = "theme-" + conf.theme;
+        document.getElementById("bodyTag").style.backgroundColor = conf.bg;
+    }
+
+    function setBg(c) { currentBg = c; }
 
     function go(n) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -162,13 +188,24 @@
 
     function toggleModal(s) {
         document.getElementById("setModal").style.display = s?'flex':'none';
-        if(s){ document.getElementById("sShop").value=conf.shop; document.getElementById("sPerc").value=conf.perc; document.getElementById("sGuar").value=conf.guar; }
+        if(s){ 
+            document.getElementById("sShop").value=conf.shop; 
+            document.getElementById("sPerc").value=conf.perc; 
+            document.getElementById("sGuar").value=conf.guar;
+            document.getElementById("sTheme").value=conf.theme;
+        }
     }
 
     function saveSettings() {
-        conf = {shop:document.getElementById("sShop").value, perc:+document.getElementById("sPerc").value, guar:+document.getElementById("sGuar").value};
+        conf = {
+            shop:document.getElementById("sShop").value, 
+            perc:+document.getElementById("sPerc").value, 
+            guar:+document.getElementById("sGuar").value,
+            theme:document.getElementById("sTheme").value,
+            bg: currentBg
+        };
         localStorage.setItem("bn3_conf", JSON.stringify(conf));
-        document.getElementById("shopTitleDisplay").innerText = conf.shop;
+        applySettings();
         toggleModal(false);
     }
 
@@ -207,10 +244,10 @@
     function renderTodayPage() {
         const today = document.getElementById("dateInp").value;
         const filtered = db.filter(r => r.date === today);
-        let total = 0, trans = 0, svccnt = 0, html = "";
+        let total = 0, trans = 0, extra = 0, html = "";
         filtered.forEach(r => {
             total += r.price; if(r.pay==='โอนเงิน') trans += r.price;
-            svccnt += r.services.length;
+            extra += (r.services.length - 1);
             html += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; font-size:14px;">
                 <span>${r.services.join('+')} <small style="color:var(--muted)">${r.hairs.join(',')}</small></span>
                 <span><b>${r.price}</b> <i class="fas fa-trash" style="color:#ccc; margin-left:8px;" onclick="delRec(${r.id})"></i></span>
@@ -223,14 +260,14 @@
         document.getElementById("todayDateLabel").innerText = new Date(today).toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
         document.getElementById("sumTotal").innerText = total.toLocaleString();
         document.getElementById("sumCust").innerText = filtered.length;
-        document.getElementById("sumEx").innerText = svccnt;
+        document.getElementById("sumEx").innerText = extra < 0 ? 0 : extra;
         document.getElementById("sumTrans").innerText = trans.toLocaleString();
         document.getElementById("incBarber").innerText = barber.toLocaleString();
         document.getElementById("incShop").innerText = shop.toLocaleString();
-        document.getElementById("todayRecords").innerHTML = html || "<center style='color:#ccc; padding:20px;'>ไม่มีข้อมูล</center>";
+        document.getElementById("todayRecords").innerHTML = html || "<center style='color:#ccc; padding:20px;'>ไม่มีข้อมูลวันนี้</center>";
 
         const bar = document.getElementById("settlementBar");
-        if(total===0) { bar.innerText="⚪️ ยอดพอดี"; bar.className="status-bar status-gray"; }
+        if(total===0) { bar.innerText="⚪️ ยอดพอดี"; bar.className="status-bar status-blue"; }
         else if(diff > 0) { bar.innerText=`🟥 ช่างคืนร้าน ฿${diff.toLocaleString()}`; bar.className="status-bar status-red"; }
         else if(diff < 0) { bar.innerText=`🟩 ร้านคืนช่าง ฿${Math.abs(diff).toLocaleString()}`; bar.className="status-bar status-green"; }
         else { bar.innerText="🔵 ยอดพอดี"; bar.className="status-bar status-blue"; }
@@ -241,72 +278,73 @@
 
     function showDailyHist() {
         const d = document.getElementById("histDate").value || document.getElementById("dateInp").value;
-        const filtered = db.filter(r => r.date === d);
-        let total = 0, trans = 0, svccnt = 0, html = "";
-        filtered.forEach(r => { 
-            total += r.price; if(r.pay==='โอนเงิน') trans += r.price; svccnt += r.services.length; 
+        const f = db.filter(r => r.date === d);
+        let tot = 0, tr = 0, html = "";
+        f.forEach(r => { 
+            tot += r.price; if(r.pay==='โอนเงิน') tr += r.price;
             html += `<div style="font-size:12px; border-bottom:1px solid #f1f5f9; padding:4px 0;">${r.services.join('+')} (${r.price})</div>`;
         });
-        const barber = Math.max(total * (conf.perc/100), conf.guar);
-        const shop = total - barber;
-        const diff = trans - shop;
-        const status = diff > 0 ? `<span style="color:red">ช่างคืนร้าน ฿${diff}</span>` : diff < 0 ? `<span style="color:green">ร้านคืนช่าง ฿${Math.abs(diff)}</span>` : "ยอดพอดี";
+        const barb = Math.max(tot * (conf.perc/100), conf.guar);
+        const sho = tot - barb;
+        const df = tr - sho;
+        const status = df > 0 ? `<span style="color:red">ช่างคืนร้าน ฿${df}</span>` : df < 0 ? `<span style="color:green">ร้านคืนช่าง ฿${Math.abs(df)}</span>` : "ยอดพอดี";
 
         document.getElementById("histContent").innerHTML = `
-            <div class="card">
+            <div class="card" style="border-top:5px solid var(--primary)">
                 <h3 style="margin:0">${new Date(d).toLocaleDateString('th-TH')}</h3>
                 <div class="grid-2" style="margin-top:10px; font-size:14px;">
-                    <div><b>ยอดรวม:</b> ฿${total}</div><div><b>ลูกค้า:</b> ${filtered.length} คน</div>
-                    <div><b>บริการ:</b> ${svccnt} รายการ</div><div><b>สถานะ:</b> ${status}</div>
-                    <div><b>ช่างได้:</b> ฿${barber}</div><div><b>ร้านได้:</b> ฿${shop}</div>
+                    <div>1. วันที่: <b>${new Date(d).toLocaleDateString('th-TH')}</b></div>
+                    <div>2. ยอดรวม: <b>฿${tot}</b></div>
+                    <div>3. ลูกค้า: <b>${f.length} คน</b></div>
+                    <div>4. บริการ: <b>${f.reduce((a,b)=>a+b.services.length,0)}</b></div>
+                    <div>5. ช่าง: <b>฿${barb}</b></div>
+                    <div>6. ร้าน: <b>฿${sho}</b></div>
+                    <div style="grid-column: span 2">7. ยอดคืนกัน: <b>${status}</b></div>
                 </div>
-                <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">${html || "ไม่มีข้อมูล"}</div>
+                <label style="margin-top:10px">8. รายการบันทึก:</label>${html || "-"}
             </div>`;
     }
 
     function showMonthlyHist() {
         const m = document.getElementById("histMonth").value; if(!m) return;
-        const filtered = db.filter(r => r.date.startsWith(m));
-        let total = 0, bTotal = 0, svcs = {}, hairs = {};
-        const days = [...new Set(filtered.map(r=>r.date))];
-        
+        const f = db.filter(r => r.date.startsWith(m));
+        let tot = 0, bTot = 0, svMap = {}, hrMap = {};
+        const days = [...new Set(f.map(r=>r.date))];
         days.forEach(d => {
-            const daySum = filtered.filter(r=>r.date===d).reduce((a,b)=>a+b.price,0);
-            bTotal += Math.max(daySum * (conf.perc/100), conf.guar);
+            const dSum = f.filter(r=>r.date===d).reduce((a,b)=>a+b.price,0);
+            bTot += Math.max(dSum * (conf.perc/100), conf.guar);
         });
-        filtered.forEach(r => { 
-            total += r.price; 
-            r.services.forEach(s => svcs[s] = (svcs[s]||0)+1);
-            r.hairs.forEach(h => hairs[h] = (hairs[h]||0)+1);
+        f.forEach(r => { 
+            tot += r.price; 
+            r.services.forEach(s => svMap[s] = (svMap[s]||0)+1);
+            r.hairs.forEach(h => hrMap[h] = (hrMap[h]||0)+1);
         });
-
-        const svcSorted = Object.entries(svcs).sort((a,b)=>b[1]-a[1]).map(e=>`<span class="badge">${e[0]} (${e[1]})</span>`).join('');
-        const hairSorted = Object.entries(hairs).sort((a,b)=>b[1]-a[1]).map(e=>`<span class="badge">${e[0]} (${e[1]})</span>`).join('');
+        const sortDisp = (obj) => Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(e=>`<span class="badge">${e[0]} (${e[1]})</span>`).join('');
 
         document.getElementById("histContent").innerHTML = `
-            <div class="card" style="border-top:5px solid var(--primary)">
+            <div class="card" style="border-top:5px solid var(--info)">
                 <h3>สรุปเดือน ${m}</h3>
-                <div style="font-size:15px;">
-                    ยอดรวม: <b style="font-size:20px; color:var(--primary)">฿${total.toLocaleString()}</b><br>
-                    ช่าง: ฿${bTotal.toLocaleString()} | ร้าน: ฿${(total-bTotal).toLocaleString()}<br>
-                    เฉลี่ย: ฿${(total/(days.length||1)).toFixed(0)} /วัน | ลูกค้า: ${filtered.length} คน
+                <div style="font-size:14px; line-height:1.6">
+                    ยอดรวมทั้งเดือน: <b style="color:var(--primary)">฿${tot.toLocaleString()}</b><br>
+                    รายได้ช่าง: ฿${bTot.toLocaleString()} | รายได้ร้าน: ฿${(tot-bTot).toLocaleString()}<br>
+                    เฉลี่ยคน/วัน: ${(f.length/(days.length||1)).toFixed(1)} คน
                 </div>
-                <label style="margin-top:15px">อันดับบริการยอดนิยม</label><div>${svcSorted || '-'}</div>
-                <label style="margin-top:10px">อันดับทรงผมยอดนิยม</label><div>${hairSorted || '-'}</div>
+                <label style="margin-top:10px">อันดับบริการ:</label><div>${sortDisp(svMap)}</div>
+                <label style="margin-top:10px">อันดับทรงผม:</label><div>${sortDisp(hrMap)}</div>
             </div>`;
     }
 
     function shareToLine() {
-        const today = document.getElementById("dateInp").value;
-        const filtered = db.filter(r => r.date === today);
-        if(!filtered.length) return alert("ไม่มีข้อมูลให้แชร์");
-        let total = 0, trans = 0, detail = "";
-        filtered.forEach((r,i) => { total += r.price; if(r.pay==='โอนเงิน') trans += r.price; detail += `${i+1}. ${r.services.join('+')} (${r.price})\n`; });
-        const barber = Math.max(total * (conf.perc/100), conf.guar);
-        const shop = total - barber;
-        const diff = trans - shop;
-        const status = diff > 0 ? "ช่างคืนร้าน" : diff < 0 ? "ร้านคืนช่าง" : "ยอดพอดี";
-        const msg = `📅 รายงาน: ${today}\n💰 ยอดรวม: ${total}\n🤵 ช่าง: ${barber} / 🏠 ร้าน: ${shop}\n🔄 ${status}: ${Math.abs(diff)}\n\n📝 รายการ:\n${detail}`;
+        const d = document.getElementById("dateInp").value;
+        const f = db.filter(r => r.date === d);
+        if(!f.length) return alert("ไม่มีข้อมูล");
+        let tot = 0, tr = 0, det = "";
+        f.forEach((r,i) => { tot += r.price; if(r.pay==='โอนเงิน') tr += r.price; det += `${i+1}.${r.services.join('+')} ฿${r.price}\n`; });
+        const barb = Math.max(tot * (conf.perc/100), conf.guar);
+        const sho = tot - barb;
+        const df = tr - sho;
+        const st = df > 0 ? "ช่างคืนร้าน" : df < 0 ? "ร้านคืนช่าง" : "ยอดพอดี";
+        const msg = `💈 รายงาน ${d}\n💰 รวม: ${tot}\n🤵 ช่าง: ${barb} | 🏠 ร้าน: ${sho}\n🔄 ${st}: ${Math.abs(df)}\n\n📝 รายการ:\n${det}`;
         window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`);
     }
 </script>
