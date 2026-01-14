@@ -391,11 +391,55 @@
     }
 
     function shareLine() {
-        const d = document.getElementById("dateInp").value;
-        const tot = document.getElementById("dTotal").innerText;
-        const msg = `💈 รายงานร้าน ${conf.shop}\n📅 วันที่: ${d}\n💰 ยอดรวม: ${tot} บ.\n🤵 ช่าง: ${document.getElementById("dBarber").innerText}\n🏠 ร้าน: ${document.getElementById("dShop").innerText}\n⚠️ ${document.getElementById("settleBar").innerText}`;
-        window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`);
-    }
+    const d = document.getElementById("dateInp").value;
+    const today = db.filter(r => r.date === d);
+    if (!today.length) return alert("ไม่มีข้อมูลของวันนี้");
+
+    // 1. หัวรายงาน
+    let msg = `💈 รายงานร้าน: ${conf.shop}\n`;
+    msg += `📅 วันที่: ${d}\n`;
+    msg += `--------------------------\n`;
+
+    // 2. รายการลูกค้า (มีเวลา)
+    msg += `📝 รายการลูกค้า:\n`;
+    today.sort((a, b) => a.id - b.id).forEach((r, index) => {
+        const svcsText = r.svcs.join('+');
+        const payIcon = r.pay === 'Cash' ? '💵' : '📱';
+        // แสดงผลรูปแบบ: ลำดับ. [เวลา] บริการ(ทรงผม) = ราคา วิธีจ่าย
+        msg += `${index + 1}. [${r.time}] ${svcsText}${r.hair ? '(' + r.hair + ')' : ''} = ${r.price} ${payIcon}\n`;
+    });
+    msg += `--------------------------\n`;
+
+    // 3. Itemized Counter (นับเฉพาะ โกนหนวด / สระผม / ย้อมผม)
+    let shave = 0, wash = 0, dye = 0;
+    today.forEach(r => {
+        r.svcs.forEach(s => {
+            if (s === "โกนหนวด") shave++;
+            if (s === "สระผม") wash++;
+            if (s === "ย้อมผม") dye++;
+        });
+    });
+
+    msg += `📊 สรุปบริการเสริม:\n`;
+    msg += `🪒 โกนหนวด: ${shave} คน\n`;
+    msg += `🚿 สระผม: ${wash} ครั้ง\n`;
+    msg += `🎨 ย้อมผม: ${dye} ครั้ง\n`;
+    msg += `--------------------------\n`;
+
+    // 4. สรุปยอดเงินและสถานะเคลียร์เงิน
+    const tot = document.getElementById("dTotal").innerText;
+    const barb = document.getElementById("dBarber").innerText;
+    const shop = document.getElementById("dShop").innerText;
+    const settle = document.getElementById("settleBar").innerText;
+
+    msg += `💰 ยอดรวม: ${tot} บ.\n`;
+    msg += `🤵 ช่าง: ${barb} บ.\n`;
+    msg += `🏠 ร้าน: ${shop} บ.\n`;
+    msg += `⚠️ ${settle}`;
+
+    // ส่งข้อมูลเข้า LINE
+    window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`);
+}
 
     function openSettings() { document.getElementById("modalSet").style.display = "flex"; document.getElementById("setShop").value = conf.shop; document.getElementById("setPerc").value = conf.perc; document.getElementById("setGuar").value = conf.guar; document.getElementById("setTheme").value = conf.theme; }
     function closeSettings() { document.getElementById("modalSet").style.display = "none"; }
@@ -407,3 +451,4 @@
 </script>
 </body>
 </html>
+
