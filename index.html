@@ -324,10 +324,27 @@ function applyCfg() {
         const total = dRecs.reduce((s, r) => s + r.total, 0);
         const trans = dRecs.filter(r => r.payType === 'โอนเงิน').reduce((s, r) => s + r.total, 0);
         
-        // คำนวณรายได้ช่างพร้อมประกัน
-        let barber = total * (cfg.per / 100);
-        if (dRecs.length > 0 && barber < cfg.gua) barber = cfg.gua;
-        const shop = total - barber;
+        // --- เริ่มต้นส่วนสูตรคำนวณใหม่ ---
+
+// 1. หายอดรวม และ ยอดโอนของวันนี้
+const total = dRecs.reduce((s, r) => s + r.total, 0);
+const trans = dRecs.filter(r => r.payType === 'โอนเงิน').reduce((s, r) => s + r.total, 0);
+
+// 2. คำนวณรายได้ช่าง (ใช้ % ที่ตั้งค่าไว้)
+let barber = total * (cfg.per / 100);
+
+// 3. กฎเหล็กประกันรายได้: ถ้ามีลูกค้าเข้าแม้แต่คนเดียว แต่ยอดคอมน้อยกว่าประกัน ให้ช่างได้ค่าประกันไปเลย
+if (dRecs.length > 0 && barber < cfg.gua) {
+    barber = cfg.gua;
+}
+
+// 4. รายได้ร้าน คือ ยอดรวมทั้งหมด หักส่วนที่ต้องจ่ายช่างออกไป
+const shop = total - barber;
+
+// 5. คำนวณส่วนต่างการเคลียร์เงิน (ยอดเงินโอน - รายได้ที่ช่างควรได้รับ)
+const diff = trans - barber;
+
+// --- สิ้นสุดส่วนสูตรคำนวณ (นำค่าเหล่านี้ไปใส่ใน id ต่างๆ ต่อได้เลย) ---
 
         // นับบริการเสริม (โกน, สระ, ย้อม)
         let counts = { "โกน": 0, "สระ": 0, "ย้อม": 0 };
@@ -475,4 +492,5 @@ function saveToHistory() {
 </script>
 </body>
 </html>
+
 
