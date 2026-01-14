@@ -2,227 +2,278 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Barber Note">
 <title>Barber Note v3 FINAL</title>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 :root{
---primary:#2563eb;
---bg:#f1f5f9;
---card:#ffffff;
---text:#0f172a;
---border:#e2e8f0;
+  --primary:#2b459a;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#334155;
+  --sub:#64748b;
+  --border:#e2e8f0;
 }
-body{margin:0;font-family:'Kanit',sans-serif;background:var(--bg);color:var(--text)}
-.page{display:none;padding:16px;max-width:520px;margin:auto}
+.theme-dark{--primary:#111827;--bg:#020617;--card:#020617;--text:#f8fafc}
+.theme-green{--primary:#166534}
+
+.bg-white{--bg:#ffffff}
+.bg-blue{--bg:#f0f9ff}
+.bg-green{--bg:#f0fdf4}
+.bg-yellow{--bg:#fefce8}
+.bg-pink{--bg:#fdf2f8}
+.bg-purple{--bg:#faf5ff}
+.bg-gray{--bg:#f8fafc}
+
+*{box-sizing:border-box;font-family:'Kanit',sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);padding-bottom:80px}
+.page{display:none;padding:15px;max-width:500px;margin:auto}
 .page.active{display:block}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px}
-input,select,button{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);font-size:16px}
-button{background:var(--primary);color:#fff;font-weight:600;border:none}
-.nav{position:fixed;bottom:0;left:0;right:0;height:64px;display:flex;background:#fff;border-top:1px solid var(--border)}
-.nav div{flex:1;text-align:center;font-size:12px;padding-top:6px}
-.nav .active{color:var(--primary);font-weight:700}
-.row{display:flex;gap:8px}
-.row>div{flex:1}
-.small{font-size:13px;color:#64748b}
-.big{font-size:28px;font-weight:800}
-.center{text-align:center}
+
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--card);border-bottom:1px solid var(--border);padding:14px
+}
+.shop{font-weight:600;color:var(--primary)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.label{font-size:12px;color:var(--sub);margin-bottom:6px}
+input,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;background:var(--primary);color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:600}
+.svc-row{display:grid;grid-template-columns:1fr 1fr 70px 30px;gap:6px;margin-bottom:8px}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px}
+.stat-title{font-size:12px;color:var(--sub)}
+.stat-val{font-size:18px;font-weight:600}
+
+.status-ok{color:#16a34a}
+.status-pay{color:#dc2626}
+.status-back{color:#2563eb}
+
+.nav{position:fixed;bottom:0;width:100%;height:70px;display:flex;background:var(--card);border-top:1px solid var(--border)}
+.nav div{flex:1;text-align:center;padding-top:10px;font-size:12px;color:var(--sub)}
+.nav .active{color:var(--primary);font-weight:600}
+.hist{border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px}
 </style>
 </head>
+
 <body>
 
-<!-- PAGE 1 RECORD -->
-<div id="p1" class="page active">
-<div class="row" style="justify-content:flex-end;align-items:center">
-<div id="shopName" style="font-size:18px;font-weight:800">BARBER SHOP</div>
-<button style="width:auto;background:none;color:#334155" onclick="openSetting()">⚙️</button>
+<!-- PAGE 1 : RECORD -->
+<div id="rec" class="page active">
+  <div class="header">
+    <div class="shop" id="shopNameRec"></div>
+    <span onclick="go('set')">⚙️</span>
+  </div>
+
+  <div class="card">
+    <div class="label">วันที่</div>
+    <input type="date" id="recDate">
+    <div class="grid2" style="margin-top:10px">
+      <input type="time" id="start">
+      <input type="time" id="end">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">บริการ</div>
+    <div id="svcList"></div>
+    <small onclick="addRow()" style="color:var(--primary)">+ เพิ่มบริการ</small>
+  </div>
+
+  <div class="grid2">
+    <button class="btn" onclick="pay='เงินสด'">เงินสด</button>
+    <button class="btn" onclick="pay='โอนเงิน'">โอนเงิน</button>
+  </div>
+
+  <button class="btn" style="margin-top:10px" onclick="save()">บันทึกข้อมูล</button>
 </div>
 
-<div id="setting" style="display:none">
-<div class="card">
-<div class="small">ชื่อร้าน / สาขา</div>
-<input id="s_shop">
-<div class="row">
-<div>
-<div class="small">คอมมิชชั่น %</div>
-<input type="number" id="s_per">
-</div>
-<div>
-<div class="small">รายได้ประกัน</div>
-<input type="number" id="s_gua">
-</div>
-</div>
-<div class="small">ธีม</div>
-<select id="s_theme">
-<option value="blue">ธีมฟ้า</option>
-<option value="green">ธีมเขียว</option>
-<option value="dark">ธีมเข้ม</option>
-</select>
-<div class="small">พื้นหลัง</div>
-<select id="s_bg">
-<option value="f1f5f9">เทาอ่อน</option>
-<option value="fefce8">เหลืองพาสเทล</option>
-<option value="fdf2f8">ชมพูพาสเทล</option>
-<option value="ecfeff">ฟ้าพาสเทล</option>
-<option value="f0fdf4">เขียวพาสเทล</option>
-<option value="faf5ff">ม่วงพาสเทล</option>
-<option value="ffffff">ขาว</option>
-</select>
-<button onclick="saveSetting()">บันทึกการตั้งค่า</button>
-</div>
+<!-- PAGE 2 : REPORT -->
+<div id="rep" class="page">
+  <div class="header"><div class="shop" id="shopNameRep"></div></div>
+
+  <div class="card" style="text-align:center">
+    <div id="repDate" style="font-weight:600"></div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-title">ยอดเงินรวม</div>
+      <div class="stat-val" id="sumTotal">0</div>
+      <div class="stat-title">จำนวนลูกค้า</div>
+      <div class="stat-val" id="custCount">0</div>
+      <div class="stat-title">บริการเพิ่ม</div>
+      <div class="stat-val" id="extraSvc">0</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-title">ยอดโอน</div>
+      <div class="stat-val" id="sumTransfer">0</div>
+      <div class="stat-title">รายได้ช่าง</div>
+      <div class="stat-val" id="barberIncome">0</div>
+      <div class="stat-title">รายได้ร้าน</div>
+      <div class="stat-val" id="shopIncome">0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">สถานะการเคลียร์เงิน</div>
+    <div id="clearStatus"></div>
+  </div>
+
+  <div id="repList"></div>
 </div>
 
-<div class="card">
-<div class="small">วันที่</div>
-<input type="date" id="recDate">
-<div class="row">
-<div><input type="time" id="start" value="09:00"></div>
-<div><input type="time" id="end" value="09:30"></div>
-</div>
+<!-- PAGE 3 : HISTORY -->
+<div id="his" class="page">
+  <input type="date" id="hisDate" onchange="renderHistory()">
+  <div id="hisList"></div>
 </div>
 
-<div id="services"></div>
-<button onclick="addService()">+ เพิ่มบริการ</button>
+<!-- SETTINGS -->
+<div id="set" class="page">
+  <div class="header"><div class="shop">ตั้งค่า</div></div>
 
-<div class="card">
-<div class="small">การชำระเงิน</div>
-<div class="row">
-<button onclick="pay='เงินสด'">เงินสด</button>
-<button onclick="pay='โอนเงิน'">โอนเงิน</button>
-</div>
-</div>
+  <div class="card">
+    <div class="label">ชื่อร้าน</div>
+    <input id="shopInput">
+  </div>
 
-<button onclick="saveRecord()">บันทึกข้อมูล</button>
-</div>
+  <div class="card">
+    <div class="label">เปอร์เซ็นต์ช่าง</div>
+    <input type="number" id="percent">
+    <div class="label">รายได้ประกัน</div>
+    <input type="number" id="guarantee">
+  </div>
 
-<!-- PAGE 2 REPORT -->
-<div id="p2" class="page">
-<div class="center">
-<div id="rShop" style="font-size:20px;font-weight:800"></div>
-<div id="rDate" style="font-size:18px;font-weight:700"></div>
-</div>
+  <div class="card">
+    <div class="label">ธีม</div>
+    <select id="theme">
+      <option value="theme-blue">Classic Blue</option>
+      <option value="theme-dark">Dark</option>
+      <option value="theme-green">Green</option>
+    </select>
 
-<div class="row">
-<div class="card">
-<div class="small">ยอดเงินรวม</div>
-<div class="big" id="sumTotal">0</div>
-<div>ลูกค้า <span id="sumCust">0</span> คน</div>
-<div class="small" id="extraCount"></div>
-</div>
-<div class="card">
-<div>ยอดโอน <b id="sumTrans">0</b></div>
-<div>รายได้ช่าง <b id="sumBarber">0</b></div>
-<div>รายได้ร้าน <b id="sumShop">0</b></div>
-</div>
-</div>
+    <div class="label">พื้นหลัง</div>
+    <select id="bg">
+      <option value="bg-white">ขาว</option>
+      <option value="bg-blue">ฟ้า</option>
+      <option value="bg-green">เขียว</option>
+      <option value="bg-yellow">เหลือง</option>
+      <option value="bg-pink">ชมพู</option>
+      <option value="bg-purple">ม่วง</option>
+      <option value="bg-gray">เทา</option>
+    </select>
+  </div>
 
-<div id="clearStatus" class="card center"></div>
-<div id="listToday"></div>
-
-<button onclick="clearToday()" style="background:#dc2626">ลบข้อมูลวันนี้</button>
-<button onclick="go(3)">ดูย้อนหลัง</button>
-</div>
-
-<!-- PAGE 3 HISTORY -->
-<div id="p3" class="page">
-<div class="card">
-<input type="date" id="hisDate" onchange="renderHistory()">
-</div>
-<div id="history"></div>
+  <button class="btn" onclick="saveCfg()">บันทึกการตั้งค่า</button>
 </div>
 
 <div class="nav">
-<div class="active" onclick="go(1)">บันทึก</div>
-<div onclick="go(2)">รายงาน</div>
-<div onclick="go(3)">ย้อนหลัง</div>
+  <div class="active" onclick="go('rec')">บันทึก</div>
+  <div onclick="go('rep')">รายงาน</div>
+  <div onclick="go('his')">ย้อนหลัง</div>
+  <div onclick="go('set')">ตั้งค่า</div>
 </div>
 
 <script>
-const SERVICE=["ตัดผม","โกนหนวด","กันหน้า","แก้ผม","โกนผม","สระผม","ย้อมผม","ดัดผม","อื่นๆ"];
-const STYLE=["รองทรง","สกินเฟด","แฟชั่น","นักเรียน","ตำรวจ / ทหาร","ทรงอเมริกัน","เปิดข้าง","วินเทจ","อื่นๆ"];
+const SERVICES=["ตัดผม","โกนหนวด","กันหน้า","แก้ผม","โกนผม","สระผม","ย้อมผม","ดัดผม","อื่นๆ"];
+const STYLES=["รองทรง","สกินเฟด","แฟชั่น","นักเรียน","ตำรวจ / ทหาร","ทรงอเมริกัน","เปิดข้าง","วินเทจ","อื่นๆ"];
 
 let db=JSON.parse(localStorage.getItem("bn_db")||"[]");
-let cfg=JSON.parse(localStorage.getItem("bn_cfg")||'{"shop":"BARBER SHOP","per":50,"gua":0}');
+let cfg=JSON.parse(localStorage.getItem("bn_cfg")||'{"shop":"BARBER SHOP","percent":50,"guarantee":300,"theme":"theme-blue","bg":"bg-gray"}');
 let pay="เงินสด";
 
-function go(n){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.querySelectorAll('.nav div').forEach(nv=>nv.classList.remove('active'));
-document.getElementById('p'+n).classList.add('active');
-document.querySelectorAll('.nav div')[n-1].classList.add('active');
-if(n===2)renderReport();
-if(n===3)renderHistory();
+function init(){
+  document.body.className=cfg.theme+" "+cfg.bg;
+  shopNameRec.innerText=shopNameRep.innerText=cfg.shop;
+  shopInput.value=cfg.shop;
+  percent.value=cfg.percent;
+  guarantee.value=cfg.guarantee;
+  theme.value=cfg.theme;
+  bg.value=cfg.bg;
+  recDate.value=hisDate.value=new Date().toISOString().split("T")[0];
+  addRow();
+}
+init();
+
+function addRow(){
+  let d=document.createElement("div");
+  d.className="svc-row";
+  d.innerHTML=`
+    <select>${SERVICES.map(s=>`<option>${s}</option>`).join("")}</select>
+    <select>${STYLES.map(s=>`<option>${s}</option>`).join("")}</select>
+    <input type="number" value="150">
+    <span onclick="this.parentNode.remove()">✕</span>`;
+  svcList.appendChild(d);
 }
 
-function addService(){
-let d=document.createElement('div');
-d.className="card";
-d.innerHTML=`
-<select class="svc">${SERVICE.map(s=>`<option>${s}</option>`).join("")}</select>
-<select class="sty">${STYLE.map(s=>`<option>${s}</option>`).join("")}</select>
-<input type="number" class="price" value="100">`;
-services.appendChild(d);
+function save(){
+  let total=0,items=[];
+  document.querySelectorAll(".svc-row").forEach(r=>{
+    let p=+r.children[2].value||0;
+    total+=p;
+    items.push({service:r.children[0].value,style:r.children[1].value,price:p});
+  });
+  if(total<=0)return alert("กรุณาใส่ราคา");
+  db.push({id:Date.now(),date:recDate.value,timeStart:start.value,timeEnd:end.value,items,payType:pay,total});
+  localStorage.setItem("bn_db",JSON.stringify(db));
+  svcList.innerHTML="";addRow();
 }
 
-function saveRecord(){
-let items=[...document.querySelectorAll('.price')].map((p,i)=>({
-svc:document.querySelectorAll('.svc')[i].value,
-sty:document.querySelectorAll('.sty')[i].value,
-price:+p.value
-}));
-let total=items.reduce((s,i)=>s+i.price,0);
-db.push({date:recDate.value,pay,items,total});
-localStorage.setItem("bn_db",JSON.stringify(db));
-services.innerHTML="";addService();go(2);
+function go(p){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+  if(p==="rep")renderReport();
+  if(p==="his")renderHistory();
 }
 
 function renderReport(){
-let d=recDate.value;
-let rec=db.filter(r=>r.date===d);
-let total=rec.reduce((s,r)=>s+r.total,0);
-let trans=rec.filter(r=>r.pay==="โอนเงิน").reduce((s,r)=>s+r.total,0);
-let barber=rec.length===0?cfg.gua:Math.max(total*cfg.per/100,cfg.gua);
-let shop=total-barber;
-rShop.innerText=cfg.shop;
-rDate.innerText=new Date(d).toLocaleDateString('th-TH',{dateStyle:'long'});
-sumTotal.innerText=total;
-sumCust.innerText=rec.length;
-sumTrans.innerText=trans;
-sumBarber.innerText=barber;
-sumShop.innerText=shop;
-let diff=trans-barber;
-clearStatus.innerText=diff===0?"ยอดพอดีไม่ต้องคืน":diff>0?`ช่างคืนร้าน ${diff}`:`ร้านคืนช่าง ${-diff}`;
-listToday.innerHTML=rec.map(r=>`<div class="card">${r.items.map(i=>i.svc).join(",")} = ${r.total}</div>`).join("");
-}
+  let d=recDate.value;
+  let day=db.filter(x=>x.date===d);
+  let sum=day.reduce((s,x)=>s+x.total,0);
+  let barber=Math.max(sum*cfg.percent/100,cfg.guarantee);
+  let shop=sum-barber;
+  let transfer=day.filter(x=>x.payType==="โอนเงิน").reduce((s,x)=>s+x.total,0);
 
-function clearToday(){
-db=db.filter(r=>r.date!==recDate.value);
-localStorage.setItem("bn_db",JSON.stringify(db));
-renderReport();
+  sumTotal.innerText=sum;
+  barberIncome.innerText=barber;
+  shopIncome.innerText=shop;
+  sumTransfer.innerText=transfer;
+
+  let cust=day.length;
+  let extra=0;
+  day.forEach(r=>r.items.forEach(i=>{if(i.service!=="ตัดผม")extra++}));
+  custCount.innerText=cust+extra;
+  extraSvc.innerText=extra;
+
+  let status="";
+  if(transfer>shop)status=`<span class="status-back">ร้านคืนช่าง ${transfer-shop}</span>`;
+  else if(transfer<shop)status=`<span class="status-pay">ช่างคืนร้าน ${shop-transfer}</span>`;
+  else status=`<span class="status-ok">ยอดพอดี</span>`;
+  clearStatus.innerHTML=status;
+
+  repDate.innerText=new Date(d).toLocaleDateString("th-TH",{dateStyle:"long"});
+  repList.innerHTML=day.map(x=>`<div class="hist">${x.items.map(i=>i.service).join("+")} ฿${x.total}</div>`).join("");
 }
 
 function renderHistory(){
-let d=hisDate.value;
-let m=d.slice(0,7);
-let rec=db.filter(r=>r.date.startsWith(m));
-history.innerHTML=`<div class="card">ลูกค้าทั้งหมด ${rec.length} คน</div>`;
+  let d=hisDate.value;
+  let day=db.filter(x=>x.date===d);
+  hisList.innerHTML=day.map(x=>`<div class="hist">${x.items.map(i=>i.service).join("+")} ฿${x.total}</div>`).join("")||"ไม่มีข้อมูล";
 }
 
-function openSetting(){
-setting.style.display=setting.style.display==="none"?"block":"none";
-s_shop.value=cfg.shop;s_per.value=cfg.per;s_gua.value=cfg.gua;
+function saveCfg(){
+  cfg={shop:shopInput.value,percent:+percent.value,guarantee:+guarantee.value,theme:theme.value,bg:bg.value};
+  localStorage.setItem("bn_cfg",JSON.stringify(cfg));
+  location.reload();
 }
-function saveSetting(){
-cfg={shop:s_shop.value,per:+s_per.value,gua:+s_gua.value};
-localStorage.setItem("bn_cfg",JSON.stringify(cfg));
-shopName.innerText=cfg.shop;rShop.innerText=cfg.shop;
-openSetting();
-}
-
-recDate.value=new Date().toISOString().split("T")[0];
-hisDate.value=recDate.value;
-shopName.innerText=cfg.shop;
-addService();
 </script>
 </body>
 </html>
