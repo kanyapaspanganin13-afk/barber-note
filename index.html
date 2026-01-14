@@ -2,315 +2,280 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Barber Note v3 FINAL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Barber Note</title>
 
-<!-- ICON / LINE SHARE -->
-<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg">
+<!-- PWA / App-like -->
+<link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/2/2d/Barber_Pole.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
 <style>
+/* ====== ธีมมินิมอลโมเดิร์น ====== */
 :root{
-  --bg:#f4f6f8;
-  --card:#ffffff;
-  --main:#111;
-  --sub:#555;
+  --primary:#222;
+  --bg:#f6f7fb;
+  --card:#fff;
   --green:#16a34a;
   --red:#dc2626;
   --blue:#2563eb;
-  --orange:#ea580c;
+  --gray:#6b7280;
 }
+
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
   background:var(--bg);
-  color:var(--main);
+  color:var(--primary);
 }
-header{
-  padding:12px 16px;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid #e5e7eb;
-}
-h1{
-  font-size:18px;
-  margin:0;
-}
-button{
-  border:none;
-  border-radius:8px;
-  padding:10px;
-  font-size:14px;
-}
-.btn-main{background:var(--blue);color:#fff;}
-.btn-line{background:#06c755;color:#fff;}
-.btn-danger{background:var(--red);color:#fff;}
-.btn-gray{background:#e5e7eb;}
 
-.page{display:none;padding:16px;}
-.page.active{display:block;}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  font-weight:600;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+}
 
 .card{
   background:var(--card);
   border-radius:14px;
   padding:14px;
-  margin-bottom:12px;
-}
-
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.big{
-  font-size:22px;
-  font-weight:700;
-}
-.mid{
-  font-size:16px;
-  font-weight:600;
+  margin:10px;
 }
 
 input,select{
   width:100%;
+  padding:12px;
+  font-size:16px;
+  margin-top:6px;
+}
+
+.nav{
+  display:flex;
+  justify-content:space-around;
   padding:10px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  font-size:14px;
-}
-
-.list{
-  border-top:1px dashed #ddd;
-  padding-top:8px;
-  margin-top:8px;
-  font-size:13px;
-}
-
-.status-ok{color:var(--green);font-weight:700;}
-.status-pay{color:var(--red);font-weight:700;}
-.status-back{color:var(--orange);font-weight:700;}
-
-footer{
+  background:#fff;
   position:fixed;
   bottom:0;
-  left:0;
-  right:0;
-  display:flex;
-  background:#fff;
-  border-top:1px solid #e5e7eb;
+  width:100%;
 }
-footer button{
-  flex:1;
-  border-radius:0;
+
+.hidden{display:none}
+
+.line-btn{
+  background:#06c755;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.line-btn img{
+  width:24px;
+  height:24px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= PAGE 1 : RECORD ================= -->
+<section id="page-record">
 <header>
-  <h1 id="shopName">Barber Note</h1>
-  <button onclick="openSetting()">⚙️</button>
+  <div id="shopName">ร้านตัดผม</div>
+  <button onclick="toggleSetting()">⚙️</button>
 </header>
 
-<!-- PAGE 1 : RECORD -->
-<div class="page active" id="page1">
-  <div class="card">
-    <label>วันที่</label>
-    <input type="date" id="recDate">
-    <label>เวลาเริ่ม</label>
-    <input type="time" id="startTime">
-    <label>เวลาสิ้นสุด</label>
-    <input type="time" id="endTime">
-  </div>
+<div class="card hidden" id="settingBox">
+  <label>ชื่อร้าน / สาขา</label>
+  <input id="setShop" />
 
-  <div class="card">
-    <label>บริการ</label>
-    <select id="service">
-      <option>ตัดผม</option>
-      <option>โกนหนวด</option>
-      <option>กันหน้า</option>
-      <option>แก้ผม</option>
-      <option>โกนผม</option>
-      <option>สระผม</option>
-      <option>ย้อมผม</option>
-      <option>ดัดผม</option>
-      <option>อื่นๆ</option>
-    </select>
+  <label>เปอร์เซ็นต์รายได้ช่าง (%)</label>
+  <input type="number" id="setPercent" />
 
-    <label>ทรงผม</label>
-    <select id="style">
-      <option>รองทรง</option>
-      <option>สกินเฟด</option>
-      <option>แฟชั่น</option>
-      <option>นักเรียน</option>
-      <option>ตำรวจ / ทหาร</option>
-      <option>ทรงอเมริกัน</option>
-      <option>เปิดข้าง</option>
-      <option>วินเทจ</option>
-      <option>อื่นๆ</option>
-    </select>
-
-    <label>ราคา (บาท)</label>
-    <input type="number" id="price">
-  </div>
-
-  <div class="card">
-    <label>วิธีชำระเงิน</label>
-    <select id="payType">
-      <option value="cash">เงินสด</option>
-      <option value="transfer">โอนเงิน</option>
-    </select>
-  </div>
-
-  <button class="btn-main" style="width:100%" onclick="saveRecord()">บันทึกข้อมูล</button>
+  <label>รายได้ประกันต่อวัน</label>
+  <input type="number" id="setGuarantee" />
 </div>
 
-<!-- PAGE 2 : DAILY REPORT -->
-<div class="page" id="page2">
-  <div class="card" style="text-align:center">
-    <div class="mid" id="reportDate"></div>
-  </div>
+<div class="card">
+  <label>วันที่</label>
+  <input type="date" id="dateInput">
 
-  <div class="grid2">
-    <div class="card">
-      <div>ยอดเงินรวม</div>
-      <div class="big" id="sumTotal">0</div>
-      <div>ลูกค้า <span id="sumCustomer">0</span> คน</div>
-      <div id="extraCount"></div>
-    </div>
+  <label>เวลาเริ่ม</label>
+  <input type="time" id="startTime">
 
-    <div class="card">
-      <div>ยอดโอน</div>
-      <div class="mid" id="sumTransfer">0</div>
-      <div>รายได้ช่าง <span id="barberIncome">0</span></div>
-      <div>รายได้ร้าน <span id="shopIncome">0</span></div>
-    </div>
-  </div>
-
-  <div class="card">
-    สถานะ :
-    <span id="clearStatus"></span>
-  </div>
-
-  <div class="card">
-    <div class="mid">รายการวันนี้</div>
-    <div id="todayList"></div>
-    <button class="btn-danger" onclick="deleteToday()">ลบข้อมูลวันนี้</button>
-  </div>
-
-  <button class="btn-line" style="width:100%" onclick="shareLine()">ส่งรายงานไป LINE</button>
+  <label>เวลาสิ้นสุด</label>
+  <input type="time" id="endTime">
 </div>
 
-<!-- PAGE 3 : HISTORY -->
-<div class="page" id="page3">
-  <div class="card">
-    <label>เลือกวัน</label>
-    <input type="date" id="hisDate" onchange="loadHistory()">
-  </div>
-  <div id="historyBox"></div>
+<div class="card">
+  <label>บริการ</label>
+  <select id="service">
+    <option>ตัดผม</option><option>โกนหนวด</option><option>กันหน้า</option>
+    <option>แก้ผม</option><option>โกนผม</option><option>สระผม</option>
+    <option>ย้อมผม</option><option>ดัดผม</option><option>อื่นๆ</option>
+  </select>
+
+  <label>ทรงผม</label>
+  <select id="style">
+    <option>รองทรง</option><option>สกินเฟด</option><option>แฟชั่น</option>
+    <option>นักเรียน</option><option>ตำรวจ / ทหาร</option>
+    <option>ทรงอเมริกัน</option><option>เปิดข้าง</option>
+    <option>วินเทจ</option><option>อื่นๆ</option>
+  </select>
+
+  <label>ราคา</label>
+  <input type="number" id="price">
 </div>
 
-<footer>
-  <button onclick="showPage(1)">บันทึก</button>
-  <button onclick="showPage(2)">รายงาน</button>
-  <button onclick="showPage(3)">ย้อนหลัง</button>
-</footer>
+<div class="card">
+  <label>การชำระเงิน</label>
+  <button id="cashBtn" onclick="setPay('เงินสด')">เงินสด</button>
+  <button id="transferBtn" onclick="setPay('โอนเงิน')">โอนเงิน</button>
+</div>
+
+<button style="margin:10px;width:calc(100% - 20px)" onclick="saveRecord()">บันทึกข้อมูล</button>
+</section>
+
+<!-- ================= PAGE 2 : DAILY REPORT ================= -->
+<section id="page-report" class="hidden">
+<header style="justify-content:center">
+  <div id="reportShop"></div>
+</header>
+
+<div class="card" id="reportDate"></div>
+
+<div style="display:flex">
+  <div class="card" style="flex:1">
+    <div id="totalMoney"></div>
+    <div id="totalCustomer"></div>
+    <div id="extraService"></div>
+  </div>
+
+  <div class="card" style="flex:1">
+    <div id="transferTotal"></div>
+    <div id="barberIncome"></div>
+    <div id="shopIncome"></div>
+  </div>
+</div>
+
+<div class="card" id="clearStatus"></div>
+
+<div class="card" id="recordList"></div>
+
+<button class="line-btn" onclick="sendLine()">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg">
+  ส่งรายงานเข้า LINE
+</button>
+</section>
+
+<!-- ================= PAGE 3 : HISTORY ================= -->
+<section id="page-history" class="hidden">
+<div class="card" id="historyBox"></div>
+</section>
+
+<div class="nav">
+  <button onclick="showPage('record')">บันทึก</button>
+  <button onclick="showPage('report')">รายงาน</button>
+  <button onclick="showPage('history')">ย้อนหลัง</button>
+</div>
 
 <script>
-/* ====== SETTING ====== */
-let setting={
-  commission:50,
-  guarantee:1000
-};
+/* ===== CONFIG ===== */
+const TEST_MODE = true;
+let payType = "เงินสด";
 
-/* ====== PAGE CONTROL ====== */
-function showPage(n){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page'+n).classList.add('active');
-  if(n===2) loadReport();
+/* ===== STORAGE ===== */
+function getData(){return JSON.parse(localStorage.getItem("records")||"[]")}
+function setData(d){localStorage.setItem("records",JSON.stringify(d))}
+
+/* ===== PAGE ===== */
+function showPage(p){
+  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+  document.getElementById("page-"+p).classList.remove("hidden");
+  if(p==="report") renderReport();
+  if(p==="history") renderHistory();
 }
 
-/* ====== SAVE RECORD ====== */
+/* ===== SETTING ===== */
+function toggleSetting(){
+  settingBox.classList.toggle("hidden");
+}
+
+/* ===== PAY ===== */
+function setPay(t){
+  payType=t;
+  cashBtn.style.background=t==="เงินสด"?"#ddd":"";
+  transferBtn.style.background=t==="โอนเงิน"?"#ddd":"";
+}
+
+/* ===== SAVE ===== */
 function saveRecord(){
   const rec={
-    date:recDate.value,
+    date:dateInput.value,
     service:service.value,
     style:style.value,
     price:+price.value,
-    pay:payType.value
+    pay:payType
   };
-  const data=JSON.parse(localStorage.getItem('records')||'[]');
-  data.push(rec);
-  localStorage.setItem('records',JSON.stringify(data));
-  alert('บันทึกสำเร็จ');
-  price.value='';
+  const d=getData();
+  d.push(rec);
+  setData(d);
+  alert("บันทึกสำเร็จ");
+  price.value="";
 }
 
-/* ====== REPORT ====== */
-function loadReport(){
-  const today=new Date().toISOString().slice(0,10);
-  reportDate.innerText=new Date(today).toLocaleDateString('th-TH');
-  const data=JSON.parse(localStorage.getItem('records')||'[]')
-    .filter(r=>r.date===today);
+/* ===== REPORT ===== */
+function renderReport(){
+  const data=getData();
+  const today=data.filter(r=>r.date===dateInput.value);
 
   let total=0,transfer=0;
-  data.forEach(r=>{
+  today.forEach(r=>{
     total+=r.price;
-    if(r.pay==='transfer') transfer+=r.price;
+    if(r.pay==="โอนเงิน") transfer+=r.price;
   });
 
-  let barber=Math.max(total*setting.commission/100,setting.guarantee);
+  const percent=+setPercent.value||50;
+  const guarantee=+setGuarantee.value||0;
+
+  let barber=Math.max(total*percent/100,guarantee);
   let shop=total-barber;
 
-  sumTotal.innerText=total;
-  sumCustomer.innerText=data.length;
-  sumTransfer.innerText=transfer;
-  barberIncome.innerText=barber;
-  shopIncome.innerText=shop;
+  totalMoney.innerText="ยอดรวม "+total+" บาท";
+  totalCustomer.innerText="ลูกค้า "+today.length+" คน";
+  transferTotal.innerText="ยอดโอน "+transfer+" บาท";
+  barberIncome.innerText="รายได้ช่าง "+barber;
+  shopIncome.innerText="รายได้ร้าน "+shop;
 
-  if(shop>0) clearStatus.innerText='ช่างคืนร้าน',clearStatus.className='status-pay';
-  else if(shop<0) clearStatus.innerText='ร้านคืนช่าง',clearStatus.className='status-back';
-  else clearStatus.innerText='ยอดพอดีไม่ต้องคืน',clearStatus.className='status-ok';
+  let status="ยอดพอดีไม่ต้องคืน";
+  if(barber>total*percent/100) status="ร้านคืนช่าง";
+  if(barber<total*percent/100) status="ช่างคืนร้าน";
+  clearStatus.innerText=status;
 
-  todayList.innerHTML=data.map(r=>`• ${r.service} ${r.price} (${r.pay})`).join('<br>');
+  recordList.innerHTML=today.map(r=>`• ${r.service} ${r.price} (${r.pay})`).join("<br>");
 }
 
-/* ====== LINE SHARE ====== */
-function shareLine(){
-  const msg=
-`📊 รายงานประจำวัน
-ยอดรวม ${sumTotal.innerText} บาท
-ลูกค้า ${sumCustomer.innerText} คน
-รายได้ช่าง ${barberIncome.innerText}
-รายได้ร้าน ${shopIncome.innerText}
-สถานะ ${clearStatus.innerText}`;
-  location.href=`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
+/* ===== LINE ===== */
+function sendLine(){
+  const text=encodeURIComponent(document.getElementById("page-report").innerText);
+  window.open("https://line.me/R/msg/text/?"+text);
 }
 
-/* ====== HISTORY ====== */
-function loadHistory(){
-  const d=hisDate.value;
-  const data=JSON.parse(localStorage.getItem('records')||'[]')
-    .filter(r=>r.date===d);
-  historyBox.innerHTML=data.map(r=>`
-    <div class="card">
-      ${r.service} - ${r.price} บาท (${r.pay})
-    </div>
-  `).join('');
-}
-
-/* ====== DELETE TODAY (TEST) ====== */
-function deleteToday(){
-  if(!confirm('ลบข้อมูลวันนี้?'))return;
-  const today=new Date().toISOString().slice(0,10);
-  const data=JSON.parse(localStorage.getItem('records')||'[]')
-    .filter(r=>r.date!==today);
-  localStorage.setItem('records',JSON.stringify(data));
-  loadReport();
+/* ===== HISTORY ===== */
+function renderHistory(){
+  historyBox.innerText=JSON.stringify(getData(),null,2);
 }
 </script>
+
 </body>
 </html>
