@@ -41,20 +41,42 @@
         .status-green { background: #dcfce7; color: #16a34a; }
         .status-blue { background: #e0f2fe; color: #0284c7; }
         .status-indigo { background: #e0e7ff; color: #4338ca; }
-
+/* ส่วนที่แก้ไขเพื่อให้ปุ่มเมนูแสดงผลครบถ้วน */
 .nav { 
-    position: fixed; bottom: 0; left: 0; right: 0; 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
     background: var(--card); 
     display: flex !important; 
     border-top: 1px solid rgba(0,0,0,0.1); 
     padding-bottom: env(safe-area-inset-bottom); 
     z-index: 9999; 
-    height: 70px; 
+    height: 75px; 
     align-items: center; 
+    justify-content: space-around; /* กระจายปุ่มให้เท่ากัน */
 }
+
 .nav-item { 
-    flex: 1; text-align: center; color: #94a3b8; font-size: 12px; cursor: pointer; 
-    display: flex; flex-direction: column; justify-content: center;
+    flex: 1; 
+    text-align: center; 
+    color: #94a3b8; 
+    font-size: 13px; 
+    cursor: pointer; 
+    display: flex !important; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    gap: 4px; /* สร้างระยะห่างระหว่างไอคอนและตัวหนังสือ */
+}
+
+.nav-item i {
+    font-size: 20px; /* ปรับขนาดไอคอนให้พอดี */
+}
+
+.nav-item.active {
+    color: var(--primary); /* สีปุ่มเมื่อถูกเลือก */
+    font-weight: 500;
 }
 .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 16px; font-size: 18px; font-weight: 600; border: none; margin-top: 10px; cursor: pointer; }
         .btn-close-day { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; border-radius: 30px; background: #818cf8; color: white; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 99; font-size: 24px; cursor: pointer; }
@@ -468,4 +490,5 @@
 </script>
 </body>
 </html>
+
 
