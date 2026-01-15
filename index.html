@@ -221,25 +221,35 @@
 
     function handleSave() {
         const p = document.getElementById("priceInp").value;
+        const mainSvcValue = document.getElementById("mainSvc").value; // ดึงค่า "เด็ก"
         if(!p || !payMethod) return alert("ระบุราคาและวิธีชำระเงิน");
+
         const rec = {
             id: Date.now(),
             date: document.getElementById("dateInp").value,
             time: `${document.getElementById("tStart").value}-${document.getElementById("tEnd").value}`,
-            svcs: [document.getElementById("mainSvc").value, document.getElementById("extraSvc1").value, document.getElementById("extraSvc2").value].filter(x => x!==""),
+            // แก้ไขจุดนี้: เดิมคุณเรียก extraSvc1, extraSvc2 ซึ่งไม่มีใน HTML ทำให้บันทึกไม่ได้
+            mainSvc: mainSvcValue, 
+            svcs: mainSvcValue ? [mainSvcValue] : [], 
             hair: document.getElementById("hairStyle").value,
             price: Number(p),
             pay: payMethod
         };
+
         db.push(rec);
         localStorage.setItem("barber_db", JSON.stringify(db));
+        
         const b = document.getElementById("mainSaveBtn");
         b.innerText = "บันทึกแล้ว ✓"; b.style.background = "var(--accent)";
+        
         setTimeout(() => {
             b.innerText = "บันทึกข้อมูล"; b.style.background = "var(--primary)";
             document.getElementById("priceInp").value = "";
             document.getElementById("tStart").value = document.getElementById("tEnd").value;
             document.getElementById("tEnd").value = "";
+            // ล้างค่าเมนูเลือก (ถ้าต้องการ)
+            document.getElementById("mainSvc").value = "เด็ก";
+            document.getElementById("hairStyle").value = "";
             selectPay("");
         }, 800);
     }
@@ -445,6 +455,7 @@
 </script>
 </body>
 </html>
+
 
 
 
