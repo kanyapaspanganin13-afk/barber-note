@@ -41,7 +41,7 @@
         .status-green { background: #dcfce7; color: #16a34a; }
         .status-blue { background: #e0f2fe; color: #0284c7; }
         .status-indigo { background: #e0e7ff; color: #4338ca; }
-/* ส่วนที่แก้ไขเพื่อให้ปุ่มเมนูแสดงผลครบถ้วน */
+
 .nav { 
     position: fixed; 
     bottom: 0; 
@@ -54,8 +54,7 @@
     z-index: 9999; 
     height: 75px; 
     align-items: center; 
-    justify-content: space-around; /* กระจายปุ่มให้เท่ากัน */
-}
+    justify-content: space-around; 
 
 .nav-item { 
     flex: 1; 
@@ -67,15 +66,15 @@
     flex-direction: column; 
     align-items: center; 
     justify-content: center;
-    gap: 4px; /* สร้างระยะห่างระหว่างไอคอนและตัวหนังสือ */
+    gap: 4px; 
 }
 
 .nav-item i {
-    font-size: 20px; /* ปรับขนาดไอคอนให้พอดี */
+    font-size: 20px;
 }
 
 .nav-item.active {
-    color: var(--primary); /* สีปุ่มเมื่อถูกเลือก */
+    color: var(--primary); 
     font-weight: 500;
 }
 .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 16px; font-size: 18px; font-weight: 600; border: none; margin-top: 10px; cursor: pointer; }
@@ -91,14 +90,12 @@
     </style>
 </head>
 <body id="mainBody">
-
 <header>
     <div style="width:40px"></div>
     <h1 id="shopNameDisp">Barber Note</h1>
     <div style="width:40px; text-align:right; cursor:pointer" onclick="openSettings()"><i class="fas fa-cog"></i></div>
 </header>
-   
-    <div id="p1" class="page active">
+   <div id="p1" class="page active">
     <div class="card">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom:15px;">
             <i class="fas fa-calendar-day" style="color:var(--primary)"></i>
@@ -109,6 +106,7 @@
             <div><label>เวลาเสร็จ</label><input type="tel" id="tEnd" placeholder="0930" class="time-input" maxlength="4"></div>
         </div>
     </div>
+
     <div class="card">
         <label>ตัดผม & ทรงผม</label>
         <div class="grid-2" style="margin-bottom:10px">
@@ -128,10 +126,9 @@
                 <option>อื่นๆ</option>
             </select>
         </div>
-     </div>
         <div class="grid-2">
-            <select id="extra1"><option value="">(เสริม 1)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
-            <select id="extra2"><option value="">(เสริม 2)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
+            <select id="extra1"><option value="">(บริการอื่น)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
+            <select id="extra2"><option value="">(บริการอื่น)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
         </div>
     </div>
 
@@ -144,9 +141,7 @@
         </div>
     </div>
     <button class="btn-save" id="mainSaveBtn" onclick="handleSave()">บันทึกข้อมูล</button>
-</div>  
-</div>
-<div id="p2" class="page">
+</div> <div id="p2" class="page">
     <div class="grid-2">
         <div class="card" style="text-align: center;">
             <label>ยอดเงินรวมวันนี้</label>
@@ -169,9 +164,7 @@
         <div id="dailyList"></div>
     </div>
     <button class="btn-close-day" onclick="closeDay()"><i class="fas fa-check-circle"></i></button>
-</div>
-
-<div id="p3" class="page">
+</div> <div id="p3" class="page">
     <div class="card" style="border-top: 4px solid var(--primary);">
         <label>เรียกดูประวัติรายวัน</label>
         <input type="date" id="histDate" onchange="loadHistDaily()">
@@ -183,6 +176,7 @@
         <div id="histMonthArea" style="margin-top:15px"></div>
     </div>
 </div>
+    
 <div id="modalSet" class="modal">
     <div class="modal-content">
         <h3>⚙️ ตั้งค่าระบบ</h3>
@@ -488,6 +482,7 @@
 </script>
 </body>
 </html>
+
 
 
 
