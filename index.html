@@ -299,15 +299,16 @@
                 </div>
             </div>`;
         });
-        const bEarn = Math.max(tot * (conf.perc/100), conf.guar);
-        const sEarn = tot - bEarn;
-        const settle = cash - bEarn;
+        const bEarn = Math.max(tot * (conf.perc / 100), conf.guar); // ยอดที่ช่างต้องได้
+    const sEarn = tot - bEarn; // ยอดที่ร้านต้องได้
+    const settle = cash - bEarn; // เงินสดในมือช่าง ลบ ยอดที่ช่างต้องได้
+
         document.getElementById("dTotal").innerText = tot.toLocaleString();
         document.getElementById("dTrans").innerText = trans.toLocaleString();
         document.getElementById("dBarber").innerText = bEarn.toLocaleString();
         document.getElementById("dShop").innerText = sEarn.toLocaleString();
-        document.getElementById("dCounts").innerText = `จำนวนลูกค้า: ${today.length} คน`;
-        document.getElementById("dailyList").innerHTML = listHtml || "<center style='padding:40px; opacity:0.3'>ยังไม่มีข้อมูล</center>"; 
+        document.getElementById("dCounts").innerText = 
+        document.getElementById("dailyList").innerHTML = listHtml; 
         let statHtml = "";
         for(let s in stats) { statHtml += `<span class="badge">${s}: ${stats[s]}</span>`; }
         document.getElementById("dServiceStats").innerHTML = statHtml;
@@ -487,4 +488,5 @@
 </script>
 </body>
 </html>
+
 
