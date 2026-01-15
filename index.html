@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="https://i.ibb.co/27GqTXFn/Barber-Note.png">
-    <title>Barber Note v.13 Draft</title>
+    <title>Barber Note v.13.1 Draft</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -307,15 +307,23 @@
         document.getElementById("dBarber").innerText = bEarn.toLocaleString();
         document.getElementById("dShop").innerText = sEarn.toLocaleString();
         document.getElementById("dCounts").innerText = `จำนวนลูกค้า: ${today.length} คน`;
-        document.getElementById("dailyList").innerHTML = listHtml || "<center style='padding:40px; opacity:0.3'>ยังไม่มีข้อมูล</center>";
+        document.getElementById("dailyList").innerHTML = listHtml || "<center style='padding:40px; opacity:0.3'>ยังไม่มีข้อมูล</center>"; 
         let statHtml = "";
         for(let s in stats) { statHtml += `<span class="badge">${s}: ${stats[s]}</span>`; }
         document.getElementById("dServiceStats").innerHTML = statHtml;
         const bar = document.getElementById("settleBar");
-        if(tot === 0) { bar.innerText = "🟦 ยอดพอดี"; bar.className = "status-bar status-blue"; }
-        else if(settle > 0) { bar.innerText = `🟥 ช่างคืนเงินสดให้ร้าน ฿${settle.toLocaleString()}`; bar.className = "status-bar status-red"; }
-        else if(settle < 0) { bar.innerText = `ร้านคืนเงินให้ช่าง ฿${Math.abs(settle).toLocaleString()}`; bar.className = "status-bar status-indigo"; }
-        else { bar.innerText = "🟦 ยอดลงตัวพอดี"; bar.className = "status-bar status-blue"; }
+    if (tot === 0 && conf.guar > 0) {
+        bar.innerText = `🟦 ร้านค้างจ่ายช่าง (ประกันรายวัน) ฿${Math.abs(settle).toLocaleString()}`;
+        bar.className = "status-bar status-indigo";
+    } else if (settle > 0) {
+        bar.innerText = `🟥 ช่างคืนเงินสดให้ร้าน ฿${settle.toLocaleString()}`;
+        bar.className = "status-bar status-red";
+    } else if (settle < 0) {
+        bar.innerText = `🟦 ร้านคืนเงินให้ช่าง ฿${Math.abs(settle).toLocaleString()}`;
+        bar.className = "status-bar status-indigo";
+    } else {
+        bar.innerText = "✅ ยอดลงตัวพอดี";
+        bar.className = "status-bar status-blue";
     }
 
     function delRec(id) {
@@ -437,7 +445,16 @@
         msg += `🏠 ร้าน: ${Math.floor(sEarn).toLocaleString()} บาท\n`;
         msg += `--------------------------\n`;
 
-        let setMsg = tot === 0 ? "ยอดพอดีไม่ต้องคืน" : settle > 0 ? `ช่างคืนเงินให้ร้าน ${Math.floor(settle).toLocaleString()} บาท` : settle < 0 ? `ร้านคืนเงินให้ช่าง ${Math.floor(Math.abs(settle)).toLocaleString()} บาท` : "ยอดลงตัวพอดี";
+        let setMsg = "";
+        if (tot === 0 && conf.guar > 0) {
+            setMsg = `ร้านค้างจ่ายช่าง (ประกันรายวัน) ${Math.floor(Math.abs(settle)).toLocaleString()} บาท`;
+        } else if (settle > 0) {
+            setMsg = `ช่างคืนเงินให้ร้าน ${Math.floor(settle).toLocaleString()} บาท`;
+        } else if (settle < 0) {
+            setMsg = `ร้านคืนเงินให้ช่าง ${Math.floor(Math.abs(settle)).toLocaleString()} บาท`;
+        } else {
+            setMsg = "ยอดลงตัวพอดี";
+        }
         msg += `⚠️ ${setMsg}`;
 
         window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`);
@@ -470,3 +487,4 @@
 </script>
 </body>
 </html>
+
