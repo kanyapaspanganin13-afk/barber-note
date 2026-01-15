@@ -56,9 +56,6 @@
     flex: 1; text-align: center; color: #94a3b8; font-size: 12px; cursor: pointer; 
     display: flex; flex-direction: column; justify-content: center;
 }
-.nav-item.active { color: var(--primary); font-weight: 600; }
-.nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
-
         .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 16px; font-size: 18px; font-weight: 600; border: none; margin-top: 10px; cursor: pointer; }
         .btn-close-day { position: fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; border-radius: 30px; background: #818cf8; color: white; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 99; font-size: 24px; cursor: pointer; }
 
@@ -236,11 +233,10 @@
         const mainSvcValue = document.getElementById("mainSvc").value; // ดึงค่า "เด็ก"
         if(!p || !payMethod) return alert("ระบุราคาและวิธีชำระเงิน");
 
-        const rec = {
+       const rec = {
             id: Date.now(),
             date: document.getElementById("dateInp").value,
             time: `${document.getElementById("tStart").value}-${document.getElementById("tEnd").value}`,
-            // แก้ไขจุดนี้: เดิมคุณเรียก extraSvc1, extraSvc2 ซึ่งไม่มีใน HTML ทำให้บันทึกไม่ได้
             mainSvc: mainSvcValue, 
             svcs: mainSvcValue ? [mainSvcValue] : [], 
             hair: document.getElementById("hairStyle").value,
@@ -467,6 +463,7 @@
 </script>
 </body>
 </html>
+
 
 
 
