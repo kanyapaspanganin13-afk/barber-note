@@ -79,27 +79,26 @@
         </div>
     </div>
 
-    <div class="card">
-        <label>ตัดผม & ทรงผม</label>
-        <div class="grid-2" style="margin-bottom:10px">
-            <select id="mainSvc"><option value="">(ไม่ตัดผม)</option><option selected>ตัดผม</option></select>
-            <select id="hairStyle">
-                <option value="">(ไม่เลือก)</option><option>รองทรง</option><option>แฟชั่น</option><option>สกินเฟด</option>
-                <option>เปิดข้าง</option><option>วินเทจ</option><option>ตำรวจ/ทหาร</option><option>ทรงนักเรียน</option><option>อื่นๆ</option>
-            </select>
-        </div>
-        <label>บริการอื่น</label>
-        <div class="grid-2">
-            <select id="extraSvc1">
-                <option value="">(เลือกบริการอื่น)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option>
-                <option>ย้อมผม</option><option>ดัดผม</option><option>โกนผม</option><option>แก้ผม</option>
-            </select>
-            <select id="extraSvc2">
-                <option value="">(เลือกบริการอื่น)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option>
-                <option>ย้อมผม</option><option>ดัดผม</option><option>โกนผม</option><option>แก้ผม</option>
-            </select>
-        </div>
+   <div class="card">
+    <label>ตัดผม & ทรงผม</label>
+    <div class="grid-2" style="margin-bottom:10px">
+        <select id="mainSvc">
+            <option value="">(ไม่เลือก)</option>
+            <option value="เด็ก" selected>เด็ก</option>
+        </select>
+        <select id="hairStyle">
+            <option value="">(ไม่เลือก)</option>
+            <option>รองทรง</option>
+            <option>แฟชั่น</option>
+            <option>สกินเฟด</option>
+            <option>เปิดข้าง</option>
+            <option>วินเทจ</option>
+            <option>ตำรวจ/ทหาร</option>
+            <option>ทรงนักเรียน</option>
+            <option>อื่นๆ</option>
+        </select>
     </div>
+</div>
 
     <div class="card">
         <label>ค่าบริการ</label>
@@ -356,14 +355,18 @@
     const today = db.filter(r => r.date === d);
     if (!today.length) return alert("ไม่มีข้อมูล");
 
-    let tot = 0, cash = 0, trans = 0, shave = 0, wash = 0, dye = 0;
-    today.sort((a, b) => a.id - b.id).forEach(r => {
+    let tot = 0, cash = 0, trans = 0;
+    let shave = 0, wash = 0, dye = 0, kid = 0; // เพิ่มตัวแปรนับเด็ก
+
+    // เรียงเวลา เริ่มต้น - สิ้นสุด (สมมติว่า r.time คือ "08:00-08:30")
+    today.sort((a, b) => a.time.localeCompare(b.time));
+
+    today.forEach(r => {
         tot += r.price;
-        if (r.pay === 'Cash') {
-            cash += r.price;
-        } else {
-            trans += r.price; // เก็บยอดโอนแยกไว้
-        }
+        if (r.pay === 'Cash') cash += r.price; else trans += r.price;
+        
+        // นับสถิติ เด็ก และ อื่นๆ
+        if (r.mainSvc === "เด็ก") kid++;
         r.svcs.forEach(s => {
             if (s === "โกนหนวด") shave++;
             if (s === "สระผม") wash++;
@@ -375,45 +378,42 @@
     const sEarn = tot - bEarn;
     const settle = cash - bEarn;
 
-    // 1. แปลงวันที่เป็น วัน/เดือน/พศ
+    // แปลงวันที่ วัน/เดือน/พศ
     const ds = d.split('-');
     const thaiDate = `${ds[2]}/${ds[1]}/${parseInt(ds[0]) + 543}`;
 
     let msg = `💈 รายงานร้าน: ${conf.shop}\n📅 วันที่: ${thaiDate}\n--------------------------\n`;
-    
-    // 2. เปลี่ยนหัวข้อเป็น จำนวนลูกค้า (รวม X คน)
     msg += `📝 จำนวนลูกค้า (รวม ${today.length} คน):\n`;
-    
+
     today.forEach((r, i) => {
-        msg += `${i + 1}. [${r.time}] ${r.svcs.join('+')}${r.hair ? '(' + r.hair + ')' : ''} = ${r.price} ${r.pay === 'Cash' ? '💵' : '📱'}\n`;
+        // ปรับการแสดงผล: แฟชั่น+สระ(เด็ก) = 250 💵
+        const kidLabel = r.mainSvc === "เด็ก" ? "(เด็ก)" : ""; 
+        const services = r.svcs.length > 0 ? r.svcs.join('+') : "";
+        const style = r.hair ? r.hair : "";
+        
+        // ต่อข้อความ: ถ้ามีทรงผม หรือ บริการอื่น ให้คั่นด้วยเครื่องหมาย +
+        let detail = style;
+        if (style && services) detail += "+" + services;
+        else if (!style && services) detail = services;
+
+        msg += `${i + 1}. [${r.time}] ${detail}${kidLabel} = ${r.price} ${r.pay === 'Cash' ? '💵' : '📱'}\n`;
     });
 
     msg += `--------------------------\n📊 สรุปงาน:\n`;
+    // แสดงสถิติตามลำดับ: เด็ก, โกน, สระ, ย้อม
+    if(kid > 0) msg += `🧒 เด็ก: ${kid} คน\n`;
     if(shave > 0) msg += `🪒 โกนหนวด: ${shave} คน\n`;
     if(wash > 0) msg += `🚿 สระผม: ${wash} ครั้ง\n`;
     if(dye > 0) msg += `🎨 ย้อมผม: ${dye} ครั้ง\n`;
 
-    // 3. ยอดรวม + ยอดโอน + หน่วย "บาท"
     msg += `--------------------------\n`;
     msg += `💰 ยอดรวม: ${tot.toLocaleString()} บาท\n`;
-    msg += `📱 ยอดโอน: ${trans.toLocaleString()} บาท\n`; // เพิ่มบรรทัดยอดโอน
+    msg += `📱 ยอดโอน: ${trans.toLocaleString()} บาท\n`;
     msg += `🤵 ช่าง: ${Math.floor(bEarn).toLocaleString()} บาท\n`;
     msg += `🏠 ร้าน: ${Math.floor(sEarn).toLocaleString()} บาท\n`;
-    
-    // 4. เส้นแบ่งเน้นยอดเคลียร์เงิน และเปลี่ยนหน่วยเป็น บาท
     msg += `--------------------------\n`;
-    
-    let setMsg = "";
-    if (tot === 0) {
-        setMsg = "ยอดพอดี";
-    } else if (settle > 0) {
-        setMsg = `ช่างคืนเงินสดให้ร้าน ${Math.floor(settle).toLocaleString()} บาท`;
-    } else if (settle < 0) {
-        setMsg = `ร้านคืนเงินให้ช่าง ${Math.floor(Math.abs(settle)).toLocaleString()} บาท`;
-    } else {
-        setMsg = "ยอดลงตัวพอดี";
-    }
-    
+
+    let setMsg = tot === 0 ? "ยอดพอดีไม่ต้องคืน" : settle > 0 ? `ช่างคืนเงินให้ร้าน ${Math.floor(settle).toLocaleString()} บาท` : settle < 0 ? `ร้านคืนเงินให้ช่าง ${Math.floor(Math.abs(settle)).toLocaleString()} บาท` : "ยอดลงตัวพอดี";
     msg += `⚠️ ${setMsg}`;
 
     window.open(`https://line.me/R/msg/text/?${encodeURIComponent(msg)}`);
@@ -445,4 +445,5 @@
 </script>
 </body>
 </html>
+
 
