@@ -281,13 +281,13 @@
         }, 600);
     }
 
-    function renderDay() {
+   function renderDay() {
         const d = document.getElementById("dateInp").value;
         const today = db.filter(r => r.date === d);
         let tot = 0, trans = 0, cash = 0, stats = {};
         let listHtml = "";
         
-        today.sort((a,b) => a.time.localeCompare(b.time)); // เรียงตามเวลา
+        today.sort((a,b) => a.time.localeCompare(b.time));
 
         today.forEach(r => {
             tot += r.price;
@@ -304,13 +304,15 @@
                 </div>
             </div>`;
         });
+
         const bEarn = Math.max(tot * (conf.perc/100), conf.guar);
         const sEarn = tot - bEarn;
         const settle = cash - bEarn;
 
         document.getElementById("dTotal").innerText = tot.toLocaleString();
         document.getElementById("dTrans").innerText = trans.toLocaleString();
-        document.getElementById("dBarber").innerText = Math.floor(bEarn).toLocaleString();
+        // เพิ่มการแสดงผล Cash และผลต่างการคืนเงินในหน้า 2
+        document.getElementById("dBarber").innerHTML = `${Math.floor(bEarn).toLocaleString()} <span style="font-size:10px; font-weight:normal; opacity:0.6">(สดในมือ: ${cash.toLocaleString()})</span>`;
         document.getElementById("dShop").innerText = Math.floor(sEarn).toLocaleString();
         document.getElementById("dCounts").innerText = `ลูกค้า: ${today.length} คน`;
         document.getElementById("dailyList").innerHTML = listHtml || "<center style='padding:40px; opacity:0.3'>ยังไม่มีข้อมูล</center>";
@@ -319,19 +321,15 @@
         for(let s in stats) { statHtml += `<span class="badge">${s}: ${stats[s]}</span>`; }
         document.getElementById("dServiceStats").innerHTML = statHtml;
 
-       const bar = document.getElementById("settleBar");
-        if (tot === 0 && conf.guar > 0) {
-            bar.innerText = `🟦ร้านจ่ายประกันรายวัน ฿${Math.abs(settle).toLocaleString()}`;
-            bar.className = "status-bar status-indigo";
-        } else if (settle > 0) {
-            bar.innerText = `🟥 ช่างคืนเงินสดให้ร้าน ฿${settle.toLocaleString()}`;
-            bar.className = "status-bar status-red";
-        } else if (settle < 0) {
-            bar.innerText = `🟦 ร้านคืนเงินให้ช่าง ฿${Math.abs(settle).toLocaleString()}`;
-            bar.className = "status-bar status-indigo";
-        } else {
-            bar.innerText = "✅ ยอดลงตัวพอดี";
-            bar.className = "status-bar status-blue";
+        const bar = document.getElementById("settleBar");
+        if(tot === 0) { 
+            bar.innerText = "🟦 ร้านจ่ายประกันรายวัน"; bar.className = "status-bar status-blue"; 
+        } else if(settle > 0) { 
+            bar.innerText = `🟥 ช่างคืนเงินสดให้ร้าน ฿${Math.floor(settle).toLocaleString()}`; bar.className = "status-bar status-red"; 
+        } else if(settle < 0) { 
+            bar.innerText = `🟦 ร้านคืนเงินให้ช่าง ฿${Math.floor(Math.abs(settle)).toLocaleString()}`; bar.className = "status-bar status-indigo"; 
+        } else { 
+            bar.innerText = "✅ ยอดลงตัวพอดี"; bar.className = "status-bar status-green"; 
         }
     }
 
@@ -349,11 +347,19 @@
         if(!today.length) return alert("ไม่มีข้อมูล");
         if(confirm("ปิดยอดวันนี้และส่งไปหน้าสถิติ?")) {
             const tot = today.reduce((a,b) => a+b.price, 0);
+            const cash = today.filter(r=>r.pay==='Cash').reduce((a,b)=>a+b.price, 0);
             const bEarn = Math.max(tot * (conf.perc/100), conf.guar);
+            const settle = cash - bEarn;
+            
+            // เก็บ Stat แยกประเภท
+            let stats = {};
+            today.forEach(r => { r.svcs.forEach(s => stats[s] = (stats[s]||0)+1); });
+
             const arc = {
-                date: d, total: tot, barber: bEarn, shop: tot-bEarn, count: today.length, details: today,
-                cash: today.filter(r=>r.pay==='Cash').reduce((a,b)=>a+b.price, 0)
+                date: d, total: tot, cash: cash, barber: bEarn, shop: tot-bEarn, 
+                count: today.length, details: today, settle: settle, stats: stats
             };
+            
             archives = archives.filter(a => a.date !== d);
             archives.push(arc);
             localStorage.setItem("barber_arc", JSON.stringify(archives));
@@ -369,6 +375,7 @@
         const found = archives.find(a => a.date === d);
         const area = document.getElementById("histDailyArea");
         if(!found) { area.innerHTML = "<center style='color:#ccc; padding:20px;'>ไม่พบข้อมูล</center>"; return; }
+        
         let rows = found.details.map(r => `
             <div class="history-row" style="font-size:13px;">
                 <div style="display:flex; justify-content:space-between">
@@ -377,15 +384,26 @@
                 </div>
                 <div style="font-size:11px; opacity:0.6">${r.hair || ''} (${r.pay==='Cash'?'เงินสด':'โอน'})</div>
             </div>`).join('');
-        area.innerHTML = `<div style="background:var(--input-bg); padding:15px; border-radius:15px;">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px; font-size:14px;">
-                <div>ยอดรวม: <b>${found.total.toLocaleString()}</b></div>
-                <div>ลูกค้า: <b>${found.count}</b></div>
-                <div>ช่างได้: <b>${Math.floor(found.barber).toLocaleString()}</b></div>
-                <div>ร้านได้: <b>${Math.floor(found.shop).toLocaleString()}</b></div>
-            </div>
-            ${rows}
-        </div>`;
+
+        let statBadges = "";
+        for(let s in found.stats) { statBadges += `<span class="badge" style="background:#eee">${s}: ${found.stats[s]}</span>`; }
+
+        const settleText = found.settle > 0 ? `ช่างคืนร้าน: ฿${Math.floor(found.settle).toLocaleString()}` : 
+                           found.settle < 0 ? `ร้านคืนช่าง: ฿${Math.floor(Math.abs(found.settle)).toLocaleString()}` : "ยอดพอดี";
+        const settleClass = found.settle > 0 ? "status-red" : found.settle < 0 ? "status-indigo" : "status-green";
+
+        area.innerHTML = `
+            <div style="background:var(--input-bg); padding:15px; border-radius:15px;">
+                <div class="status-bar ${settleClass}" style="padding:8px; font-size:13px; margin-bottom:10px;">${settleText}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:15px; font-size:13px;">
+                    <div>ยอดรวม: <b>${found.total.toLocaleString()}</b></div>
+                    <div>เงินสด: <b>${found.cash.toLocaleString()}</b></div>
+                    <div>ช่างได้: <b>${Math.floor(found.barber).toLocaleString()}</b></div>
+                    <div>ร้านได้: <b>${Math.floor(found.shop).toLocaleString()}</b></div>
+                </div>
+                <div style="margin-bottom:15px;">${statBadges}</div>
+                <div style="border-top:1px dashed #ccc; padding-top:10px;">${rows}</div>
+            </div>`;
     }
 
     function loadHistMonth() {
@@ -394,13 +412,40 @@
         if(!m) return;
         const filtered = archives.filter(a => a.date.startsWith(m));
         if(!filtered.length) { area.innerHTML = "<center style='color:#ccc; padding:20px;'>ไม่มีข้อมูล</center>"; return; }
-        let tot = 0, bTot = 0;
-        filtered.forEach(a => { tot += a.total; bTot += a.barber; });
-        area.innerHTML = `<div style="padding:10px; background:var(--input-bg); border-radius:15px;">
-            <div style="font-size:18px;">รายได้รวม: <b style="color:var(--primary)">฿${tot.toLocaleString()}</b></div>
-            <div style="font-size:13px; opacity:0.8; margin-top:5px;">ช่าง: ฿${Math.floor(bTot).toLocaleString()} | ร้าน: ฿${Math.floor(tot-bTot).toLocaleString()}</div>
-            <div style="font-size:12px; margin-top:5px; color:var(--accent)">จำนวนวันที่บันทึก: ${filtered.length} วัน</div>
-        </div>`;
+        
+        let tot = 0, bTot = 0, cTot = 0, monthStats = {};
+        
+        filtered.forEach(a => { 
+            tot += a.total; 
+            bTot += a.barber;
+            cTot += a.count;
+            // รวมสถิติแยกประเภทของทั้งเดือน
+            if(a.stats) {
+                for(let s in a.stats) {
+                    monthStats[s] = (monthStats[s] || 0) + a.stats[s];
+                }
+            }
+        });
+
+        let monthStatBadges = "";
+        for(let s in monthStats) { 
+            monthStatBadges += `<span class="badge" style="background:var(--indigo); color:white; font-weight:300;">${s}: ${monthStats[s]}</span>`; 
+        }
+
+        area.innerHTML = `
+            <div style="padding:15px; background:var(--input-bg); border-radius:15px;">
+                <div style="font-size:20px; margin-bottom:10px;">รายได้รวม: <b style="color:var(--primary)">฿${tot.toLocaleString()}</b></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; opacity:0.8;">
+                    <div>ช่างรวม: <b>฿${Math.floor(bTot).toLocaleString()}</b></div>
+                    <div>ร้านรวม: <b>฿${Math.floor(tot-bTot).toLocaleString()}</b></div>
+                    <div>ลูกค้าสะสม: <b>${cTot} คน</b></div>
+                    <div>วันที่บันทึก: <b>${filtered.length} วัน</b></div>
+                </div>
+                <div style="margin-top:15px; border-top:1px dashed #ccc; padding-top:10px;">
+                    <label style="font-size:11px; opacity:0.6;">สถิติบริการรวมทั้งเดือน:</label>
+                    <div style="margin-top:5px;">${monthStatBadges || '<span style="opacity:0.4">ไม่มีข้อมูลสถิติ</span>'}</div>
+                </div>
+            </div>`;
     }
 
     function shareLine() {
@@ -490,6 +535,7 @@
 </script>
 </body>
 </html>
+
 
 
 
