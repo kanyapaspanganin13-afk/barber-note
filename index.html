@@ -172,10 +172,10 @@
             <div class="color-dot" style="background:#f1f5f9" onclick="setBg('#f1f5f9')"></div>
             <div class="color-dot" style="background:#eef2ff" onclick="setBg('#eef2ff')"></div>
             <div class="color-dot" style="background:#fff7ed" onclick="setBg('#fff7ed')"></div>
-        </div>
-        <button class="btn-save" onclick="saveSettings()">บันทึกการตั้งค่า</button>
-        <button onclick="closeSettings()" style="width:100%; margin-top:15px; border:none; background:none; color:#666; text-decoration:underline; cursor:pointer;">ปิดหน้าต่าง</button>
-        <button onclick="clearAllData()" style="width:100%; margin-top:10px; color:var(--danger); border:none; background:none; font-size:12px;">ล้างข้อมูลทั้งหมด</button>
+       </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+        <button class="btn-save" onclick="saveSettings()" style="width:100%; margin:0;">บันทึกการตั้งค่า</button>
+        <button onclick="closeSettings()" style="width:100%; margin:0; border: 1px solid var(--border); background: #f8fafc; color: #666; border-radius: 10px; cursor: pointer; font-weight: 500;">ปิดหน้าต่าง</button>
     </div>
 </div>
 
@@ -445,5 +445,6 @@
 </script>
 </body>
 </html>
+
 
 
