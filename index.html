@@ -97,8 +97,7 @@
     <h1 id="shopNameDisp">Barber Note</h1>
     <div style="width:40px; text-align:right; cursor:pointer" onclick="openSettings()"><i class="fas fa-cog"></i></div>
 </header>
-   
-<div id="p1" class="page active">
+   <div id="p1" class="page active">
     <div class="card">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom:15px;">
             <i class="fas fa-calendar-day" style="color:var(--primary)"></i>
@@ -110,31 +109,30 @@
         </div>
     </div>
 
-   <div class="card">
-    <label>ตัดผม & ทรงผม</label>
-    <div class="grid-2" style="margin-bottom:10px">
-        <select id="mainSvc">
-            <option value="">(ไม่เลือก)</option>
-            <option value="เด็ก" selected>เด็ก</option>
-        </select>
-        <select id="hairStyle">
-            <option value="">(ไม่เลือก)</option>
-            <option>รองทรง</option>
-            <option>แฟชั่น</option>
-            <option>สกินเฟด</option>
-            <option>เปิดข้าง</option>
-            <option>วินเทจ</option>
-            <option>ตำรวจ/ทหาร</option>
-            <option>ทรงนักเรียน</option>
-            <option>อื่นๆ</option>
-        </select>
-    </div>
-<div class="grid-2">
+    <div class="card">
+        <label>ตัดผม & ทรงผม</label>
+        <div class="grid-2" style="margin-bottom:10px">
+            <select id="mainSvc">
+                <option value="">(ไม่เลือก)</option>
+                <option value="เด็ก" selected>เด็ก</option>
+            </select>
+            <select id="hairStyle">
+                <option value="">(ไม่เลือก)</option>
+                <option>รองทรง</option>
+                <option>แฟชั่น</option>
+                <option>สกินเฟด</option>
+                <option>เปิดข้าง</option>
+                <option>วินเทจ</option>
+                <option>ตำรวจ/ทหาร</option>
+                <option>ทรงนักเรียน</option>
+                <option>อื่นๆ</option>
+            </select>
+        </div>
+        <div class="grid-2">
             <select id="extra1"><option value="">(เสริม 1)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
             <select id="extra2"><option value="">(เสริม 2)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
         </div>
     </div>
-   </div>
 
     <div class="card">
         <label>ค่าบริการ</label>
@@ -184,7 +182,6 @@
         <div id="histMonthArea" style="margin-top:15px"></div>
     </div>
 </div>
-
 <div id="modalSet" class="modal">
     <div class="modal-content">
         <h3>⚙️ ตั้งค่าระบบ</h3>
@@ -490,6 +487,7 @@
 </script>
 </body>
 </html>
+
 
 
 
