@@ -97,7 +97,8 @@
     <h1 id="shopNameDisp">Barber Note</h1>
     <div style="width:40px; text-align:right; cursor:pointer" onclick="openSettings()"><i class="fas fa-cog"></i></div>
 </header>
-   <div id="p1" class="page active">
+   
+    <div id="p1" class="page active">
     <div class="card">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom:15px;">
             <i class="fas fa-calendar-day" style="color:var(--primary)"></i>
@@ -108,7 +109,6 @@
             <div><label>เวลาเสร็จ</label><input type="tel" id="tEnd" placeholder="0930" class="time-input" maxlength="4"></div>
         </div>
     </div>
-
     <div class="card">
         <label>ตัดผม & ทรงผม</label>
         <div class="grid-2" style="margin-bottom:10px">
@@ -128,6 +128,7 @@
                 <option>อื่นๆ</option>
             </select>
         </div>
+     </div>
         <div class="grid-2">
             <select id="extra1"><option value="">(เสริม 1)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
             <select id="extra2"><option value="">(เสริม 2)</option><option>โกนหนวด</option><option>กันหน้า</option><option>สระผม</option><option>ย้อมผม</option><option>ดัดผม</option><option>แก้ผม</option><option>โกนผม</option></select>
@@ -143,8 +144,8 @@
         </div>
     </div>
     <button class="btn-save" id="mainSaveBtn" onclick="handleSave()">บันทึกข้อมูล</button>
+</div>  
 </div>
-
 <div id="p2" class="page">
     <div class="grid-2">
         <div class="card" style="text-align: center;">
@@ -487,6 +488,7 @@
 </script>
 </body>
 </html>
+
 
 
 
