@@ -1596,7 +1596,7 @@ function renderDay(selectedDate) {
     const isHoliday = allRec.some(r => r.type && r.type.toUpperCase() === 'HOLIDAY');
     const stats = {};
 
-    const extraSvcs = ["โกนหนวด", "กันหน้า", "สระผม", "กันจอน", "ย้อมแฟชั่น", "ดัดผม"];
+    const extraSvcs = ["โกนหนวด", "กันหน้า", "สระผม", "กันจอน", "ย้อมแฟชั่น", "ดัดผม", "แคะหู"];
     
     let tot = 0, trans = 0, cash = 0, tips = 0;
     let listHtml = "";
@@ -1642,7 +1642,7 @@ allRec
                 // 🎁 ใช้สิทธิ์ฟรี (ฟรีทั้งบิล ไม่มีจ่ายเพิ่ม)
                 } else {
                     payIcon = '🎁 ใช้สิทธิ์ฟรี';
-                    moneyDetailText = `<span style="color:#64748b; font-size:13px; font-weight:normal;">0</span>`;
+                    moneyDetailText = `<span style="color:#64748b; font-size:13px; font-weight:normal;">฿0</span>`;
                     // ไม่บวกเงินเข้ายอดรวม
                 }
 
@@ -1693,8 +1693,8 @@ allRec
             }
         
         let custTag = ""; 
-        if (cType === 'new') custTag = ` <span style="color:#22c55e; font-size:11px; font-weight:bold;">[ใหม่]</span>`;
-        if (cType === 'regular') custTag = ` <span style="color:#eab308; font-size:11px; font-weight:bold;">[ประจำ]</span>`;
+        if (cType === 'new') custTag = ` <span style="color:#22c55e; font-size:11px; font-weight:bold;">[🌟]</span>`;
+        if (cType === 'regular') custTag = ` <span style="color:#eab308; font-size:11px; font-weight:bold;">[📌]</span>`;
 
         listHtml += `
         <div class="history-row" style="padding:15px; border-bottom:1px solid #f1f5f9; background:#fff;">
@@ -1778,7 +1778,7 @@ allRec
     } else if (tot === 0) {
         txt = "ร้านจ่ายประกัน"; statusColor = "#0369a1"; icon = "🛡️";
     } else if (settle > 0) {
-        txt = `ช่างคืนร้าน ฿${Math.floor(settle).toLocaleString()}`; statusColor = "#b91c1c"; icon = "🥷";
+        txt = `ช่างคืนร้าน ฿${Math.floor(settle).toLocaleString()}`; statusColor = "#b91c1c"; icon = "🕵️‍♀️";
     } else if (settle < 0) {
         txt = `ร้านคืนช่าง ฿${Math.floor(Math.abs(settle)).toLocaleString()}`; statusColor = "#4338ca"; icon = "🏠";
     } else {
