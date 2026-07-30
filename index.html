@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 02</title>
+    <title>Barber-Note 03</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1612,59 +1612,78 @@ function renderDay(selectedDate) {
             const t = parseFloat(r.tip) || 0;
             const rType = r.type ? String(r.type).toUpperCase().trim() : '';
             const currentSvcs = Array.isArray(r.svcs) ? r.svcs : [];
-            
-            // ตรวจสอบว่าเป็นรายการของขวัญ/โปรโมชันหรือไม่
-            const isGiftItem = r.isGift || r.pay === 'Gift' || r.pay === 'ของขวัญ';
-            
-            // 🎯 ปรับแต่ง: ถ้าเป็น Gift ให้กำหนดสถานะลูกค้าเป็นประจำ (regular) ทันที
-            const cType = isGiftItem ? 'regular' : (r.custType || 'none');
+            const cType = r.custType || 'none';
 
             const timeShow = r.endTime ? `${r.time}-${r.endTime}` : r.time;
 
-            // 🎯 คิดเงิน: ถ้าไม่ใช่ Gift จึงจะนำไปคำนวณยอดเงินรวมและช่องทางการชำระเงิน
-            if (!isGiftItem) {
-                tot += p;
-                if (r.pay === 'Mix') {
-                    const pCash = parseFloat(r.payCash) || 0;
-                    const pTrans = parseFloat(r.payTrans) || 0;
-                    trans += pTrans;
-                    cash += (pCash - t);
-                } else if (r.pay === 'Trans' || r.pay === 'โอน') {
-                    trans += (p + t);
-                } else {
-                    cash += p;
-                }
-            }
-            
-            // ทิปยังคงคำนวณปกติแยกต่างหาก (เผื่อกรณีตัดฟรีแต่ลูกค้าให้ทิปช่าง)
-            tips += t;
+            // 🎯 เช็คค่าตัวเลือกการจ่ายเงินจากหน้าบันทึก (แปลงเป็นพิมพ์เล็กตัดช่องว่างเพื่อความแม่นยำ)
+            const payType = r.pay ? String(r.pay).trim() : 'Cash';
 
-            // 🎯 นับจำนวนลูกค้าและสถิติ: ข้ามเฉพาะวันหยุดและประกัน ส่วน Gift 🎁 ให้นับตามปกติ
-            if (rType === 'HOLIDAY' || rType === 'GUARANTEE') {
-                // ข้ามการนับยอดลูกค้าปกติ
+            let payIcon = '💶'; 
+            let moneyDetailText = `฿${p}`;
+
+            // 🎯 1. 🎁 ใช้สิทธิ์ฟรี (ฟรีทั้งบิล ไม่คิดเงินเข้ายอดรวมเลย)
+            if (payType === 'Free' || payType === 'ฟรี') {
+                payIcon = '🎁 ใช้สิทธิ์ฟรี';
+                moneyDetailText = `<span style="color:#64748b; font-size:13px; font-weight:normal;">ฟรีทั้งบิล</span>`;
+                // ไม่บวกเข้า tot, trans, cash
+                
+            // 🎯 2. 🎁 ฟรี + 💶 เงินสด (บริการอื่น/จ่ายเพิ่มเป็นเงินสด)
+            } else if (payType === 'FreeCash' || payType === 'ฟรี+เงินสด' || payType === 'ฟรี + เงินสด') {
+                payIcon = '🎁 + 💶';
+                moneyDetailText = `฿${p}`;
+                tot += p;
+                cash += p;
+
+            // 🎯 3. 🎁 ฟรี + 📱 เงินโอน (บริการอื่น/จ่ายเพิ่มเป็นเงินโอน)
+            } else if (payType === 'FreeTrans' || payType === 'ฟรี+โอน' || payType === 'ฟรี + เงินโอน' || payType === 'ฟรี + โอน') {
+                payIcon = '🎁 + 📱';
+                moneyDetailText = `฿${p}`;
+                tot += p;
+                trans += (p + t);
+
+            // 🎯 4. เงื่อนไขปกติเดิม (Mix / Trans / Cash)
+            } else if (payType === 'Mix') {
+                payIcon = '🌓';
+                const pCash = parseFloat(r.payCash) || 0;
+                const pTrans = parseFloat(r.payTrans) || 0;
+                tot += p;
+                trans += pTrans;
+                cash += (pCash - t);
+                moneyDetailText = `฿${p} <br><small style="color:#64748b; font-size:10px; font-weight:normal;">(สด:${pCash}/โอน:${pTrans})</small>`;
+            } else if (payType === 'Trans' || payType === 'โอน') {
+                payIcon = '📱';
+                tot += p;
+                trans += (p + t);
+                moneyDetailText = `฿${p}`;
+            } else { // Cash หรือ เงินสด ปกติ
+                payIcon = '💶';
+                tot += p;
+                cash += p;
+                moneyDetailText = `฿${p}`;
+            }
+            // จัดการเรื่องทิป (ถ้ามีทิป และไม่ใช่เคสฟรีทั้งบิล ให้บวกทิปรวม)
+            if (payType !== 'Free' && payType !== 'ฟรี') {
+                tips += t;
+            }
+
+            if (rType === 'HOLIDAY' || rType === 'GUARANTEE' || (p === 0 && payType !== 'Free' && payType !== 'ฟรี')) {
+                // ข้ามการนับ
             } else {
                 if (currentSvcs.length > 0) {
                     realCustomerCount++;
                     if (cType === 'new') countNew++;
-                    if (cType === 'regular') countRegular++; // 🎁 จะถูกนับเข้ากลุ่มลูกค้าประจำตรงนี้
+                    if (cType === 'regular') countRegular++;
                 }
 
                 currentSvcs.forEach(s => {
-                    if (s) stats[s] = (stats[s] || 0) + 1; // 🎁 นับสถิติทรงผมปกติ
+                    if (s) stats[s] = (stats[s] || 0) + 1;
                 });
             }
         
         let custTag = ""; 
-        
-        // ปรับการแสดงไอคอนประเภทการชำระเงิน/ของขวัญ
-        let payIcon = r.pay === 'Trans' ? '📱' : '💶';
-        let mixText = "";
-        if (isGiftItem) {
-            payIcon = '🎁';
-        } else if (r.pay === 'Mix') {
-            payIcon = '🌓';
-            mixText = `<br><small style="color:#64748b; font-size:10px; font-weight:normal;">(สด:${r.payCash}/โอน:${r.payTrans})</small>`;
-        } 
+        if (cType === 'new') custTag = ` <span style="color:#22c55e; font-size:11px; font-weight:bold;">[ใหม่]</span>`;
+        if (cType === 'regular') custTag = ` <span style="color:#eab308; font-size:11px; font-weight:bold;">[ประจำ]</span>`;
 
         listHtml += `
         <div class="history-row" style="padding:15px; border-bottom:1px solid #f1f5f9; background:#fff;">
@@ -1675,7 +1694,7 @@ function renderDay(selectedDate) {
                     </div>
                     <div style="display:flex; flex-direction:column;">
                         <div style="font-weight:800; font-size:14px; color:#1e293b; margin-bottom:2px;">
-                            <span style="color:#64748b; font-weight:500;">[${timeShow}]</span> ${isGiftItem ? '🎁 ' : ''}${currentSvcs.join(' + ')}${custTag}
+                            <span style="color:#64748b; font-weight:500;">[${timeShow}]</span> ${currentSvcs.join(' + ')}${custTag}
                         </div>
                         <div style="display:flex; gap:8px; align-items:center;">
                             ${t ? `<small style="color:#be185d; font-weight:700; font-size:11px;">🔹 ทิป: ฿${t}</small>` : '<small style="color:#94a3b8; font-size:11px;">(ไม่มีทิป)</small>'}
@@ -1683,16 +1702,15 @@ function renderDay(selectedDate) {
                     </div>
                 </div>
                 <div style="text-align:right;">
-                    <b style="font-size:16px; display:block; color:#1e293b; line-height:1.2;">
-                        <span style="font-size:14px;">${payIcon}</span> ฿${isGiftItem ? 0 : p}${t ? ` <span style="color:#be185d;">(+${t})</span>` : ''}
-                        ${mixText}
+                    <!-- 🎯 แสดงค่าอิโมจิและยอดเงินตามเงื่อนไขที่เลือกมาจากหน้าบันทึก -->
+                    <b style="font-size:15px; display:block; color:#1e293b; line-height:1.2;">
+                        <span style="font-size:13px; font-weight:bold;">${payIcon}</span> ${moneyDetailText}${t ? ` <span style="color:#be185d;">(+${t})</span>` : ''}
                     </b>
                     <span style="font-size:11px; font-weight:700; color:#ef4444; cursor:pointer;" onclick="delRec(${r.id})">ลบ</span>
                 </div>
             </div>
         </div>`;
     });
-
     const bEarn = isHoliday ? 0 : Math.max(tot * (conf.perc / 100), conf.guar) + tips;
     const sEarn = isHoliday ? 0 : tot - (bEarn - tips);
     const settle = isHoliday ? 0 : cash - bEarn;
