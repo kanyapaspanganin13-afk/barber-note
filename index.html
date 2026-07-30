@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 03</title>
+    <title>Barber-Note 04</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -2489,7 +2489,7 @@ function loadHistDaily() {
     if (cashTotal > barberEarn) {
         const toShop = cashTotal - barberEarn;
         settleHTML = `<div style="background:rgba(251,146,60,0.1); padding:16px; border-radius:16px; margin-bottom:20px; text-align:center; border:1px solid rgba(251,146,60,0.3);">
-            <div style="font-size:16px; color:#fdba74; font-weight:600; margin-bottom:4px;">🥷 ช่างคืนร้าน</div>
+            <div style="font-size:16px; color:#fdba74; font-weight:600; margin-bottom:4px;">🕵️‍♀️ ช่างคืนร้าน</div>
             <div style="font-size:24px; color:#fb923c; font-weight:800;">฿${toShop.toLocaleString()}</div>
         </div>`;
     } else if (barberEarn > cashTotal) {
@@ -3022,29 +3022,55 @@ function shareLine() {
     let stats = {}, realCustomerCount = 0;
     let newCount = 0, regCount = 0;
 
-    // 📝 3. ประมวลผลรายการลูกค้า (ปรับปรุงการแยกยอด Mix)
+    // 📝 3. ประมวลผลรายการลูกค้า (รองรับระบบ 🎁 ฟรี ในทุกรูปแบบ)
     const clientList = today
             .sort((a, b) => a.time.localeCompare(b.time))
             .map((r, i) => {
                 const p = Number(r.price) || 0;
                 const t = Number(r.tip) || 0;
-                tot += p; tips += t;
-    
+                const payType = String(r.pay || "").trim();
+                
                 let detailText = ""; 
-    
-                if (r.pay === 'Mix') {
+                let pIcon = '🎁'; // Default สำหรับกรณี ฟรีล้วน
+
+                // 🔄 เช็กเงื่อนไขการจ่ายเงินรูปแบบต่าง ๆ
+                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁') {
+                    // 🎁 ฟรีทั้งบิล -> ไม่บวกยอดเงินป้อนเข้าระบบเลย
+                    pIcon = '🎁';
+                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💶') {
+                    // 🎁 ฟรี + 💶 เงินสด -> เงินวิ่งเข้าฝั่งเงินสด
+                    cash += p;
+                    tot += p;
+                    pIcon = '🎁+💵';
+                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱') {
+                    // 🎁 ฟรี + 📱 เงินโอน -> เงินวิ่งเข้าฝั่งโอน
+                    trans += (p + t);
+                    tot += p;
+                    pIcon = '🎁+📱';
+                } else if (payType === 'Mix') {
                     const pTrans = Number(r.payTrans) || 0;
                     const pCash = Number(r.payCash) || 0;
                     trans += pTrans;
                     cash += (pCash - t);
-                    detailText = ` (สด:${pCash}/โอน:${pTrans})`; // ✅ เตรียมข้อความยอดแยก
-                } else if (r.pay === 'Trans' || r.pay === 'โอน') {
+                    tot += p;
+                    detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
+                    pIcon = '🌓';
+                } else if (payType === 'Trans' || payType === 'โอน') {
                     trans += (p + t);
+                    tot += p;
+                    pIcon = '📱';
                 } else {
+                    // จ่ายสดปกติ
                     cash += p;
+                    tot += p;
+                    pIcon = '🎁+💵'; // ปรับตามที่ระบุใน Turn แรกว่าให้ใช้แทน 💶
                 }
-    
-                if (!['GUARANTEE', 'HOLIDAY'].includes(String(r.type).toUpperCase()) && p > 0) {
+
+                // สะสมยอดทิปรวม
+                tips += t;
+
+                // นับจำนวนลูกค้าและสถิติงานตามปกติ (กรณีตัดฟรี ก็นับเป็นผลงานช่างด้วย)
+                if (!['GUARANTEE', 'HOLIDAY'].includes(String(r.type).toUpperCase())) {
                     realCustomerCount++;
                     const cType = String(r.custType || "").toLowerCase();
                     if (cType === 'new') newCount++;
@@ -3054,11 +3080,9 @@ function shareLine() {
                 }
     
                 const tShow = r.endTime ? `${r.time}-${r.endTime}` : r.time;
-                const pIcon = r.pay === 'Trans' ? '📱' : (r.pay === 'Mix' ? '🌓' : '💶');
-                
-                // ✅ แก้ไขบรรทัดนี้: ใส่ detailText ลงไปในข้อความที่จะ return ด้วย
                 return `${i + 1}. [${tShow}] ${(r.svcs || []).join('+')} = ${p}${t ? ` (+ทิป ${t})` : ''}${detailText} ${pIcon}`;
             }).join('\n');
+
     // 📊 4. สถิติงาน
     const allowed = ["เด็ก", "สระผม", "โกนหนวด", "ย้อมผม", "ย้อมสี"];
     const icons = { "เด็ก": "🧒", "สระ": "🧼", "โกน": "🪒", "ย้อม": "🎨" };
@@ -3105,7 +3129,7 @@ function shareLine() {
     msg += `-------------------------\n${clientList}\n-------------------------\n`;
     msg += `🏷️ สรุปงาน:\n${statText || '(ไม่มีรายการ)'}\n-------------------------\n`;
     msg += `💰 ยอด: ${tot.toLocaleString()} | 🧧 ทิปโอน: ${tips}\n`;
-    msg += `📱 โอน: ${trans.toLocaleString()} | 💶 เงินสด: ${cash.toLocaleString()}\n`;
+    msg += `📱 โอน: ${trans.toLocaleString()} | 🎁+💵 เงินสด: ${cash.toLocaleString()}\n`;
     msg += `🤵 ช่าง: ${Math.floor(bEarn).toLocaleString()}\n🏠 ร้าน: ${Math.floor(shopEarn).toLocaleString()}\n`;
     msg += `-------------------------\n`;
 
