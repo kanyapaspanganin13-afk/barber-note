@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 02</title>
+    <title>Barber-Note 0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1277,13 +1277,29 @@ function setPaymentType(m) {
 
     const priceInp = $("priceInp");
     const mixPanel = $("mixPanel");
+    const payTypeSelect = $("payTypeSelect"); // ดึงตัวเลือกวิธีชำระเงิน
+
+    // 🎯 บังคับให้ Dropdown บนหน้าจอเปลี่ยนตามค่า m (ทำให้ซิงค์กันทั้งหน้าจอและโค้ด)
+    if (payTypeSelect) {
+        payTypeSelect.value = m;
+        if (m === "") {
+            payTypeSelect.selectedIndex = 0; // ดีดกลับเป็น "วิธีชำระเงิน"
+        }
+    }
+
+    // 🎯 กรณีสั่งล้างค่า (m เป็นค่าว่าง "") ให้เคลียร์ทุกอย่างให้เกลี้ยงทันที
+    if (m === "") {
+        if ($("mixCash")) $("mixCash").value = "";
+        if ($("mixTrans")) $("mixTrans").value = "";
+        if (mixPanel) mixPanel.style.display = 'none';
+        return;
+    }
 
     // ถ้าเลือก "ใช้สิทธิฟรี"
     if (m === 'Free') {
         if (priceInp) {
             priceInp.readOnly = false;       // ✅ ปลดล็อกให้ช่างกรอกค่าบริการเสริมเพิ่มได้
             priceInp.style.opacity = '1';
-            // ไม่ต้องเคลียร์เป็น 0 เพื่อให้ช่างใส่ราคาบริการเสริมได้ตามปกติ
         }
         if ($("mixCash")) $("mixCash").value = "";
         if ($("mixTrans")) $("mixTrans").value = "";
@@ -1296,7 +1312,7 @@ function setPaymentType(m) {
         }
     }
 
-    // แผงจ่ายแบบผสม (Mix Panel) คงเดิม
+    // แผงจ่ายแบบผสม (Mix Panel)
     if (mixPanel) {
         if (m === 'Mix') {
             mixPanel.style.display = 'block';
@@ -1312,13 +1328,12 @@ function setPaymentType(m) {
     }
 }
 
-// --- ส่วนจัดการการคำนวณเงินอัตโนมัติ (Event Listeners) ---
+// --- ส่วนจัดการการคำนวณเงินอัตโนมัติ (Event Listeners) คงเดิม ---
 
 // เมื่อกรอก "เงินสด" ให้ "เงินโอน" ลดลงอัตโนมัติ
 if ($("mixCash")) {
     $("mixCash").addEventListener("input", function() {
-        // ดักป้องกัน: ถ้าจ่ายแบบใช้สิทธิฟรี ไม่ต้องคำนวณเงินผสม
-        if (payMethod === 'Free') {
+        if (payMethod === 'Free' || payMethod === '') {
             this.value = "";
             if ($("mixTrans")) $("mixTrans").value = "";
             return;
@@ -1331,7 +1346,6 @@ if ($("mixCash")) {
         const cash = parseFloat(this.value) || 0;
         const remain = total - cash;
         
-        // ปรับยอดโอนที่เหลือ (ห้ามติดลบ)
         if ($("mixTrans")) {
             $("mixTrans").value = remain >= 0 ? remain : 0;
         }
@@ -1341,8 +1355,7 @@ if ($("mixCash")) {
 // เมื่อกรอก "เงินโอน" ให้ "เงินสด" ลดลงอัตโนมัติ
 if ($("mixTrans")) {
     $("mixTrans").addEventListener("input", function() {
-        // ดักป้องกัน: ถ้าจ่ายแบบใช้สิทธิฟรี ไม่ต้องคำนวณเงินผสม
-        if (payMethod === 'Free') {
+        if (payMethod === 'Free' || payMethod === '') {
             this.value = "";
             if ($("mixCash")) $("mixCash").value = "";
             return;
