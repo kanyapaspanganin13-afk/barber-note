@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 0</title>
+    <title>Barber-Note 07</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1277,17 +1277,25 @@ function setPaymentType(m) {
 
     const priceInp = $("priceInp");
     const mixPanel = $("mixPanel");
-    const payTypeSelect = $("payTypeSelect"); // ดึงตัวเลือกวิธีชำระเงิน
+    const payTypeSelect = $("payTypeSelect");
 
-    // 🎯 บังคับให้ Dropdown บนหน้าจอเปลี่ยนตามค่า m (ทำให้ซิงค์กันทั้งหน้าจอและโค้ด)
+    // 🎯 แก้ไขจุดนี้: จัดการเคสช่องจ่ายเงินที่มีไอคอนทับอยู่
     if (payTypeSelect) {
-        payTypeSelect.value = m;
         if (m === "") {
-            payTypeSelect.selectedIndex = 0; // ดีดกลับเป็น "วิธีชำระเงิน"
+            payTypeSelect.value = "";
+            payTypeSelect.selectedIndex = 0;
+            
+            // 🔥 บังคับหน้าจอวาดใหม่ (แก้ปัญหาเรื่องไอคอนทับแล้วข้อความไม่ยอมเคลียร์)
+            const originalDisplay = payTypeSelect.style.display;
+            payTypeSelect.style.display = 'none';
+            payTypeSelect.offsetHeight; // สั่งทริกเกอร์ reflow
+            payTypeSelect.style.display = originalDisplay;
+        } else {
+            payTypeSelect.value = m;
         }
     }
 
-    // 🎯 กรณีสั่งล้างค่า (m เป็นค่าว่าง "") ให้เคลียร์ทุกอย่างให้เกลี้ยงทันที
+    // ถ้า m เป็นค่าว่าง (สั่งรีเซ็ตตอนบันทึก) ให้เคลียร์ค่าผสม ซ่อนแผง แล้วหยุดทันที
     if (m === "") {
         if ($("mixCash")) $("mixCash").value = "";
         if ($("mixTrans")) $("mixTrans").value = "";
@@ -1296,9 +1304,9 @@ function setPaymentType(m) {
     }
 
     // ถ้าเลือก "ใช้สิทธิฟรี"
-    if (m === 'Free') {
+    if (m === 'Free' || m === 'Free-Cash' || m === 'Free-Trans') {
         if (priceInp) {
-            priceInp.readOnly = false;       // ✅ ปลดล็อกให้ช่างกรอกค่าบริการเสริมเพิ่มได้
+            priceInp.readOnly = false;
             priceInp.style.opacity = '1';
         }
         if ($("mixCash")) $("mixCash").value = "";
