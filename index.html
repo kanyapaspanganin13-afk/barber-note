@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 02</title>
+    <title>Barber-Note 0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1013,6 +1013,9 @@ function clearAllData(){if(confirm("ลบข้อมูลทั้งหม�
    (การจัดการแบบฟอร์มบันทึกงานรายวัน)
    ========================================================== */
 function addRecord() {
+    // 🛠️ ประกาศตัวย่อเฉพาะในฟังก์ชันนี้ เพื่อป้องกันไม่ให้ชนกับหน้า 2 และ 3
+    const $ = (id) => document.getElementById(id); 
+
     const dInp = $("dateInp").value;
     const timeInp = $("timeInp").value;
     const price = parseFloat($("priceInp").value) || 0;
@@ -1028,7 +1031,7 @@ function addRecord() {
         return;
     }
 
-    // 🎯 1. แก้ไขเงื่อนไขราคา 0 ตามที่แจ้ง: (อนุญาตให้ราคาเป็น 0 ได้ถ้าเป็น Holiday, Guarantee หรือ Free 🎁)
+    // 🎯 1. เงื่อนไขราคา 0: (อนุญาตให้ราคาเป็น 0 ได้ถ้าเป็น Holiday, Guarantee หรือ Free)
     if (
         price === 0 &&
         currentPay !== "Holiday" &&
@@ -1092,7 +1095,7 @@ function addRecord() {
         payCash: finalCash,
         payTrans: finalTrans,
         type: 'SERVICE',
-        // ✅ 2. แก้ไขตามสั่ง: เปลี่ยน Flag สำหรับสิทธิพิเศษกลุ่ม Free ทั้ง 3 ตัว
+        // Flag สำหรับกลุ่มสิทธิพิเศษ Free ทั้ง 3 ตัว
         isGift: (
             currentPay === "Free" ||
             currentPay === "Free-Cash" ||
@@ -1155,6 +1158,9 @@ function addRecord() {
 }
 
 function resetForm() {
+    // 🛠️ ประกาศตัวย่อเฉพาะในฟังก์ชันนี้ เพื่อใช้จัดการรีเซ็ตค่าเริ่มต้นในหน้านี้โดยเฉพาะ
+    const $ = (id) => document.getElementById(id); 
+
     // 1. ล้างข้อมูลในฟอร์ม
     if ($("priceInp")) $("priceInp").value = "";
     if ($("tipInp")) $("tipInp").value = "";
