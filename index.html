@@ -286,22 +286,23 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 /* ========= 🔘 6. BUTTONS & NAV ========= */
-/* 1. ปุ่มหลัก (บันทึกข้อมูล) */
+
+/* 1. แถวปุ่มใหม่ (แบ่งซ้าย-ขวา) และปุ่มบันทึกข้อมูล */
 .btn-pay, .btn-save {
     width: 100%;
-    height: 75px;
+    height: 100%; /* ✅ ปรับเป็น 100% เพื่อให้สูงเท่าแถว Grid (80px) ที่ตั้งไว้ใน HTML */
     border: none;
-    border-radius: 20px;
+    border-radius: 18px; /* ปรับให้โค้งมน 18px เท่ากันกับช่องวิธีชำระเงิน */
     background: linear-gradient(135deg, var(--save1), var(--save2));
     color: #fff;
     display: flex !important;
-    flex-direction: row !important; /* ✅ บังคับเรียงหน้ากระดาน ไอคอนไม่เด้งขึ้นบน */
+    flex-direction: row !important;
     align-items: center;
     justify-content: center;
     gap: 12px;
     cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    font-size: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    font-size: 18px;
     font-weight: 900;
     
     /* 🔒 ล็อคขนาดปุ่มไม่ให้ดีดขยาย */
@@ -309,23 +310,48 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     transition: none !important;
 }
 
-/* 2. สถานะเมื่อปุ่มถูกเลือก (Active) - ล็อคให้นิ่งสนิท */
-.btn-pay.active-cash, 
-.btn-pay.active-trans, 
-.btn-pay.active-mix {
-    border: 3px solid #ffffff !important; /* ขอบขาวเน้น */
-    box-shadow: 0 0 15px rgba(255,255,255,0.3);   
-    transform: scale(1) !important; /* 🔒 ล็อคขนาด 1:1 */
-    opacity: 1 !important;
+.btn-pay i {
+    transform: none !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    font-size: 22px;
 }
 
-/* 3. ปุ่มตัวเลือกอื่นๆ (เงินสด / โอน / ผสม) */
-.btn-cash, .btn-transfer, .btn-mix, .btn-clear, .btn-history {
+/* 2. สไตล์ช่องเลือกวิธีชำระเงิน (Dropdown เข้าตามธีม) */
+#payTypeSelect {
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-weight: 800;
+    font-size: 16px;
+    text-align: center;
+    text-align-last: center;
+    padding: 0 25px 0 35px;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* สไตล์เมื่อช่องวิธีชำระเงินถูก Focus */
+#payTypeSelect:focus {
+    border-color: var(--accent);
+}
+
+/* 3. ปุ่มเมนูระบบอื่น ๆ (ล้างปุ่มเงินสด/โอนเดิมออก เหลือเฉพาะปุ่มล้างค่า/ประวัติ) */
+.btn-clear, .btn-history, .btn-monthly, .btn-compare {
     border: none;
     border-radius: 18px;
     padding: 12px;
     display: flex;
-    flex-direction: row; /* ✅ จัดให้ไอคอนอยู่ข้างข้อความ */
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -333,31 +359,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-weight: 800;
 }
 
-/* สีปุ่มตัวเลือก */
-.btn-cash { background: linear-gradient(135deg, var(--cash1), var(--cash2)); color: var(--btn-text); }
-.btn-transfer { background: linear-gradient(135deg, var(--trans1), var(--trans2)); color: var(--btn-text); }
-.btn-mix { background: linear-gradient(135deg, var(--mix1), var(--mix2)); color: var(--btn-text); }
 .btn-clear { background: linear-gradient(135deg, var(--btn-clear1), var(--btn-clear2)); color: var(--btn-text); }
 .btn-history { background: linear-gradient(135deg, var(--btn-his1), var(--btn-his2)); color: var(--btn-text); }
 .btn-monthly { background: linear-gradient(135deg, var(--btn-monthly1), var(--btn-monthly2)); color: var(--btn-text); }
 .btn-compare { background: linear-gradient(135deg, var(--btn-compare1), var(--btn-compare2)); color: var(--btn-text); }
 
-/* 🔒 ล็อคไอคอนภายในปุ่ม ไม่ให้ดีด */
-.btn-pay i {
-    transform: none !important;
-    display: inline-block !important;
-    margin: 0 !important; /* ❌ ล้าง margin-bottom เพื่อไม่ให้มันดันตัวหนังสือลงไปข้างล่าง */
-    font-size: 24px;
-}
-
-/* ⚪ สถานะปุ่มที่ไม่ได้เลือก */
-.btn-pay.is-inactive {
-    opacity: 0.4;
-    filter: grayscale(0.5);
-    transform: none !important;
-}
-
-/* 4. NAV ด้านล่าง */
+/* 4. NAV ด้านล่าง (คงเดิมไว้ตามโครงสร้างหลัก) */
 nav {
     position: fixed;
     bottom: 0;
@@ -395,7 +402,6 @@ nav {
     font-size: 20px;
     margin-bottom: 4px;
 }
-
 /* ========= 📦 7. MODALS ========= */
 .modal {
     display: none;
