@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 01</title>
+    <title>Barber-Note 02</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1142,62 +1142,42 @@ function addRecord() {
     // 🎯 3. แจ้งเตือนความสำเร็จ
     notify("success", "ดำเนินการสำเร็จ", "ระบบจัดเก็บข้อมูลการทำงานเรียบร้อยแล้ว");
 
-    // 🎯 4. ล้างค่าในฟอร์ม (Reset Form)
+    // 🎯 4. เคลียร์ทุกอย่างให้กลับเป็นค่าเริ่มต้น (รวมไว้ในนี้ตรงๆ ไม่เรียกฟังก์ชันอื่นแล้ว)
     if (document.getElementById("priceInp")) document.getElementById("priceInp").value = "";
     if (document.getElementById("tipInp")) document.getElementById("tipInp").value = "0";
-    if (hairStyleSelect) hairStyleSelect.selectedIndex = 0; 
+    if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
+    if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
     
-    // ✅ รีเซ็ตหน้าต่างการจ่ายเงินให้กลับไปค่าเริ่มต้นเหมือนกับทรงผม
+    // รีเซ็ตตัวแปรวิธีชำระเงิน และหน้าจอ Dropdown วิธีชำระเงิน
+    payMethod = "";
     if (document.getElementById("payTypeSelect")) {
         document.getElementById("payTypeSelect").selectedIndex = 0;
     }
 
-    if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
-    if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
-    
-    // รีเฟรชหน้าจอ
-    if (typeof resetForm === 'function') resetForm();
-    if (typeof renderDay === 'function') renderDay();
-    if (typeof loadAccountStatus === 'function') loadAccountStatus();
-}
-
-function resetForm() {
-    // 1. ล้างข้อมูลในฟอร์ม
-    if (document.getElementById("priceInp")) document.getElementById("priceInp").value = "";
-    if (document.getElementById("tipInp")) document.getElementById("tipInp").value = "";
-    if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
-    if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
-    // 2. รีเซ็ตวิธีชำระเงิน
-    payMethod = "";
-    if (document.getElementById("payTypeSelect")) {
-        document.getElementById("payTypeSelect").selectedIndex = 0; // สั่ง Dropdown วิธีชำระเงินกลับไปค่าเริ่มต้น
-    }
-    
-    // 3. รีเซ็ตรายการบริการ
+    // รีเซ็ตรายการบริการและสีปุ่ม
     selectedServices = [];
-    
     const serviceButtons = document.querySelectorAll(".service-btn");
-    serviceButtons.forEach(btn => {
-        btn.classList.remove("selected", "active", "bg-blue-500");
+    serviceButtons.forEach(b => {
+        b.classList.remove("selected", "active", "bg-blue-500");
     });
-    
+
     // รีเซ็ต Dropdown ทรงผม
-    if (document.getElementById("hairStyle")) {
-        document.getElementById("hairStyle").selectedIndex = 0; // สั่ง Dropdown ทรงผมกลับไปค่าเริ่มต้น
+    if (hairStyleSelect) {
+        hairStyleSelect.selectedIndex = 0; 
     }
         
-    // 4. ตั้งเวลาเป็นเวลาปัจจุบัน
+    // ตั้งเวลาปัจจุบันใหม่
     const now = new Date();
-    const currentTime =
-        now.getHours().toString().padStart(2, "0") +
-        ":" +
-        now.getMinutes().toString().padStart(2, "0");
-
+    const currentTime = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
     if (document.getElementById("timeInp")) {
         document.getElementById("timeInp").value = currentTime;
     }
 
     console.log("🧹 ล้างฟอร์มเตรียมรับลูกค้ารายใหม่เรียบร้อย");
+    
+    // รีเฟรชหน้าจอเฉพาะส่วนแสดงผล
+    if (typeof renderDay === 'function') renderDay();
+    if (typeof loadAccountStatus === 'function') loadAccountStatus();
 }
 // ฟังก์ชันเปิด/ปิด mixPanel ตามการเลือกวิธีชำระเงิน
 function togglePayType() {
