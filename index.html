@@ -1220,51 +1220,45 @@ function editTime(id) {
     renderDay();
 }
 function setPaymentType(m) {
-    // 1. ตรวจสอบว่าเป็นการกดซ้ำปุ่มเดิมหรือไม่ (Toggle Off)
-    if (typeof payMethod !== 'undefined' && payMethod === m) {
-        payMethod = ''; // ล้างค่าสถานะการจ่ายเงิน
-        // คืนค่าทุกปุ่มให้กลับมาเป็นสีปกติ
-        ['btnCash', 'btnTrans', 'btnMix'].forEach(id => {
-            const el = $(id);
-            if (el) el.className = 'btn btn-pay'; 
-        });
-
-        if ($("mixPanel")) $("mixPanel").style.display = 'none';
-        return;
-    }
-    // 2. ถ้าเป็นการเลือกประเภทใหม่ (Toggle On)
+    // 1. อัปเดตค่าสถานะการจ่ายเงินหลักของระบบ
     payMethod = m;
 
-    const btns = {
-        'Cash': { id: 'btnCash', active: 'active-cash' },
-        'Trans': { id: 'btnTrans', active: 'active-trans' },
-        'Mix': { id: 'btnMix', active: 'active-mix' }
-    };
-    // ปรับเปลี่ยนสถานะปุ่มตามการเลือก
-    Object.keys(btns).forEach(key => {
-        const target = $(btns[key].id);
-        if (target) {
-            if (m === key) {
-                // ปุ่มที่เลือก: ใส่สีตามประเภทการจ่าย
-                target.className = `btn btn-pay ${btns[key].active}`;
-            } else {
-                // ปุ่มที่ไม่ได้เลือก: ทำให้ดูจางลง
-                target.className = `btn btn-pay is-inactive`;
-            }
-        }
-    });
-    // 3. จัดการแผงจ่ายแบบผสม (Mix Panel)
+    const priceInp = $("priceInp");
     const mixPanel = $("mixPanel");
+
+    // 2. จัดการกรณีเลือก "ใช้สิทธิฟรี (Free)"
+    if (m === 'Free') {
+        if (priceInp) {
+            priceInp.value = 0;             // เซ็ตราคาเป็น 0
+            priceInp.readOnly = true;        // ล็อกช่องกรอกราคาไม่ให้แก้ไข
+            priceInp.style.opacity = '0.6';   // ปรับให้ดูจางลงเพื่อให้รู้ว่าล็อกอยู่
+        }
+        // ล้างค่าในช่องเงินผสมเดิมออกเพื่อป้องกันข้อมูลค้าง
+        if ($("mixCash")) $("mixCash").value = "";
+        if ($("mixTrans")) $("mixTrans").value = "";
+    } else {
+        // ถ้าเลือกแบบปกติ (Cash, Trans, Mix หรือค่าว่าง) ให้ปลดล็อกช่องราคา
+        if (priceInp) {
+            priceInp.readOnly = false;
+            priceInp.style.opacity = '1';
+            if (priceInp.value == 0) priceInp.value = ''; // ถ้าเคยเป็น 0 ให้เคลียร์โล่งไว้
+        }
+    }
+
+    // 3. จัดการแผงจ่ายแบบผสม (Mix Panel)
     if (mixPanel) {
         if (m === 'Mix') {
             mixPanel.style.display = 'block';
+            
             // คำนวณยอดรวมปัจจุบันเพื่อนำไปใส่ในช่อง Mix อัตโนมัติ
-            const price = parseFloat($("priceInp")?.value) || 0;
+            const price = parseFloat(priceInp?.value) || 0;
             const tip = parseFloat($("tipInp")?.value) || 0;
             const total = price + tip;
-            // ตั้งค่าเริ่มต้นให้ MixTrans เป็นยอดทั้งหมด และ MixCash เป็น 0 (เพื่อให้ผู้ใช้ปรับเปลี่ยนเอง)
+            
+            // ตั้งค่าเริ่มต้นให้ MixTrans เป็นยอดทั้งหมด และ MixCash เป็นค่าว่าง
             if ($("mixCash")) $("mixCash").value = ""; 
             if ($("mixTrans")) $("mixTrans").value = total > 0 ? total : "";   
+            
             // เลื่อนหน้าจอไปที่แผง Mix เพื่อให้มองเห็นง่าย
             mixPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
@@ -1272,27 +1266,19 @@ function setPaymentType(m) {
         }
     }
 }
-function togglePayType() {
-    const payType = $("payTypeInp") ? $("payTypeInp").value : payMethod;
-    const panel = $("mixPanel");
-    
-    if (!panel) return;
 
-    if (payType === 'Mix') {
-        panel.style.display = "block";
-        // คำนวณยอดรวมปัจจุบัน
-        const total = (parseFloat($("priceInp").value) || 0) + (parseFloat($("tipInp").value) || 0);
-        // ใส่ค่าเริ่มต้น: เงินสดว่างไว้ และให้โอนเป็นยอดเต็ม
-        if ($("mixCash")) $("mixCash").value = "";
-        if ($("mixTrans")) $("mixTrans").value = total > 0 ? total : "";
-    } else {
-        panel.style.display = "none";
-    }
-}
 // --- ส่วนจัดการการคำนวณเงินอัตโนมัติ (Event Listeners) ---
+
 // เมื่อกรอก "เงินสด" ให้ "เงินโอน" ลดลงอัตโนมัติ
 if ($("mixCash")) {
     $("mixCash").addEventListener("input", function() {
+        // ดักป้องกัน: ถ้าจ่ายแบบใช้สิทธิฟรี ไม่ต้องคำนวณเงินผสม
+        if (payMethod === 'Free') {
+            this.value = "";
+            if ($("mixTrans")) $("mixTrans").value = "";
+            return;
+        }
+
         const price = parseFloat($("priceInp").value) || 0;
         const tip = parseFloat($("tipInp").value) || 0;
         const total = price + tip;
@@ -1306,9 +1292,17 @@ if ($("mixCash")) {
         }
     });
 }
-// เพิ่มเติม: เมื่อกรอก "เงินโอน" ให้ "เงินสด" ลดลงอัตโนมัติ (เผื่อผู้ใช้กรอกสลับช่อง)
+
+// เมื่อกรอก "เงินโอน" ให้ "เงินสด" ลดลงอัตโนมัติ
 if ($("mixTrans")) {
     $("mixTrans").addEventListener("input", function() {
+        // ดักป้องกัน: ถ้าจ่ายแบบใช้สิทธิฟรี ไม่ต้องคำนวณเงินผสม
+        if (payMethod === 'Free') {
+            this.value = "";
+            if ($("mixCash")) $("mixCash").value = "";
+            return;
+        }
+
         const total = (parseFloat($("priceInp").value) || 0) + (parseFloat($("tipInp").value) || 0);
         const trans = parseFloat(this.value) || 0;
         const remain = total - trans;
