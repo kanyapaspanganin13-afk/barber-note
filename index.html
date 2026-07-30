@@ -3034,39 +3034,39 @@ function shareLine() {
                 let pIcon = '💵'; // ค่าเริ่มต้นเป็นเงินสดปกติ
                 let displayPrice = p; // ราคาที่จะแสดงในไลน์
 
-                // 🔄 เช็กเงื่อนไขการจ่ายเงินรูปแบบต่าง ๆ
-                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁') {
-                    // 🎁 ฟรีทั้งบิล -> ไม่บวกยอดเงินป้อนเข้าระบบเลย
-                    pIcon = '🎁';
-                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💶') {
-                    // 🎁 ฟรี + 💵 เงินสด -> เงินวิ่งเข้าฝั่งเงินสด
-                    cash += p;
-                    tot += p;
-                    pIcon = '🎁+💵';
-                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱') {
-                    // 🎁 ฟรี + 📱 เงินโอน -> เงินวิ่งเข้าฝั่งโอน
-                    trans += (p + t);
-                    tot += p;
-                    pIcon = '🎁+📱';
-                } else if (payType === 'Mix') {
-                    const pTrans = Number(r.payTrans) || 0;
-                    const pCash = Number(r.payCash) || 0;
-                    trans += pTrans;
-                    cash += (pCash - t);
-                    tot += p;
-                    detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
-                    pIcon = '🌓';
-                } else if (payType === 'Trans' || payType === 'โอน' || payType === '📱') {
-                    // 📱 เงินโอนปกติ
-                    trans += (p + t);
-                    tot += p;
-                    pIcon = '📱';
-                } else {
-                    // 💵 จ่ายเงินสดปกติ (แก้ไขไอคอนตรงนี้ไม่ให้มี 🎁 ปน)
-                    cash += p;
-                    tot += p;
-                    pIcon = '💵'; 
-                }
+                 // 🔄 ตรวจสอบประเภทการจ่ายเงินให้ตรงกับหน้ารายงาน
+                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁' || payType === 'ใช้สิทธิ์ฟรี') {
+                    // 🎁 ฟรีทั้งบิล -> ยอดเงินเป็น 0 ตามหน้ารายงาน
+                    displayPrice = 0;
+                    pIcon = '🎁';
+                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💵' || payType === '🎁+Cash') {
+                    // 🎁 ฟรี + 💵 เงินสด
+                    cash += p;
+                    tot += p;
+                    pIcon = '🎁+💵';
+                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱' || payType === '🎁+Trans') {
+                    // 🎁 ฟรี + 📱 เงินโอน
+                    trans += (p + t);
+                    tot += p;
+                    pIcon = '🎁+📱';
+                } else if (payType === 'Mix') {
+                    const pTrans = Number(r.payTrans) || 0;
+                    const pCash = Number(r.payCash) || 0;
+                    trans += pTrans;
+                    cash += (pCash - t);
+                    tot += p;
+                    detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
+                    pIcon = '🌓';
+                } else if (payType === 'Trans' || payType === 'โอน') {
+                    trans += (p + t);
+                    tot += p;
+                    pIcon = '📱';
+                } else {
+                    // เงินสดปกติ (แสดง 💵 ตามหน้ารายงาน ลำดับที่ 1)
+                    cash += p;
+                    tot += p;
+                    pIcon = '💵';
+                }
 
                 tips += t;
 
