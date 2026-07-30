@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 07</title>
+    <title>Barber-Note 06</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1142,16 +1142,28 @@ function addRecord() {
     // 🎯 3. แจ้งเตือนความสำเร็จ
     notify("success", "ดำเนินการสำเร็จ", "ระบบจัดเก็บข้อมูลการทำงานเรียบร้อยแล้ว");
 
-    // 🎯 4. เคลียร์ทุกอย่างให้กลับเป็นค่าเริ่มต้น (รวมไว้ในนี้ตรงๆ ไม่เรียกฟังก์ชันอื่นแล้ว)
+    // 🎯 4. เคลียร์ทุกอย่างให้กลับเป็นค่าเริ่มต้น (แก้ไขจุดนี้เพื่อให้ UI วิธีชำระเงินรีเซ็ต 100%)
     if (document.getElementById("priceInp")) document.getElementById("priceInp").value = "";
     if (document.getElementById("tipInp")) document.getElementById("tipInp").value = "0";
     if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
     if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
     
-    // รีเซ็ตตัวแปรวิธีชำระเงิน และหน้าจอ Dropdown วิธีชำระเงิน
+    // รีเซ็ตตัวแปรวิธีชำระเงินในระบบ
     payMethod = "";
-    if (document.getElementById("payTypeSelect")) {
-        document.getElementById("payTypeSelect").selectedIndex = 0;
+    
+    // บังคับหน้าจอดรอปดาวน์วิธีชำระเงินที่มีไอคอนทับให้ยอมรีเซ็ตตัวหนังสือกลับมาเริ่มต้น
+    const paySelect = document.getElementById("payTypeSelect");
+    if (paySelect) {
+        paySelect.value = "";          // 1. ปรับค่ากลับเป็นค่าว่างตามโครงสร้าง HTML
+        paySelect.selectedIndex = 0;   // 2. ดีดตัวเลือกลำดับกลับไปที่ตำแหน่งแรก ("วิธีชำระเงิน")
+        
+        // 3. เรียกฟังก์ชันจัดการ UI จ่ายเงินโดยตรง เพื่อสั่งซ่อนแผงผสมหรือเคลียร์หน้าต่างทันที
+        if (typeof setPaymentType === "function") {
+            setPaymentType("");
+        }
+
+        // 4. บังคับยิง Event เปลี่ยนค่าให้เบราว์เซอร์รับรู้ วาดตัวหนังสือ UI ใหม่ ป้องกันตัวหนังสือค้าง
+        paySelect.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     // รีเซ็ตรายการบริการและสีปุ่ม
