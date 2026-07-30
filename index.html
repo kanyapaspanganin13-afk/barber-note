@@ -1604,7 +1604,7 @@ function renderDay(selectedDate) {
     let countNew = 0;
     let countRegular = 0;
 
-    allRec
+allRec
         .slice()
         .sort((a, b) => a.time.localeCompare(b.time))
         .forEach((r, i) => {
@@ -1616,34 +1616,38 @@ function renderDay(selectedDate) {
 
             const timeShow = r.endTime ? `${r.time}-${r.endTime}` : r.time;
 
-            // 🎯 เช็คค่าตัวเลือกการจ่ายเงินจากหน้าบันทึก (แปลงเป็นพิมพ์เล็กตัดช่องว่างเพื่อความแม่นยำ)
-            const payType = r.pay ? String(r.pay).trim() : 'Cash';
+            // แปลงค่าการจ่ายเงินเป็น String เพื่อให้ง่ายต่อการค้นหาคำ
+            const payStr = r.pay ? String(r.pay).trim() : 'เงินสด';
 
             let payIcon = '💶'; 
             let moneyDetailText = `฿${p}`;
 
-            // 🎯 1. 🎁 ใช้สิทธิ์ฟรี (ฟรีทั้งบิล ไม่คิดเงินเข้ายอดรวมเลย)
-            if (payType === 'Free' || payType === 'ฟรี') {
-                payIcon = '🎁 ใช้สิทธิ์ฟรี';
-                moneyDetailText = `<span style="color:#64748b; font-size:13px; font-weight:normal;">ฟรีทั้งบิล</span>`;
-                // ไม่บวกเข้า tot, trans, cash
+            // 🎯 1. เช็คกลุ่มที่มีคำว่า "ฟรี" ก่อน
+            if (payStr.includes('ฟรี') || payStr.toLowerCase().includes('free')) {
                 
-            // 🎯 2. 🎁 ฟรี + 💶 เงินสด (บริการอื่น/จ่ายเพิ่มเป็นเงินสด)
-            } else if (payType === 'FreeCash' || payType === 'ฟรี+เงินสด' || payType === 'ฟรี + เงินสด') {
-                payIcon = '🎁 + 💶';
-                moneyDetailText = `฿${p}`;
-                tot += p;
-                cash += p;
+                // 🎁 ฟรี + เงินสด (เช่น "🎁 ฟรี + 💵 เงินสด")
+                if (payStr.includes('สด') || payStr.toLowerCase().includes('cash')) {
+                    payIcon = '🎁 + 💵'; // ปรับอิโมจิให้ตรงตามหน้าบันทึกของคุณ
+                    moneyDetailText = `฿${p}`;
+                    tot += p;
+                    cash += p;
+                    
+                // 🎁 ฟรี + เงินโอน (เช่น "🎁 ฟรี + 📱 เงินโอน")
+                } else if (payStr.includes('โอน') || payStr.includes('Trans') || payStr.toLowerCase().includes('trans')) {
+                    payIcon = '🎁 + 📱';
+                    moneyDetailText = `฿${p}`;
+                    tot += p;
+                    trans += (p + t);
+                    
+                // 🎁 ใช้สิทธิ์ฟรี (ฟรีทั้งบิล ไม่มีจ่ายเพิ่ม)
+                } else {
+                    payIcon = '🎁 ใช้สิทธิ์ฟรี';
+                    moneyDetailText = `<span style="color:#64748b; font-size:13px; font-weight:normal;">0</span>`;
+                    // ไม่บวกเงินเข้ายอดรวม
+                }
 
-            // 🎯 3. 🎁 ฟรี + 📱 เงินโอน (บริการอื่น/จ่ายเพิ่มเป็นเงินโอน)
-            } else if (payType === 'FreeTrans' || payType === 'ฟรี+โอน' || payType === 'ฟรี + เงินโอน' || payType === 'ฟรี + โอน') {
-                payIcon = '🎁 + 📱';
-                moneyDetailText = `฿${p}`;
-                tot += p;
-                trans += (p + t);
-
-            // 🎯 4. เงื่อนไขปกติเดิม (Mix / Trans / Cash)
-            } else if (payType === 'Mix') {
+            // 🎯 2. กลุ่มปกติ (ไม่มีคำว่าฟรี)
+            } else if (payStr.includes('Mix') || payStr.includes('ผสม')) {
                 payIcon = '🌓';
                 const pCash = parseFloat(r.payCash) || 0;
                 const pTrans = parseFloat(r.payTrans) || 0;
@@ -1651,23 +1655,30 @@ function renderDay(selectedDate) {
                 trans += pTrans;
                 cash += (pCash - t);
                 moneyDetailText = `฿${p} <br><small style="color:#64748b; font-size:10px; font-weight:normal;">(สด:${pCash}/โอน:${pTrans})</small>`;
-            } else if (payType === 'Trans' || payType === 'โอน') {
+                
+            } else if (payStr.includes('Trans') || payStr.includes('โอน') || payStr.includes('📱')) {
                 payIcon = '📱';
                 tot += p;
                 trans += (p + t);
                 moneyDetailText = `฿${p}`;
-            } else { // Cash หรือ เงินสด ปกติ
-                payIcon = '💶';
+                
+            } else { 
+                // เคสเงินสดปกติ (เช่น "💵 เงินสด" หรือ "💶 เงินสด")
+                payIcon = '💵'; // เปลี่ยนตามอิโมจิหน้าบันทึกหลักของคุณ
                 tot += p;
                 cash += p;
                 moneyDetailText = `฿${p}`;
             }
-            // จัดการเรื่องทิป (ถ้ามีทิป และไม่ใช่เคสฟรีทั้งบิล ให้บวกทิปรวม)
-            if (payType !== 'Free' && payType !== 'ฟรี') {
+
+            // คำนวณทิป (ถ้าไม่ใช่เคสฟรีทั้งบิล)
+            const isPureFree = (payStr.includes('ฟรี') || payStr.toLowerCase().includes('free')) && 
+                               !(payStr.includes('สด') || payStr.toLowerCase().includes('cash') || payStr.includes('โอน') || payStr.toLowerCase().includes('trans'));
+            
+            if (!isPureFree) {
                 tips += t;
             }
 
-            if (rType === 'HOLIDAY' || rType === 'GUARANTEE' || (p === 0 && payType !== 'Free' && payType !== 'ฟรี')) {
+            if (rType === 'HOLIDAY' || rType === 'GUARANTEE' || (p === 0 && isPureFree)) {
                 // ข้ามการนับ
             } else {
                 if (currentSvcs.length > 0) {
@@ -1702,7 +1713,6 @@ function renderDay(selectedDate) {
                     </div>
                 </div>
                 <div style="text-align:right;">
-                    <!-- 🎯 แสดงค่าอิโมจิและยอดเงินตามเงื่อนไขที่เลือกมาจากหน้าบันทึก -->
                     <b style="font-size:15px; display:block; color:#1e293b; line-height:1.2;">
                         <span style="font-size:13px; font-weight:bold;">${payIcon}</span> ${moneyDetailText}${t ? ` <span style="color:#be185d;">(+${t})</span>` : ''}
                     </b>
