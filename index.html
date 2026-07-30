@@ -793,11 +793,16 @@ const LAST_UPDATED = "27/03/2026";
         localStorage.setItem("app_v", APP_VERSION);
         if ('caches' in window) {
             caches.keys().then(names => {
-                for (let name of names) caches.delete(name);
+                for (let name of names) {
+                    caches.delete(name);
+                }
+            }).then(() => {
+                // ✅ แก้ไข: ล้างประวัติ URL และโหลดใหม่เพียงรอบเดียวอย่างปลอดภัย
+                window.location.replace(window.location.href);
             });
+        } else {
+            window.location.replace(window.location.href);
         }
-        // บังคับรีโหลดเพื่อรับโค้ดใหม่
-        window.location.reload(true);
     }
 })();
 // 3. ตัวแปรหลักของระบบ (ปรับปรุงให้รองรับค่าที่บันทึกแยก Key ด้วย)
@@ -3159,14 +3164,19 @@ function saveSettings() {
     } 
 
     // 5. เรียกฟังก์ชันอัปเดต UI 
-    if (typeof applyTheme === "function")        applyTheme(settings.theme);
+    if (typeof applyTheme === "function")      applyTheme(settings.theme);
     if (typeof calculateMoney === "function")    calculateMoney(); 
-    if (typeof renderDay === "function")         renderDay(); 
+    
+    // ✅ ส่งตัวแปรวันที่ปัจจุบันเข้าไป (ถ้ามี) หรือส่งค่าจาก input วันที่บนหน้าจอ เพื่อป้องกัน renderDay ทำงานผิดพลาด
+    if (typeof renderDay === "function") {
+        const currentSelectedDate = $("currentDateInput")?.value; // เปลี่ยนเป็น ID input วันที่จริงของคุณ
+        renderDay(currentSelectedDate); 
+    }
 
     // 6. ปิด Modal
     if ($("modalSet")) $("modalSet").style.display = 'none';
     
-    // 7. แจ้งเตือนความสำเร็จ (ใช้ notify แทน alert เพื่อคุมธีมและเล่นเสียง)
+    // 7. แจ้งเตือนความสำเร็จ
     notify("success", "บันทึกสำเร็จ", "ระบบได้ดำเนินการบันทึกการตั้งค่าเรียบร้อยแล้ว");
 }
 async function handleSave(event) {
