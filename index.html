@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 06</title>
+    <title>Barber-Note 0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1013,13 +1013,10 @@ function clearAllData(){if(confirm("ลบข้อมูลทั้งหม�
    (การจัดการแบบฟอร์มบันทึกงานรายวัน)
    ========================================================== */
 function addRecord() {
-    // 🛠️ ประกาศตัวย่อเฉพาะในฟังก์ชันนี้
-    const $ = (id) => document.getElementById(id); 
-
-    const dInp = $("dateInp").value;
-    const timeInp = $("timeInp").value;
-    const price = parseFloat($("priceInp").value) || 0;
-    const tip = parseFloat($("tipInp").value) || 0;
+    const dInp = document.getElementById("dateInp") ? document.getElementById("dateInp").value : "";
+    const timeInp = document.getElementById("timeInp") ? document.getElementById("timeInp").value : "";
+    const price = (document.getElementById("priceInp") && parseFloat(document.getElementById("priceInp").value)) || 0;
+    const tip = (document.getElementById("tipInp") && parseFloat(document.getElementById("tipInp").value)) || 0;
     const total = price + tip; 
     
     const currentPay = payMethod; 
@@ -1027,7 +1024,7 @@ function addRecord() {
     // 🎯 ตรวจสอบว่ามีการเลือกวิธีชำระเงินแล้วหรือยัง
     if (!currentPay) {
         notify("error", "ระบุข้อมูลไม่ครบถ้วน", "กรุณาเลือกวิธีชำระเงิน");
-        if ($("payTypeSelect")) $("payTypeSelect").focus();
+        if (document.getElementById("payTypeSelect")) document.getElementById("payTypeSelect").focus();
         return;
     }
 
@@ -1041,12 +1038,12 @@ function addRecord() {
         currentPay !== "Free-Trans"
     ) {
         notify("error", "ระบุข้อมูลไม่ครบถ้วน", "กรุณาระบุจำนวนเงินค่าบริการให้ถูกต้อง");
-        $("priceInp").focus();
+        if (document.getElementById("priceInp")) document.getElementById("priceInp").focus();
         return;
     }
 
     // 🎯 2. ตรวจสอบ: กรณีไม่ได้เลือกรายการทรงผม
-    const hairStyleSelect = $("hairStyle");
+    const hairStyleSelect = document.getElementById("hairStyle");
     if (hairStyleSelect && hairStyleSelect.value === "" && currentPay !== 'Holiday') {
         notify("error", "ระบุข้อมูลไม่ครบถ้วน", "กรุณาเลือกรายการทรงผมก่อนการบันทึก");
         hairStyleSelect.focus();
@@ -1081,8 +1078,8 @@ function addRecord() {
             finalTrans = total;
             break;
         case "Mix":
-            finalCash = parseFloat($("mixCash").value) || 0;
-            finalTrans = parseFloat($("mixTrans").value) || 0;
+            finalCash = (document.getElementById("mixCash") && parseFloat(document.getElementById("mixCash").value)) || 0;
+            finalTrans = (document.getElementById("mixTrans") && parseFloat(document.getElementById("mixTrans").value)) || 0;
             break;
     }
 
@@ -1097,7 +1094,6 @@ function addRecord() {
         payCash: finalCash,
         payTrans: finalTrans,
         type: 'SERVICE',
-        // Flag สำหรับกลุ่มสิทธิพิเศษ Free ทั้ง 3 ตัว
         isGift: (
             currentPay === "Free" ||
             currentPay === "Free-Cash" ||
@@ -1131,11 +1127,11 @@ function addRecord() {
     }
 
     // --- ปรับสถานะปุ่มส่งข้อมูล ---
-    const btn = $("btnSubmitSend");
+    const btn = document.getElementById("btnSubmitSend");
     if (btn) {
         btn.disabled = false;
         btn.style.background = "#ff6f00"; 
-        const icon = $("btnIcon");
+        const icon = document.getElementById("btnIcon");
         if (icon) icon.className = "fas fa-paper-plane";
     }
 
@@ -1147,17 +1143,17 @@ function addRecord() {
     notify("success", "ดำเนินการสำเร็จ", "ระบบจัดเก็บข้อมูลการทำงานเรียบร้อยแล้ว");
 
     // 🎯 4. ล้างค่าในฟอร์ม (Reset Form)
-    if ($("priceInp")) $("priceInp").value = "";
-    if ($("tipInp")) $("tipInp").value = "0";
+    if (document.getElementById("priceInp")) document.getElementById("priceInp").value = "";
+    if (document.getElementById("tipInp")) document.getElementById("tipInp").value = "0";
     if (hairStyleSelect) hairStyleSelect.selectedIndex = 0; 
     
-    // ✅ ปรับแก้ช่องวิธีชำระเงิน ให้รีเซ็ตแบบเดียวกับช่องทรงผมตามที่แจ้งครับ
-    if ($("payTypeSelect")) {
-        $("payTypeSelect").selectedIndex = 0;
+    // ✅ รีเซ็ตหน้าต่างการจ่ายเงินให้กลับไปค่าเริ่มต้นเหมือนกับทรงผม
+    if (document.getElementById("payTypeSelect")) {
+        document.getElementById("payTypeSelect").selectedIndex = 0;
     }
 
-    if ($("mixCash")) $("mixCash").value = "";
-    if ($("mixTrans")) $("mixTrans").value = "";
+    if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
+    if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
     
     // รีเฟรชหน้าจอ
     if (typeof resetForm === 'function') resetForm();
@@ -1166,26 +1162,23 @@ function addRecord() {
 }
 
 function resetForm() {
-    // 🛠️ ประกาศตัวย่อเฉพาะในฟังก์ชันนี้
-    const $ = (id) => document.getElementById(id); 
-
     // 1. ล้างข้อมูลในฟอร์ม
-    if ($("priceInp")) $("priceInp").value = "";
-    if ($("tipInp")) $("tipInp").value = "";
-    if ($("mixCash")) $("mixCash").value = "";
-    if ($("mixTrans")) $("mixTrans").value = "";
+    if (document.getElementById("priceInp")) document.getElementById("priceInp").value = "";
+    if (document.getElementById("tipInp")) document.getElementById("tipInp").value = "";
+    if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
+    if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
 
     // 2. รีเซ็ตวิธีชำระเงิน
     payMethod = "";
 
-    // ✅ ปรับแก้ช่องวิธีชำระเงินในฟังก์ชันรีเซ็ต ให้เป็นรูปแบบเดียวกันทั้งหมด
-    if ($("payTypeSelect")) {
-        $("payTypeSelect").selectedIndex = 0;
+    // ✅ ใช้คำสั่งตรงไปยัง id="payTypeSelect" ดึงกลับแถวแรกสุดสำเร็จแน่นอน
+    if (document.getElementById("payTypeSelect")) {
+        document.getElementById("payTypeSelect").selectedIndex = 0;
     }
 
     // ซ่อนแผงจ่ายแบบผสม
-    if ($("mixPanel")) {
-        $("mixPanel").style.display = "none";
+    if (document.getElementById("mixPanel")) {
+        document.getElementById("mixPanel").style.display = "none";
     }
 
     // 3. รีเซ็ตรายการบริการ
@@ -1197,8 +1190,8 @@ function resetForm() {
     });
 
     // รีเซ็ต Dropdown ทรงผม
-    if ($("hairStyle")) {
-        $("hairStyle").selectedIndex = 0;
+    if (document.getElementById("hairStyle")) {
+        document.getElementById("hairStyle").selectedIndex = 0;
     }
 
     // 4. ตั้งเวลาเป็นเวลาปัจจุบัน
@@ -1208,8 +1201,8 @@ function resetForm() {
         ":" +
         now.getMinutes().toString().padStart(2, "0");
 
-    if ($("timeInp")) {
-        $("timeInp").value = currentTime;
+    if (document.getElementById("timeInp")) {
+        document.getElementById("timeInp").value = currentTime;
     }
 
     console.log("🧹 ล้างฟอร์มเตรียมรับลูกค้ารายใหม่เรียบร้อย");
