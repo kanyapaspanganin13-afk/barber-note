@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 02</title>
+    <title>Barber-Note 03</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -3023,47 +3023,54 @@ function shareLine() {
     let newCount = 0, regCount = 0;
     let giftCount = 0; // ตัวนับจำนวนคนที่ใช้สิทธิ์ฟรีสะสมของวัน
 
-    // 📝 3. ประมวลผลรายการลูกค้า (แก้ไขตรรกะตรวจเช็คไอคอน ลำดับ 3, 4 ให้ตรงตามหน้ารายงาน)
+    // 📝 3. ประมวลผลรายการลูกค้า (ปรับปรุงตรวจเช็คจากคำว่า Gift / ของขวัญ และเช็คยอดเงินในระบบ)
     const clientList = today
             .sort((a, b) => a.time.localeCompare(b.time))
             .map((r, i) => {
                 const p = Number(r.price) || 0;
                 const t = Number(r.tip) || 0;
                 const payType = String(r.pay || "").trim();
+                const pCash = Number(r.payCash) || 0;
+                const pTrans = Number(r.payTrans) || 0;
                 
                 let detailText = ""; 
                 let pIcon = '💵'; // ค่าเริ่มต้น
                 let displayPrice = p; 
 
-                // 🔄 ตรวจสอบประเภทการจ่ายเงินตรงตามที่แสดงบนหน้าจอบอร์ด
-                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁' || payType === 'ใช้สิทธิ์ฟรี') {
-                    displayPrice = 0;
-                    pIcon = '🎁';
-                    giftCount++; // นับสิทธิ์ฟรี +1
-                } else if (payType.includes('ฟรี+Cash') || payType.includes('ฟรี+สด') || payType.includes('🎁+💵') || payType.includes('🎁+Cash') || payType.includes('ฟรี') && (payType.includes('สด') || payType.includes('Cash'))) {
-                    cash += p;
-                    tot += p;
-                    pIcon = '🎁+💵';
-                    giftCount++; // นับสิทธิ์ฟรี +1
-                } else if (payType.includes('ฟรี+Trans') || payType.includes('ฟรี+โอน') || payType.includes('🎁+📱') || payType.includes('🎁+Trans') || payType.includes('ฟรี') && (payType.includes('โอน') || payType.includes('Trans'))) {
-                    trans += (p + t);
-                    tot += p;
-                    pIcon = '🎁+📱';
-                    giftCount++; // นับสิทธิ์ฟรี +1
+                // 🔄 เช็คเงื่อนไขตามโครงสร้าง addRecord และการบันทึกเงินของหน้ารายงาน
+                if (payType === 'Gift' || payType === 'ของขวัญ' || payType === 'ฟรี' || payType === '🎁') {
+                    giftCount++; // พบการใช้สิทธิ์ฟรีสะสมตัวนับวัน +1
+                    
+                    // แยกประเภทสิทธิ์ฟรีผสม จากเงินที่วิ่งเข้าฝั่งเงินสด หรือเงินโอน
+                    if (pCash > 0) {
+                        // 🎁 ฟรี + 💵 เงินสด
+                        cash += pCash;
+                        tot += pCash;
+                        pIcon = '🎁+💵';
+                        displayPrice = pCash; // แสดงยอดที่จ่ายเพิ่มจริงตามหน้ารายงาน
+                    } else if (pTrans > 0) {
+                        // 🎁 ฟรี + 📱 เงินโอน
+                        trans += pTrans;
+                        tot += pTrans;
+                        pIcon = '🎁+📱';
+                        displayPrice = pTrans; // แสดงยอดที่จ่ายเพิ่มจริงตามหน้ารายงาน
+                    } else {
+                        // 🎁 ฟรีปกติล้วนๆ (ยอดเงินเป็น 0)
+                        displayPrice = 0;
+                        pIcon = '🎁';
+                    }
                 } else if (payType === 'Mix') {
-                    const pTrans = Number(r.payTrans) || 0;
-                    const pCash = Number(r.payCash) || 0;
                     trans += pTrans;
                     cash += (pCash - t);
                     tot += p;
                     detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
                     pIcon = '🌓';
-                } else if (payType === 'Trans' || payType === 'โอน' || payType === '📱') {
+                } else if (payType === 'Trans' || payType === 'โอน') {
                     trans += (p + t);
                     tot += p;
                     pIcon = '📱';
                 } else {
-                    // จ่ายเงินสดปกติล้วน
+                    // เงินสดปกติล้วน (Cash หรือ เงินสด)
                     cash += p;
                     tot += p;
                     pIcon = '💵';
