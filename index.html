@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 01</title>
+    <title>Barber-Note 0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -3034,18 +3034,17 @@ function shareLine() {
                 let pIcon = '💵'; // ค่าเริ่มต้นเป็นเงินสดปกติ
                 let displayPrice = p; // ราคาที่จะแสดงในไลน์
 
-                // 🔄 ตรวจสอบประเภทการจ่ายเงินให้ตรงกับหน้ารายงาน
-                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁' || payType === 'ใช้สิทธิ์ฟรี') {
-                    // 🎁 ฟรีทั้งบิล -> ยอดเงินเป็น 0 ตามหน้ารายงาน
-                    displayPrice = 0;
+                // 🔄 เช็กเงื่อนไขการจ่ายเงินรูปแบบต่าง ๆ
+                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁') {
+                    // 🎁 ฟรีทั้งบิล -> ไม่บวกยอดเงินป้อนเข้าระบบเลย
                     pIcon = '🎁';
-                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💵' || payType === '🎁+Cash') {
-                    // 🎁 ฟรี + 💵 เงินสด
+                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💶') {
+                    // 🎁 ฟรี + 💵 เงินสด -> เงินวิ่งเข้าฝั่งเงินสด
                     cash += p;
                     tot += p;
                     pIcon = '🎁+💵';
-                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱' || payType === '🎁+Trans') {
-                    // 🎁 ฟรี + 📱 เงินโอน
+                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱') {
+                    // 🎁 ฟรี + 📱 เงินโอน -> เงินวิ่งเข้าฝั่งโอน
                     trans += (p + t);
                     tot += p;
                     pIcon = '🎁+📱';
@@ -3057,15 +3056,16 @@ function shareLine() {
                     tot += p;
                     detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
                     pIcon = '🌓';
-                } else if (payType === 'Trans' || payType === 'โอน') {
+                } else if (payType === 'Trans' || payType === 'โอน' || payType === '📱') {
+                    // 📱 เงินโอนปกติ
                     trans += (p + t);
                     tot += p;
                     pIcon = '📱';
                 } else {
-                    // เงินสดปกติ (แสดง 💵 ตามหน้ารายงาน ลำดับที่ 1)
+                    // 💵 จ่ายเงินสดปกติ (แก้ไขไอคอนตรงนี้ไม่ให้มี 🎁 ปน)
                     cash += p;
                     tot += p;
-                    pIcon = '💵';
+                    pIcon = '💵'; 
                 }
 
                 tips += t;
