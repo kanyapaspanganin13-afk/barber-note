@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note </title>
+    <title>Barber-Note 01</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -529,24 +529,31 @@ nav {
            style="width: 100%; height: 100%; background: rgba(225, 245, 254, 0.1); border: 2px solid var(--accent); border-radius: 20px; font-size: 28px; font-weight: 900; color: #ad2c18; text-align: center; outline: none; box-sizing: border-box;">
 </div>
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px;">
-    <button id="btnCash" onclick="setPaymentType('Cash')" style="height:80px; border-radius:18px; border:none; background:linear-gradient(135deg, var(--cash1), var(--cash2)); color: var(--btn-text); font-weight:700; font-size:14px; cursor:pointer; padding: 5px 2px;">
-        <i class="fas fa-money-bill-wave" style="font-size:16px;"></i><br>เงินสด
+        <!-- แถวแบ่งซ้าย-ขวา (วิธีชำระเงิน และ ปุ่มบันทึก) -->
+<div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-bottom: 12px; height: 80px;">
+    
+    <!-- ฝั่งซ้าย: วิธีชำระเงิน (Dropdown 4 ตัวเลือก) -->
+    <div style="position: relative; width: 100%; height: 100%;">
+        <select id="payTypeSelect" onchange="setPaymentType(this.value)" style="width: 100%; height: 100%; border-radius: 18px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-weight: 800; font-size: 16px; text-align: center; text-align-last: center; padding: 0 20px 0 10px; outline: none; appearance: none; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <option value="">💳 วิธีชำระเงิน</option>
+            <option value="Cash">💵 1. เงินสด</option>
+            <option value="Trans">📱 2. โอน/สแกน</option>
+            <option value="Mix">🪪 3. ผสม</option>
+            <option value="Free">🎁 4. ใช้สิทธิฟรี</option>
+        </select>
+        <!-- ไอคอนลูกศรชี้ลงขนาดเล็กด้านขวาของซีเล็ค เพื่อความสวยงาม -->
+        <i class="fas fa-chevron-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text); opacity: 0.5; pointer-events: none; font-size: 12px;"></i>
+    </div>
+
+    <!-- ฝั่งขวา: ปุ่มบันทึกข้อมูล -->
+    <button class="btn-pay" onclick="handleSave(event)" style="width: 100%; height: 100%; margin: 0; border-radius: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; padding: 0;">
+        <i class="fas fa-save" style="font-size: 22px;"></i>
+        <span style="font-size: 18px; font-weight: 900; letter-spacing: 0.5px;">บันทึกข้อมูล</span>
     </button>
-    <button id="btnTrans" onclick="setPaymentType('Trans')" style="height:80px; border-radius:18px; border:none; background:linear-gradient(135deg, var(--trans1), var(--trans2)); color: var(--btn-text); font-weight:700; font-size:14px; cursor:pointer; padding: 5px 2px;">
-        <i class="fas fa-qrcode" style="font-size:16px;"></i><br>สแกน
-    </button>
-    <button id="btnMix" onclick="setPaymentType('Mix')" style="style="height:80px; border-radius:18px; border:none; background:linear-gradient(135deg, var(--mix1), var(--mix2)); color: var(--btn-text); font-weight:700; font-size:14px; cursor:pointer; padding: 5px 2px;">
-        <i class="fas fa-wallet" style="font-size:16px;"></i><br>ผสม
-    </button>
-    <!-- ปุ่มที่ 4: ใช้สิทธิฟรี/คูปอง (เลือกไออนตามต้องการได้เลยครับ) -->
-    <button id="btnFree" onclick="setPaymentType('Free')" style="height:80px; border-radius:18px; border:none; background:linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-weight:700; font-size:13px; cursor:pointer; padding: 5px 2px;">
-        <!-- เปลี่ยนเป็น fa-gift ได้หากชอบรูปของขวัญครับ -->
-        <i class="fas fa-ticket-alt" style="font-size:16px;"></i><br>ใช้สิทธิฟรี
-    </button>
+
 </div>
 
-<!-- ช่องใส่เงินผสมคงเดิม ทำงานร่วมกับปุ่มผสมด้านบนได้ปกติ -->
+<!-- ช่องใส่เงินผสม (จะกางเปิด-ปิดอยู่ใต้แถวนี้โดยไม่กระทบกับปุ่มบันทึก) -->
 <div id="mixPanel" style="display: none; background: var(--input-bg); padding: 15px; border-radius: 20px; border: 2px dashed var(--accent); margin: 15px 0;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <div>
@@ -558,13 +565,7 @@ nav {
             <input type="number" id="mixTrans" placeholder="0" inputmode="numeric" style="width: 100%; height: 60px; border-radius: 15px; border: 1px solid var(--border); text-align: center; font-size: 32px; font-weight: 900; background: var(--card); color: var(--text); outline: none;">
         </div>
     </div>
-</div>
-        <button class="btn-pay" onclick="handleSave(event)">
-            <i class="fas fa-save" style="font-size: 30px;"></i>
-            <span style="font-size: 28px; font-weight: 900; letter-spacing:1px;">บันทึกข้อมูล</span>
-        </button>
-    </div>
-    
+</div>       
     <div id="p2" class="page" style="width: 98%; max-width: 480px; margin:0 auto; padding: 15px; background: var(--card); border: 1px solid var(--border); border-radius: 25px;">
     <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; margin-bottom: 15px; align-items: stretch;">
         
