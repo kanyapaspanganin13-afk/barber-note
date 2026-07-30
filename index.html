@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 01</title>
+    <title>Barber-Note 03</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1012,8 +1012,9 @@ function clearAllData(){if(confirm("ลบข้อมูลทั้งหม�
    SECTION 3: DAILY WORK INPUT & FORM HANDLING
    (การจัดการแบบฟอร์มบันทึกงานรายวัน)
    ========================================================== */
+const $ = (id) => document.getElementById(id); 
+
 function addRecord() {
-    const $ = (id) => document.getElementById(id); 
     const dInp = $("dateInp").value;
     const timeInp = $("timeInp").value;
     const price = parseFloat($("priceInp").value) || 0;
@@ -1022,8 +1023,20 @@ function addRecord() {
     
     const currentPay = payMethod; 
 
-    // 🎯 1. ตรวจสอบ: กรณีไม่ได้ระบุราคา (อนุญาตให้ราคาเป็น 0 ได้ถ้าเป็น Holiday, Guarantee หรือ Gift 🎁)
-    if (price === 0 && currentPay !== 'Holiday' && currentPay !== 'Guarantee' && currentPay !== 'Gift' && currentPay !== 'ของขวัญ') {
+    // 🎯 ตรวจสอบว่ามีการเลือกวิธีชำระเงินแล้วหรือยัง
+    if (!currentPay) {
+        notify("error", "ระบุข้อมูลไม่ครบถ้วน", "กรุณาเลือกวิธีชำระเงิน");
+        if ($("payTypeSelect")) $("payTypeSelect").focus();
+        return;
+    }
+
+    // 🎯 1. แก้ไขเงื่อนไขราคา 0 ตามที่แจ้ง: (อนุญาตให้ราคาเป็น 0 ได้ถ้าเป็น Holiday, Guarantee หรือ Free 🎁)
+    if (
+        price === 0 &&
+        currentPay !== "Holiday" &&
+        currentPay !== "Guarantee" &&
+        currentPay !== "Free"
+    ) {
         notify("error", "ระบุข้อมูลไม่ครบถ้วน", "กรุณาระบุจำนวนเงินค่าบริการให้ถูกต้อง");
         $("priceInp").focus();
         return;
@@ -1038,43 +1051,37 @@ function addRecord() {
     }
 
     // --- ส่วนจัดการยอดเงิน ---
-let finalCash = 0;
-let finalTrans = 0;
+    let finalCash = 0;
+    let finalTrans = 0;
 
-switch (currentPay) {
-
-    case "Free":
-        finalCash = 0;
-        finalTrans = 0;
-        break;
-
-    case "Free-Cash":
-        finalCash = price;
-        finalTrans = 0;
-        break;
-
-    case "Free-Trans":
-        finalCash = 0;
-        finalTrans = price + tip;
-        break;
-
-    case "Cash":
-    case "เงินสด":
-        finalCash = total;
-        finalTrans = 0;
-        break;
-
-    case "Trans":
-    case "โอน":
-        finalCash = 0;
-        finalTrans = total;
-        break;
-
-    case "Mix":
-        finalCash = parseFloat($("mixCash").value) || 0;
-        finalTrans = parseFloat($("mixTrans").value) || 0;
-        break;
-}
+    switch (currentPay) {
+        case "Free":
+            finalCash = 0;
+            finalTrans = 0;
+            break;
+        case "Free-Cash":
+            finalCash = price;
+            finalTrans = 0;
+            break;
+        case "Free-Trans":
+            finalCash = 0;
+            finalTrans = price + tip;
+            break;
+        case "Cash":
+        case "เงินสด":
+            finalCash = total;
+            finalTrans = 0;
+            break;
+        case "Trans":
+        case "โอน":
+            finalCash = 0;
+            finalTrans = total;
+            break;
+        case "Mix":
+            finalCash = parseFloat($("mixCash").value) || 0;
+            finalTrans = parseFloat($("mixTrans").value) || 0;
+            break;
+    }
 
     const newRec = {
         id: Date.now(),
@@ -1087,8 +1094,12 @@ switch (currentPay) {
         payCash: finalCash,
         payTrans: finalTrans,
         type: 'SERVICE',
-        // ✅ 2. ฝัง Flag พิเศษไว้ เพื่อให้ฟังก์ชันคำนวณเงินและหน้ารายงาน (renderDay) แยกแยะออก
-        isGift: (currentPay === 'Gift' || currentPay === 'ของขวัญ')
+        // ✅ 2. แก้ไขตามสั่ง: เปลี่ยน Flag สำหรับสิทธิพิเศษกลุ่ม Free ทั้ง 3 ตัว
+        isGift: (
+            currentPay === "Free" ||
+            currentPay === "Free-Cash" ||
+            currentPay === "Free-Trans"
+        )
     };
 
     // บันทึกข้อมูล
@@ -1144,40 +1155,51 @@ switch (currentPay) {
     if (typeof renderDay === 'function') renderDay();
     if (typeof loadAccountStatus === 'function') loadAccountStatus();
 }
-function resetForm() {
-    const $ = (id) => document.getElementById(id);
 
-    // 1. ล้างตัวเลขในช่องกรอกข้อมูล
+function resetForm() {
+    // 1. ล้างข้อมูลในฟอร์ม
     if ($("priceInp")) $("priceInp").value = "";
     if ($("tipInp")) $("tipInp").value = "";
     if ($("mixCash")) $("mixCash").value = "";
     if ($("mixTrans")) $("mixTrans").value = "";
-    
-    // 2. จัดการหน้าจอการจ่ายเงิน
-    if ($("mixPanel")) $("mixPanel").style.display = "none"; 
-    
-    // รีเซ็ตวิธีจ่ายเงินกลับเป็น "Cash" ในระบบ
-    payMethod = "Cash"; 
-    if (typeof setPaymentType === "function") {
-        setPaymentType('Cash'); 
+
+    // 2. รีเซ็ตวิธีชำระเงิน
+    payMethod = "";
+
+    // รีเซ็ต Dropdown กลับไปเป็น "วิธีชำระเงิน"
+    if ($("payTypeSelect")) {
+        $("payTypeSelect").value = "";
     }
 
-    // 🚨 [เพิ่มตรงนี้] ล้างค่าหน้าจอช่องเลือกวิธีชำระเงินที่เป็นแท็ก Select
-    // สมมติว่าแท็ก select นั้นมี id="paySelect" หรือ id="payMethodSelect"
-    const payDropdown = $("paySelect") || $("payMethodSelect"); 
-    if (payDropdown) {
-        payDropdown.selectedIndex = 0; // ดีดกลับไปรายการแรก (เช่น คำว่า วิธีชำระเงิน หรือ เงินสด)
+    // ซ่อนแผงจ่ายแบบผสม
+    if ($("mixPanel")) {
+        $("mixPanel").style.display = "none";
     }
 
-    // 3. จัดการรายการบริการ (Services)
-    selectedServices = []; 
-    const serviceButtons = document.querySelectorAll('.service-btn');
-    serviceButtons.forEach(btn => btn.classList.remove('selected', 'active', 'bg-blue-500'));
-    
-    // 4. ตั้งเวลาปัจจุบันใหม่ให้เป็นเวลาล่าสุด
-    const n = new Date();
-    const t = n.getHours().toString().padStart(2, '0') + ':' + n.getMinutes().toString().padStart(2, '0'); 
-    if ($("timeInp")) $("timeInp").value = t;
+    // 3. รีเซ็ตรายการบริการ
+    selectedServices = [];
+
+    const serviceButtons = document.querySelectorAll(".service-btn");
+    serviceButtons.forEach(btn => {
+        btn.classList.remove("selected", "active", "bg-blue-500");
+    });
+
+    // รีเซ็ต Dropdown ทรงผม
+    if ($("hairStyle")) {
+        $("hairStyle").selectedIndex = 0;
+    }
+
+    // 4. ตั้งเวลาเป็นเวลาปัจจุบัน
+    const now = new Date();
+    const currentTime =
+        now.getHours().toString().padStart(2, "0") +
+        ":" +
+        now.getMinutes().toString().padStart(2, "0");
+
+    if ($("timeInp")) {
+        $("timeInp").value = currentTime;
+    }
+
     console.log("🧹 ล้างฟอร์มเตรียมรับลูกค้ารายใหม่เรียบร้อย");
 }
 // ฟังก์ชันเปิด/ปิด mixPanel ตามการเลือกวิธีชำระเงิน
