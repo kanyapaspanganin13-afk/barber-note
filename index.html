@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 05</title>
+    <title>Barber-Note 06</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1151,10 +1151,9 @@ function addRecord() {
     if ($("tipInp")) $("tipInp").value = "0";
     if (hairStyleSelect) hairStyleSelect.selectedIndex = 0; 
     
-    // ✅ เพิ่มการล้างช่อง Dropdown "วิธีชำระเงิน" ตรงนี้ให้ชัวร์ว่ากลับไปตำแหน่งแรกสุด
+    // ✅ ปรับแก้ช่องวิธีชำระเงิน ให้รีเซ็ตแบบเดียวกับช่องทรงผมตามที่แจ้งครับ
     if ($("payTypeSelect")) {
         $("payTypeSelect").selectedIndex = 0;
-        $("payTypeSelect").value = "";
     }
 
     if ($("mixCash")) $("mixCash").value = "";
@@ -1179,10 +1178,9 @@ function resetForm() {
     // 2. รีเซ็ตวิธีชำระเงิน
     payMethod = "";
 
-    // ✅ บังคับให้ Dropdown วิธีชำระเงิน เด้งกลับไปที่บรรทัดแรกสุด (selectedIndex = 0)
+    // ✅ ปรับแก้ช่องวิธีชำระเงินในฟังก์ชันรีเซ็ต ให้เป็นรูปแบบเดียวกันทั้งหมด
     if ($("payTypeSelect")) {
         $("payTypeSelect").selectedIndex = 0;
-        $("payTypeSelect").value = "";
     }
 
     // ซ่อนแผงจ่ายแบบผสม
