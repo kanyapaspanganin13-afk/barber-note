@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 03</title>
+    <title>Barber-Note 01</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1038,23 +1038,43 @@ function addRecord() {
     }
 
     // --- ส่วนจัดการยอดเงิน ---
-    let finalCash = 0;
-    let finalTrans = 0;
-    
-    // ✅ เพิ่มการดักจับ Gift: ถ้าเป็นของขวัญ ยอดเงินสดและโอนจะเป็น 0 เสมอ (แต่ยังเก็บยอด Tip ได้ถ้ามี)
-    if (currentPay === 'Gift' || currentPay === 'ของขวัญ') {
+let finalCash = 0;
+let finalTrans = 0;
+
+switch (currentPay) {
+
+    case "Free":
         finalCash = 0;
         finalTrans = 0;
-    } else if (currentPay === 'Mix') {
-        finalCash = parseFloat($("mixCash").value) || 0;
-        finalTrans = parseFloat($("mixTrans").value) || 0;
-    } else if (currentPay === 'Cash' || currentPay === 'เงินสด') {
+        break;
+
+    case "Free-Cash":
+        finalCash = price;
+        finalTrans = 0;
+        break;
+
+    case "Free-Trans":
+        finalCash = 0;
+        finalTrans = price + tip;
+        break;
+
+    case "Cash":
+    case "เงินสด":
         finalCash = total;
         finalTrans = 0;
-    } else if (currentPay === 'Trans' || currentPay === 'โอน') {
+        break;
+
+    case "Trans":
+    case "โอน":
         finalCash = 0;
         finalTrans = total;
-    }
+        break;
+
+    case "Mix":
+        finalCash = parseFloat($("mixCash").value) || 0;
+        finalTrans = parseFloat($("mixTrans").value) || 0;
+        break;
+}
 
     const newRec = {
         id: Date.now(),
@@ -3023,43 +3043,42 @@ function shareLine() {
     let newCount = 0, regCount = 0;
     let giftCount = 0; // ตัวนับจำนวนคนที่ใช้สิทธิ์ฟรีสะสมของวัน
 
-    // 📝 3. ประมวลผลรายการลูกค้า (ปรับปรุงตรวจเช็คจากคำว่า Gift / ของขวัญ และเช็คยอดเงินในระบบ)
+    // 📝 3. ประมวลผลรายการลูกค้า (แก้ไขการแมตช์คำจ่ายเงินจาก addRecord และคำนวณยอดเงินให้ถูกต้อง)
     const clientList = today
             .sort((a, b) => a.time.localeCompare(b.time))
             .map((r, i) => {
                 const p = Number(r.price) || 0;
                 const t = Number(r.tip) || 0;
                 const payType = String(r.pay || "").trim();
-                const pCash = Number(r.payCash) || 0;
-                const pTrans = Number(r.payTrans) || 0;
                 
                 let detailText = ""; 
                 let pIcon = '💵'; // ค่าเริ่มต้น
                 let displayPrice = p; 
 
-                // 🔄 เช็คเงื่อนไขตามโครงสร้าง addRecord และการบันทึกเงินของหน้ารายงาน
-                if (payType === 'Gift' || payType === 'ของขวัญ' || payType === 'ฟรี' || payType === '🎁') {
-                    giftCount++; // พบการใช้สิทธิ์ฟรีสะสมตัวนับวัน +1
-                    
-                    // แยกประเภทสิทธิ์ฟรีผสม จากเงินที่วิ่งเข้าฝั่งเงินสด หรือเงินโอน
-                    if (pCash > 0) {
-                        // 🎁 ฟรี + 💵 เงินสด
-                        cash += pCash;
-                        tot += pCash;
-                        pIcon = '🎁+💵';
-                        displayPrice = pCash; // แสดงยอดที่จ่ายเพิ่มจริงตามหน้ารายงาน
-                    } else if (pTrans > 0) {
-                        // 🎁 ฟรี + 📱 เงินโอน
-                        trans += pTrans;
-                        tot += pTrans;
-                        pIcon = '🎁+📱';
-                        displayPrice = pTrans; // แสดงยอดที่จ่ายเพิ่มจริงตามหน้ารายงาน
-                    } else {
-                        // 🎁 ฟรีปกติล้วนๆ (ยอดเงินเป็น 0)
-                        displayPrice = 0;
-                        pIcon = '🎁';
-                    }
+                // 🔄 เช็คเงื่อนไขตามโครงสร้างปุ่มกดจ่ายเงินที่บันทึกมาจริง
+                if (payType === 'Free' || payType === 'Gift' || payType === 'ของขวัญ') {
+                    // 🎁 ฟรีปกติล้วนๆ ยอดบริการเป็น 0 (แต่อาจมีทิปโอนโผล่มาได้)
+                    displayPrice = 0;
+                    pIcon = '🎁';
+                    trans += t; // บันทึกเฉพาะทิปโอน (ถ้ามี)
+                    giftCount++;
+                } else if (payType === 'Free-Cash') {
+                    // 🎁 ฟรี + 💵 เงินสด (จ่ายค่าบริการเพิ่มเป็นเงินสด)
+                    cash += p;
+                    tot += p;
+                    pIcon = '🎁+💵';
+                    displayPrice = p;
+                    giftCount++;
+                } else if (payType === 'Free-Trans') {
+                    // 🎁 ฟรี + 📱 เงินโอน (จ่ายค่าบริการเพิ่มเป็นเงินโอน และรวมทิปโอน)
+                    trans += (p + t);
+                    tot += p;
+                    pIcon = '🎁+📱';
+                    displayPrice = p;
+                    giftCount++;
                 } else if (payType === 'Mix') {
+                    const pTrans = Number(r.payTrans) || 0;
+                    const pCash = Number(r.payCash) || 0;
                     trans += pTrans;
                     cash += (pCash - t);
                     tot += p;
@@ -3070,7 +3089,7 @@ function shareLine() {
                     tot += p;
                     pIcon = '📱';
                 } else {
-                    // เงินสดปกติล้วน (Cash หรือ เงินสด)
+                    // Cash หรือ เงินสด หรือค่าเริ่มต้น วิ่งเข้าเงินสดปกติ
                     cash += p;
                     tot += p;
                     pIcon = '💵';
@@ -3128,7 +3147,7 @@ function shareLine() {
     let todayDiff = -settle;
     let finalNet = oldBalance + todayDiff;
 
-    // ✉️ 7. ประกอบข้อความ Template (ปรับปรุงช่องสรุปเงินตามที่คุณพี่สั่งการ)
+    // ✉️ 7. ประกอบข้อความ Template
     let msg = `💈 รายงานร้าน: ${shopName}\n`;
     msg += `📅 วันที่: ${fDate}\n`;
     msg += `-------------------------\n`;
@@ -3140,7 +3159,7 @@ function shareLine() {
     // ช่องสรุปยอดเงินรวม
     msg += `💰 ยอด: ${tot.toLocaleString()} | 🧧 ทิปโอน: ${tips}\n`;
     
-    // แก้ไข: แสดงเฉพาะ 💵 เงินสด และ 📱 โอน ส่วนสิทธิ์ฟรี 🎁 จะเพิ่มท้ายสุดถ้ามีการกดเลือกใช้สิทธิ์เท่านั้น
+    // ✅ แก้ไขตามสั่ง: แสดงช่องสรุปเป็น 💵 เงินสด และ 📱 โอน ปกติ ส่วน 🎁: จำนวนสิทธิ์ จะต่อท้ายเมื่อมีการเลือกใช้ในวันนั้นเท่านั้น
     let giftLine = giftCount > 0 ? ` | 🎁: ${giftCount}` : '';
     msg += `📱 โอน: ${trans.toLocaleString()} | 💵 เงินสด: ${cash.toLocaleString()}${giftLine}\n`;
     
