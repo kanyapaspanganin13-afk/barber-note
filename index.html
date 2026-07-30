@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 0</title>
+    <title>Barber-Note 01</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -1167,33 +1167,25 @@ function resetForm() {
     if (document.getElementById("tipInp")) document.getElementById("tipInp").value = "";
     if (document.getElementById("mixCash")) document.getElementById("mixCash").value = "";
     if (document.getElementById("mixTrans")) document.getElementById("mixTrans").value = "";
-
     // 2. รีเซ็ตวิธีชำระเงิน
     payMethod = "";
-
-    // ✅ ใช้คำสั่งตรงไปยัง id="payTypeSelect" ดึงกลับแถวแรกสุดสำเร็จแน่นอน
     if (document.getElementById("payTypeSelect")) {
-        document.getElementById("payTypeSelect").selectedIndex = 0;
+        document.getElementById("payTypeSelect").selectedIndex = 0; // สั่ง Dropdown วิธีชำระเงินกลับไปค่าเริ่มต้น
     }
-
-    // ซ่อนแผงจ่ายแบบผสม
-    if (document.getElementById("mixPanel")) {
-        document.getElementById("mixPanel").style.display = "none";
-    }
-
+    
     // 3. รีเซ็ตรายการบริการ
     selectedServices = [];
-
+    
     const serviceButtons = document.querySelectorAll(".service-btn");
     serviceButtons.forEach(btn => {
         btn.classList.remove("selected", "active", "bg-blue-500");
     });
-
+    
     // รีเซ็ต Dropdown ทรงผม
     if (document.getElementById("hairStyle")) {
-        document.getElementById("hairStyle").selectedIndex = 0;
+        document.getElementById("hairStyle").selectedIndex = 0; // สั่ง Dropdown ทรงผมกลับไปค่าเริ่มต้น
     }
-
+        
     // 4. ตั้งเวลาเป็นเวลาปัจจุบัน
     const now = new Date();
     const currentTime =
