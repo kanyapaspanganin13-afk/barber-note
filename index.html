@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 01</title>
+    <title>Barber-Note 02</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -3021,8 +3021,9 @@ function shareLine() {
     let tot = 0, cash = 0, trans = 0, tips = 0;
     let stats = {}, realCustomerCount = 0;
     let newCount = 0, regCount = 0;
+    let giftCount = 0; // ตัวนับจำนวนคนที่ใช้สิทธิ์ฟรีสะสมของวัน
 
-    // 📝 3. ประมวลผลรายการลูกค้า (ปรับปรุงเช็กสถานะและมูลค่าตามจริง)
+    // 📝 3. ประมวลผลรายการลูกค้า (แก้ไขตรรกะตรวจเช็คไอคอน ลำดับ 3, 4 ให้ตรงตามหน้ารายงาน)
     const clientList = today
             .sort((a, b) => a.time.localeCompare(b.time))
             .map((r, i) => {
@@ -3031,24 +3032,24 @@ function shareLine() {
                 const payType = String(r.pay || "").trim();
                 
                 let detailText = ""; 
-                let pIcon = '💵'; // ค่าเริ่มต้นเป็นเงินสดปกติ
-                let displayPrice = p; // ราคาที่จะแสดงในไลน์
+                let pIcon = '💵'; // ค่าเริ่มต้น
+                let displayPrice = p; 
 
-// 🔄 ตรวจสอบประเภทการจ่ายเงินให้ตรงกับหน้ารายงาน
+                // 🔄 ตรวจสอบประเภทการจ่ายเงินตรงตามที่แสดงบนหน้าจอบอร์ด
                 if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁' || payType === 'ใช้สิทธิ์ฟรี') {
-                    // 🎁 ฟรีทั้งบิล -> ยอดเงินเป็น 0 ตามหน้ารายงาน
                     displayPrice = 0;
                     pIcon = '🎁';
-                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💵' || payType === '🎁+Cash') {
-                    // 🎁 ฟรี + 💵 เงินสด (สิทธิ์ฟรีผสมเงินสด)
+                    giftCount++; // นับสิทธิ์ฟรี +1
+                } else if (payType.includes('ฟรี+Cash') || payType.includes('ฟรี+สด') || payType.includes('🎁+💵') || payType.includes('🎁+Cash') || payType.includes('ฟรี') && (payType.includes('สด') || payType.includes('Cash'))) {
                     cash += p;
                     tot += p;
-                    pIcon = '🎁+💵'; // บังคับใช้ไอคอนผสมตรงนี้ให้ชัดเจน
-                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱' || payType === '🎁+Trans') {
-                    // 🎁 ฟรี + 📱 เงินโอน (สิทธิ์ฟรีผสมเงินโอน)
+                    pIcon = '🎁+💵';
+                    giftCount++; // นับสิทธิ์ฟรี +1
+                } else if (payType.includes('ฟรี+Trans') || payType.includes('ฟรี+โอน') || payType.includes('🎁+📱') || payType.includes('🎁+Trans') || payType.includes('ฟรี') && (payType.includes('โอน') || payType.includes('Trans'))) {
                     trans += (p + t);
                     tot += p;
                     pIcon = '🎁+📱';
+                    giftCount++; // นับสิทธิ์ฟรี +1
                 } else if (payType === 'Mix') {
                     const pTrans = Number(r.payTrans) || 0;
                     const pCash = Number(r.payCash) || 0;
@@ -3057,17 +3058,12 @@ function shareLine() {
                     tot += p;
                     detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
                     pIcon = '🌓';
-                } else if (payType === 'Trans' || payType === 'โอน') {
+                } else if (payType === 'Trans' || payType === 'โอน' || payType === '📱') {
                     trans += (p + t);
                     tot += p;
                     pIcon = '📱';
-                } else if (payType === 'Cash' || payType === 'สด' || payType === '') {
-                    // 💵 เงินสดปกติล้วนๆ (ไม่มีสิทธิ์ฟรีผสม)
-                    cash += p;
-                    tot += p;
-                    pIcon = '💵';
                 } else {
-                    // กรณีอื่นๆ ที่เหลือ ให้วิ่งเข้าเงินสดตามหน้ารายงาน
+                    // จ่ายเงินสดปกติล้วน
                     cash += p;
                     tot += p;
                     pIcon = '💵';
@@ -3085,7 +3081,6 @@ function shareLine() {
                 }
     
                 const tShow = r.endTime ? `${r.time}-${r.endTime}` : r.time;
-                // แสดงมูลค่าที่ถูกปรับตามเงื่อนไข (displayPrice)
                 return `${i + 1}. [${tShow}] ${(r.svcs || []).join('+')} = ${displayPrice}${t ? ` (+ทิป ${t})` : ''}${detailText} ${pIcon}`;
             }).join('\n');
 
@@ -3126,7 +3121,7 @@ function shareLine() {
     let todayDiff = -settle;
     let finalNet = oldBalance + todayDiff;
 
-    // ✉️ 7. ประกอบข้อความ Template
+    // ✉️ 7. ประกอบข้อความ Template (ปรับปรุงช่องสรุปเงินตามที่คุณพี่สั่งการ)
     let msg = `💈 รายงานร้าน: ${shopName}\n`;
     msg += `📅 วันที่: ${fDate}\n`;
     msg += `-------------------------\n`;
@@ -3134,10 +3129,13 @@ function shareLine() {
     if (newCount > 0 || regCount > 0) msg += ` ใหม่: ${newCount} | ประจำ: ${regCount}\n`;
     msg += `-------------------------\n${clientList}\n-------------------------\n`;
     msg += `🏷️ สรุปงาน:\n${statText || '(ไม่มีรายการ)'}\n-------------------------\n`;
+    
+    // ช่องสรุปยอดเงินรวม
     msg += `💰 ยอด: ${tot.toLocaleString()} | 🧧 ทิปโอน: ${tips}\n`;
     
-    // ตรงสรุปยอดรวมของวัน ปรับหัวข้อตามที่คุณระบุ 🎁+💵 เงินสด
-    msg += `📱 โอน: ${trans.toLocaleString()} | 🎁+💵 เงินสด: ${cash.toLocaleString()}\n`;
+    // แก้ไข: แสดงเฉพาะ 💵 เงินสด และ 📱 โอน ส่วนสิทธิ์ฟรี 🎁 จะเพิ่มท้ายสุดถ้ามีการกดเลือกใช้สิทธิ์เท่านั้น
+    let giftLine = giftCount > 0 ? ` | 🎁: ${giftCount}` : '';
+    msg += `📱 โอน: ${trans.toLocaleString()} | 💵 เงินสด: ${cash.toLocaleString()}${giftLine}\n`;
     
     msg += `🤵 ช่าง: ${Math.floor(bEarn).toLocaleString()}\n🏠 ร้าน: ${Math.floor(shopEarn).toLocaleString()}\n`;
     msg += `-------------------------\n`;
