@@ -549,6 +549,8 @@ nav {
             <option value="Trans">📱 โอน/สแกน</option>
             <option value="Mix">🌓 ผสม</option>
             <option value="Free">🎁 ใช้สิทธิฟรี</option>
+            <option value="Free-Cash">🎁 ฟรี + 💶 เงินสด</option>
+            <option value="Free-Trans">🎁 ฟรี + 📱 เงินโอน</option>
         </select>
         
         <!-- ลูกศรชี้ลงฝั่งขวา -->
@@ -1226,46 +1228,38 @@ function editTime(id) {
     renderDay();
 }
 function setPaymentType(m) {
-    // 1. อัปเดตค่าสถานะการจ่ายเงินหลักของระบบ
     payMethod = m;
 
     const priceInp = $("priceInp");
     const mixPanel = $("mixPanel");
 
-    // 2. จัดการกรณีเลือก "ใช้สิทธิฟรี (Free)"
+    // ถ้าเลือก "ใช้สิทธิฟรี"
     if (m === 'Free') {
         if (priceInp) {
-            priceInp.value = 0;             // เซ็ตราคาเป็น 0
-            priceInp.readOnly = true;        // ล็อกช่องกรอกราคาไม่ให้แก้ไข
-            priceInp.style.opacity = '0.6';   // ปรับให้ดูจางลงเพื่อให้รู้ว่าล็อกอยู่
+            priceInp.readOnly = false;       // ✅ ปลดล็อกให้ช่างกรอกค่าบริการเสริมเพิ่มได้
+            priceInp.style.opacity = '1';
+            // ไม่ต้องเคลียร์เป็น 0 เพื่อให้ช่างใส่ราคาบริการเสริมได้ตามปกติ
         }
-        // ล้างค่าในช่องเงินผสมเดิมออกเพื่อป้องกันข้อมูลค้าง
         if ($("mixCash")) $("mixCash").value = "";
         if ($("mixTrans")) $("mixTrans").value = "";
-    } else {
-        // ถ้าเลือกแบบปกติ (Cash, Trans, Mix หรือค่าว่าง) ให้ปลดล็อกช่องราคา
+    } 
+    // ถ้าเลือกจ่ายแบบปกติ (Cash, Trans, Mix)
+    else {
         if (priceInp) {
             priceInp.readOnly = false;
             priceInp.style.opacity = '1';
-            if (priceInp.value == 0) priceInp.value = ''; // ถ้าเคยเป็น 0 ให้เคลียร์โล่งไว้
         }
     }
 
-    // 3. จัดการแผงจ่ายแบบผสม (Mix Panel)
+    // แผงจ่ายแบบผสม (Mix Panel) คงเดิม
     if (mixPanel) {
         if (m === 'Mix') {
             mixPanel.style.display = 'block';
-            
-            // คำนวณยอดรวมปัจจุบันเพื่อนำไปใส่ในช่อง Mix อัตโนมัติ
             const price = parseFloat(priceInp?.value) || 0;
             const tip = parseFloat($("tipInp")?.value) || 0;
             const total = price + tip;
-            
-            // ตั้งค่าเริ่มต้นให้ MixTrans เป็นยอดทั้งหมด และ MixCash เป็นค่าว่าง
             if ($("mixCash")) $("mixCash").value = ""; 
             if ($("mixTrans")) $("mixTrans").value = total > 0 ? total : "";   
-            
-            // เลื่อนหน้าจอไปที่แผง Mix เพื่อให้มองเห็นง่าย
             mixPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
             mixPanel.style.display = 'none';
