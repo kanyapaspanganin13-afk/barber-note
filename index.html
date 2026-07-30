@@ -1145,23 +1145,35 @@ switch (currentPay) {
     if (typeof loadAccountStatus === 'function') loadAccountStatus();
 }
 function resetForm() {
+    const $ = (id) => document.getElementById(id);
+
     // 1. ล้างตัวเลขในช่องกรอกข้อมูล
     if ($("priceInp")) $("priceInp").value = "";
     if ($("tipInp")) $("tipInp").value = "";
     if ($("mixCash")) $("mixCash").value = "";
-    if ($("mixTrans")) $("mixTrans").value = ""; // แก้ไขตรงนี้ให้ถูกต้องครับ
+    if ($("mixTrans")) $("mixTrans").value = "";
+    
     // 2. จัดการหน้าจอการจ่ายเงิน
     if ($("mixPanel")) $("mixPanel").style.display = "none"; 
-    // รีเซ็ตวิธีจ่ายเงินกลับเป็น "เงินสด" เป็นค่าเริ่มต้น
+    
+    // รีเซ็ตวิธีจ่ายเงินกลับเป็น "Cash" ในระบบ
     payMethod = "Cash"; 
     if (typeof setPaymentType === "function") {
         setPaymentType('Cash'); 
     }
+
+    // 🚨 [เพิ่มตรงนี้] ล้างค่าหน้าจอช่องเลือกวิธีชำระเงินที่เป็นแท็ก Select
+    // สมมติว่าแท็ก select นั้นมี id="paySelect" หรือ id="payMethodSelect"
+    const payDropdown = $("paySelect") || $("payMethodSelect"); 
+    if (payDropdown) {
+        payDropdown.selectedIndex = 0; // ดีดกลับไปรายการแรก (เช่น คำว่า วิธีชำระเงิน หรือ เงินสด)
+    }
+
     // 3. จัดการรายการบริการ (Services)
     selectedServices = []; 
-    // ล้างสถานะสีของปุ่มที่กดเลือกไว้
     const serviceButtons = document.querySelectorAll('.service-btn');
-    serviceButtons.forEach(btn => btn.classList.remove('selected', 'active', 'bg-blue-500')); // เพิ่มคลาสที่ช่างใช้ออกให้หมด
+    serviceButtons.forEach(btn => btn.classList.remove('selected', 'active', 'bg-blue-500'));
+    
     // 4. ตั้งเวลาปัจจุบันใหม่ให้เป็นเวลาล่าสุด
     const n = new Date();
     const t = n.getHours().toString().padStart(2, '0') + ':' + n.getMinutes().toString().padStart(2, '0'); 
