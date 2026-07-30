@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Barber-MS">
     <link rel="apple-touch-icon" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
     <link rel="icon" type="image/png" href="https://i.ibb.co/9mmX3c3R/Barber-Management-Icon.png">
-    <title>Barber-Note 0</title>
+    <title>Barber-Note 01</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -3034,39 +3034,44 @@ function shareLine() {
                 let pIcon = '💵'; // ค่าเริ่มต้นเป็นเงินสดปกติ
                 let displayPrice = p; // ราคาที่จะแสดงในไลน์
 
-                 // 🔄 ตรวจสอบประเภทการจ่ายเงินให้ตรงกับหน้ารายงาน
-                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁' || payType === 'ใช้สิทธิ์ฟรี') {
-                    // 🎁 ฟรีทั้งบิล -> ยอดเงินเป็น 0 ตามหน้ารายงาน
-                    displayPrice = 0;
-                    pIcon = '🎁';
-                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💵' || payType === '🎁+Cash') {
-                    // 🎁 ฟรี + 💵 เงินสด
-                    cash += p;
-                    tot += p;
-                    pIcon = '🎁+💵';
-                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱' || payType === '🎁+Trans') {
-                    // 🎁 ฟรี + 📱 เงินโอน
-                    trans += (p + t);
-                    tot += p;
-                    pIcon = '🎁+📱';
-                } else if (payType === 'Mix') {
-                    const pTrans = Number(r.payTrans) || 0;
-                    const pCash = Number(r.payCash) || 0;
-                    trans += pTrans;
-                    cash += (pCash - t);
-                    tot += p;
-                    detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
-                    pIcon = '🌓';
-                } else if (payType === 'Trans' || payType === 'โอน') {
-                    trans += (p + t);
-                    tot += p;
-                    pIcon = '📱';
-                } else {
-                    // เงินสดปกติ (แสดง 💵 ตามหน้ารายงาน ลำดับที่ 1)
-                    cash += p;
-                    tot += p;
-                    pIcon = '💵';
-                }
+// 🔄 ตรวจสอบประเภทการจ่ายเงินให้ตรงกับหน้ารายงาน
+                if (payType === 'ฟรี' || payType === 'Free' || payType === '🎁' || payType === 'ใช้สิทธิ์ฟรี') {
+                    // 🎁 ฟรีทั้งบิล -> ยอดเงินเป็น 0 ตามหน้ารายงาน
+                    displayPrice = 0;
+                    pIcon = '🎁';
+                } else if (payType === 'ฟรี+Cash' || payType === 'ฟรี+สด' || payType === '🎁+💵' || payType === '🎁+Cash') {
+                    // 🎁 ฟรี + 💵 เงินสด (สิทธิ์ฟรีผสมเงินสด)
+                    cash += p;
+                    tot += p;
+                    pIcon = '🎁+💵'; // บังคับใช้ไอคอนผสมตรงนี้ให้ชัดเจน
+                } else if (payType === 'ฟรี+Trans' || payType === 'ฟรี+โอน' || payType === '🎁+📱' || payType === '🎁+Trans') {
+                    // 🎁 ฟรี + 📱 เงินโอน (สิทธิ์ฟรีผสมเงินโอน)
+                    trans += (p + t);
+                    tot += p;
+                    pIcon = '🎁+📱';
+                } else if (payType === 'Mix') {
+                    const pTrans = Number(r.payTrans) || 0;
+                    const pCash = Number(r.payCash) || 0;
+                    trans += pTrans;
+                    cash += (pCash - t);
+                    tot += p;
+                    detailText = ` (สด:${pCash}/โอน:${pTrans})`; 
+                    pIcon = '🌓';
+                } else if (payType === 'Trans' || payType === 'โอน') {
+                    trans += (p + t);
+                    tot += p;
+                    pIcon = '📱';
+                } else if (payType === 'Cash' || payType === 'สด' || payType === '') {
+                    // 💵 เงินสดปกติล้วนๆ (ไม่มีสิทธิ์ฟรีผสม)
+                    cash += p;
+                    tot += p;
+                    pIcon = '💵';
+                } else {
+                    // กรณีอื่นๆ ที่เหลือ ให้วิ่งเข้าเงินสดตามหน้ารายงาน
+                    cash += p;
+                    tot += p;
+                    pIcon = '💵';
+                }
 
                 tips += t;
 
